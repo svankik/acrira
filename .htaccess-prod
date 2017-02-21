@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName "Restricted Files"
+# (Following line optional)
+AuthBasicProvider file
+AuthUserFile "/var/www/clients/client16/web26/web/v2/.htpasswd"
+Require user acrira
