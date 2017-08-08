@@ -64,28 +64,28 @@ function codex_cinema_init() {
 	register_post_type( 'cinema', $args );
 }
 
-add_action( 'init', 'codex_partner_init' );
+add_action( 'init', 'codex_highschool_init' );
 /**
- * Register a partner post type.
+ * Register a highschool post type.
  *
  * @link http://codex.wordpress.org/Function_Reference/register_post_type
  */
-function codex_partner_init() {
+function codex_highschool_init() {
 	$labels = array(
-		'name'               => _x( 'Partners', 'post type general name', 'acrira' ),
-		'singular_name'      => _x( 'Partner', 'post type singular name', 'acrira' ),
-		'menu_name'          => _x( 'Partners', 'admin menu', 'acrira' ),
-		'name_admin_bar'     => _x( 'Partner', 'add new on admin bar', 'acrira' ),
-		'add_new'            => _x( 'Add New', 'partner', 'acrira' ),
-		'add_new_item'       => __( 'Add New Partner', 'acrira' ),
-		'new_item'           => __( 'New Partner', 'acrira' ),
-		'edit_item'          => __( 'Edit Partner', 'acrira' ),
-		'view_item'          => __( 'View Partner', 'acrira' ),
-		'all_items'          => __( 'All Partners', 'acrira' ),
-		'search_items'       => __( 'Search Partners', 'acrira' ),
-		'parent_item_colon'  => __( 'Parent Partners:', 'acrira' ),
-		'not_found'          => __( 'No partner found.', 'acrira' ),
-		'not_found_in_trash' => __( 'No partners found in Trash.', 'acrira' )
+		'name'               => _x( 'High schools', 'post type general name', 'acrira' ),
+		'singular_name'      => _x( 'High school', 'post type singular name', 'acrira' ),
+		'menu_name'          => _x( 'High schools', 'admin menu', 'acrira' ),
+		'name_admin_bar'     => _x( 'High school', 'add new on admin bar', 'acrira' ),
+		'add_new'            => _x( 'Add New', 'High school', 'acrira' ),
+		'add_new_item'       => __( 'Add New High school', 'acrira' ),
+		'new_item'           => __( 'New High school', 'acrira' ),
+		'edit_item'          => __( 'Edit High school', 'acrira' ),
+		'view_item'          => __( 'View High school', 'acrira' ),
+		'all_items'          => __( 'All High schools', 'acrira' ),
+		'search_items'       => __( 'Search High schools', 'acrira' ),
+		'parent_item_colon'  => __( 'Parent High schools:', 'acrira' ),
+		'not_found'          => __( 'No High school found.', 'acrira' ),
+		'not_found_in_trash' => __( 'No High schools found in Trash.', 'acrira' )
 	);
 
 	$args = array(
@@ -96,7 +96,7 @@ function codex_partner_init() {
 		'show_ui'            => true,
 		'show_in_menu'       => true,
 		'query_var'          => true,
-		'rewrite'            => array( 'slug' => 'partner' ),
+		'rewrite'            => array( 'slug' => 'highschool' ),
 		'capability_type'    => 'post',
 		'has_archive'        => true,
 		'hierarchical'       => false,
@@ -104,7 +104,7 @@ function codex_partner_init() {
 		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
 	);
 
-	register_post_type( 'partner', $args );
+	register_post_type( 'High school', $args );
 }
 
 ?>
