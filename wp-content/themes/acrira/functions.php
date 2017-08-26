@@ -152,4 +152,47 @@ function codex_educationaltool_init() {
 	register_post_type( 'Educational tool', $args );
 }
 
+add_action( 'init', 'codex_film_init' );
+/**
+ * Register a Film post type.
+ *
+ * @link http://codex.wordpress.org/Function_Reference/register_post_type
+ */
+function codex_film_init() {
+	$labels = array(
+		'name'               => _x( 'Films', 'post type general name', 'acrira' ),
+		'singular_name'      => _x( 'Film', 'post type singular name', 'acrira' ),
+		'menu_name'          => _x( 'Films', 'admin menu', 'acrira' ),
+		'name_admin_bar'     => _x( 'Film', 'add new on admin bar', 'acrira' ),
+		'add_new'            => _x( 'Add New', 'Film', 'acrira' ),
+		'add_new_item'       => __( 'Add New Film', 'acrira' ),
+		'new_item'           => __( 'New Film', 'acrira' ),
+		'edit_item'          => __( 'Edit Film', 'acrira' ),
+		'view_item'          => __( 'View Film', 'acrira' ),
+		'all_items'          => __( 'All Films', 'acrira' ),
+		'search_items'       => __( 'Search Films', 'acrira' ),
+		'parent_item_colon'  => __( 'Parent Films:', 'acrira' ),
+		'not_found'          => __( 'No Film found.', 'acrira' ),
+		'not_found_in_trash' => __( 'No Films found in Trash.', 'acrira' )
+	);
+
+	$args = array(
+		'labels'             => $labels,
+		'description'        => __( 'Description.', 'acrira' ),
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'show_in_menu'       => true,
+		'query_var'          => true,
+		'rewrite'            => array( 'slug' => 'film' ),
+		'capability_type'    => 'post',
+		'has_archive'        => true,
+		'hierarchical'       => false,
+		'menu_position'      => null,
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+	);
+
+	register_post_type( 'Film', $args );
+}
+
 ?>
