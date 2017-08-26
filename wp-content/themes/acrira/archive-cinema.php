@@ -20,11 +20,11 @@ get_header(); ?>
 				switch($_GET['secteur']) {
 					case 'cinemas-en-reseau':
 						$title = 'Cinémas adhérents';
-						$introduction = __( 'cinémas en réseau / cinémas adhérents introduction', 'acrira' );
+						$introduction = __( '%% cinémas en réseau / cinémas adhérents introduction', 'acrira' );
 						break;
 					case 'lyceens-et-apprentis-au-cinema':
 						$title = 'Salles partenaires';
-						$introduction = __( 'lycéens et apprentis au cinema / salles partenaires introduction', 'acrira' );
+						$introduction = __( '%% lycéens et apprentis au cinema / salles partenaires introduction', 'acrira' );
 						break;
 				}
 				echo '<h1 class="page-title">'.$title.'</h1>' ;
