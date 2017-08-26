@@ -109,13 +109,13 @@ function codex_highschool_init() {
 	register_post_type( 'High school', $args );
 }
 
-add_action( 'init', 'codex_educationaltools_init' );
+add_action( 'init', 'codex_educationaltool_init' );
 /**
- * Register a Educational tools post type.
+ * Register a Educational tool post type.
  *
  * @link http://codex.wordpress.org/Function_Reference/register_post_type
  */
-function codex_educationaltools_init() {
+function codex_educationaltool_init() {
 	$labels = array(
 		'name'               => _x( 'Educational tools', 'post type general name', 'acrira' ),
 		'singular_name'      => _x( 'Educational tool', 'post type singular name', 'acrira' ),
