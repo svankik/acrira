@@ -58,7 +58,8 @@ function codex_cinema_init() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
+		'taxonomies'         => array( 'category' ), 
 	);
 
 	register_post_type( 'cinema', $args );
@@ -96,7 +97,51 @@ function codex_highschool_init() {
 		'show_ui'            => true,
 		'show_in_menu'       => true,
 		'query_var'          => true,
-		'rewrite'            => array( 'slug' => 'highschool' ),
+		'rewrite'            => array( 'slug' => 'lycee' ),
+		'capability_type'    => 'post',
+		'has_archive'        => true,
+		'hierarchical'       => false,
+		'menu_position'      => null,
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+		'taxonomies'         => array( 'category' ),
+	);
+
+	register_post_type( 'High school', $args );
+}
+
+add_action( 'init', 'codex_educationaltools_init' );
+/**
+ * Register a Educational tools post type.
+ *
+ * @link http://codex.wordpress.org/Function_Reference/register_post_type
+ */
+function codex_educationaltools_init() {
+	$labels = array(
+		'name'               => _x( 'Educational tools', 'post type general name', 'acrira' ),
+		'singular_name'      => _x( 'Educational tool', 'post type singular name', 'acrira' ),
+		'menu_name'          => _x( 'Educational tools', 'admin menu', 'acrira' ),
+		'name_admin_bar'     => _x( 'Educational tool', 'add new on admin bar', 'acrira' ),
+		'add_new'            => _x( 'Add New', 'Educational tool', 'acrira' ),
+		'add_new_item'       => __( 'Add New Educational tool', 'acrira' ),
+		'new_item'           => __( 'New Educational tool', 'acrira' ),
+		'edit_item'          => __( 'Edit Educational tool', 'acrira' ),
+		'view_item'          => __( 'View Educational tool', 'acrira' ),
+		'all_items'          => __( 'All Educational tools', 'acrira' ),
+		'search_items'       => __( 'Search Educational tools', 'acrira' ),
+		'parent_item_colon'  => __( 'Parent Educational tools:', 'acrira' ),
+		'not_found'          => __( 'No Educational tool found.', 'acrira' ),
+		'not_found_in_trash' => __( 'No Educational tools found in Trash.', 'acrira' )
+	);
+
+	$args = array(
+		'labels'             => $labels,
+		'description'        => __( 'Description.', 'acrira' ),
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'show_in_menu'       => true,
+		'query_var'          => true,
+		'rewrite'            => array( 'slug' => 'outil-pedagogique' ),
 		'capability_type'    => 'post',
 		'has_archive'        => true,
 		'hierarchical'       => false,
@@ -104,7 +149,7 @@ function codex_highschool_init() {
 		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
 	);
 
-	register_post_type( 'High school', $args );
+	register_post_type( 'Educational tool', $args );
 }
 
 ?>
