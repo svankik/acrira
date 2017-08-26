@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-08 10:13+0000\n"
+"POT-Creation-Date: 2017-08-26 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -39,7 +39,7 @@ msgctxt "cinema"
 msgid "Add New"
 msgstr ""
 
-#: functions.php:37
+#: functions.php:37 template-parts/footer/site-info.php:16
 msgid "Add New Cinema"
 msgstr ""
 
@@ -140,22 +140,10 @@ msgstr ""
 msgid "No High schools found in Trash."
 msgstr ""
 
-#. Name of the theme
-msgid "Acrira"
-msgstr ""
-
 #. Description of the theme
 msgid "Acrira - child of Twenty Seventeen Theme"
 msgstr ""
 
-#. URI of the theme
-msgid "http://example.com/acrira/"
-msgstr ""
-
 #. Author of the theme
 msgid "Sylvain BRUYAS"
-msgstr ""
-
-#. Author URI of the theme
-msgid "http://example.com"
 msgstr ""

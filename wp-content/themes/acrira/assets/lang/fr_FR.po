@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Acrira\n"
+"Project-Id-Version: acrira\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-08 10:13+0000\n"
-"PO-Revision-Date: 2017-08-08 10:21+0000\n"
+"POT-Creation-Date: 2017-08-26 09:53+0000\n"
+"PO-Revision-Date: 2017-08-26 09:53+0000\n"
 "Last-Translator: ACRIRA_admin <bruyas@gmail.com>\n"
 "Language-Team: French (France)\n"
 "Language: fr-FR\n"
@@ -16,51 +16,51 @@ msgstr ""
 #: functions.php:32
 msgctxt "post type general name"
 msgid "Cinemas"
-msgstr "Cinémas"
+msgstr ""
 
 #: functions.php:33
 msgctxt "post type singular name"
 msgid "Cinema"
-msgstr "Cinéma"
+msgstr ""
 
 #: functions.php:34
 msgctxt "admin menu"
 msgid "Cinemas"
-msgstr "Cinémas"
+msgstr ""
 
 #: functions.php:35
 msgctxt "add new on admin bar"
 msgid "Cinema"
-msgstr "Cinéma"
+msgstr ""
 
 #: functions.php:36
 msgctxt "cinema"
 msgid "Add New"
-msgstr "Ajouter"
+msgstr ""
 
-#: functions.php:37
+#: functions.php:37 template-parts/footer/site-info.php:16
 msgid "Add New Cinema"
 msgstr "Ajouter un cinéma"
 
 #: functions.php:38
 msgid "New Cinema"
-msgstr "Nouveau cinéma"
+msgstr ""
 
 #: functions.php:39
 msgid "Edit Cinema"
-msgstr "Editer cinéma"
+msgstr ""
 
 #: functions.php:40
 msgid "View Cinema"
-msgstr "Voir cinéma"
+msgstr ""
 
 #: functions.php:41
 msgid "All Cinemas"
-msgstr "Tous les cinémas"
+msgstr ""
 
 #: functions.php:42
 msgid "Search Cinemas"
-msgstr "Rechercher un cinéma"
+msgstr ""
 
 #: functions.php:43
 msgid "Parent Cinemas:"
@@ -68,64 +68,64 @@ msgstr ""
 
 #: functions.php:44
 msgid "No cinema found."
-msgstr "Pas de cinéma trouvé."
+msgstr ""
 
 #: functions.php:45
 msgid "No cinemas found in Trash."
-msgstr "Pas de cinéma trouvé dans la corbeille."
+msgstr ""
 
 #: functions.php:50 functions.php:93
 msgid "Description."
-msgstr "Descrition"
+msgstr ""
 
 #: functions.php:75
 msgctxt "post type general name"
 msgid "High schools"
-msgstr "Lycées"
+msgstr ""
 
 #: functions.php:76
 msgctxt "post type singular name"
 msgid "High school"
-msgstr "Lycée"
+msgstr ""
 
 #: functions.php:77
 msgctxt "admin menu"
 msgid "High schools"
-msgstr "Lycées"
+msgstr ""
 
 #: functions.php:78
 msgctxt "add new on admin bar"
 msgid "High school"
-msgstr "Lycée"
+msgstr ""
 
 #: functions.php:79
 msgctxt "High school"
 msgid "Add New"
-msgstr "Ajouter"
+msgstr ""
 
 #: functions.php:80
 msgid "Add New High school"
-msgstr "Ajouter un lycée"
+msgstr ""
 
 #: functions.php:81
 msgid "New High school"
-msgstr "Nouveau lycée"
+msgstr ""
 
 #: functions.php:82
 msgid "Edit High school"
-msgstr "Editer lycée"
+msgstr ""
 
 #: functions.php:83
 msgid "View High school"
-msgstr "Voir lycée"
+msgstr ""
 
 #: functions.php:84
 msgid "All High schools"
-msgstr "Tous les lycées"
+msgstr ""
 
 #: functions.php:85
 msgid "Search High schools"
-msgstr "Rechercher un lycée"
+msgstr ""
 
 #: functions.php:86
 msgid "Parent High schools:"
@@ -133,28 +133,16 @@ msgstr ""
 
 #: functions.php:87
 msgid "No High school found."
-msgstr "Pas de lycée trouvé"
+msgstr ""
 
 #: functions.php:88
 msgid "No High schools found in Trash."
-msgstr "Pas de lycée trouvé dans la corbeille."
-
-#. Name of the theme
-msgid "Acrira"
 msgstr ""
 
 #. Description of the theme
 msgid "Acrira - child of Twenty Seventeen Theme"
 msgstr ""
 
-#. URI of the theme
-msgid "http://example.com/acrira/"
-msgstr ""
-
 #. Author of the theme
 msgid "Sylvain BRUYAS"
-msgstr ""
-
-#. Author URI of the theme
-msgid "http://example.com"
 msgstr ""
