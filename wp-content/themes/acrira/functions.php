@@ -5,7 +5,7 @@ function acrira_setup() {
 	 * If you're building a theme based on Twenty Seventeen, use a find and replace
 	 * to change 'twentyseventeen' to the name of your theme in all the template files.
 	 */
-	load_theme_textdomain( 'acrira' );
+	load_theme_textdomain( 'acrira', get_stylesheet_directory () . '/assets/lang' );
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
 
