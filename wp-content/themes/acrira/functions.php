@@ -6,6 +6,9 @@ function acrira_setup() {
 	 * to change 'twentyseventeen' to the name of your theme in all the template files.
 	 */
 	load_theme_textdomain( 'acrira', get_stylesheet_directory () . '/assets/lang' );
+
+	// Add image sizes
+	add_image_size ( 'slider', 1000, 500, true );
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
 
@@ -233,3 +236,78 @@ function acrira_pre_get_posts( $query ) {
 
 }
 add_action( 'pre_get_posts', 'acrira_pre_get_posts' );
+
+/**
+ * Add some custom them options
+ *
+ * @param   object  $wp_customize
+ *
+ * @return  void
+ */
+function acrira_theme_customizer( $wp_customize ) {
+
+	$wp_customize->add_section( 'acrira_homepage_slider_section' , array(
+		'title'       => __( 'Homepage slider images', 'acrira' ),
+		'priority'    => 30,
+		'description' => __( 'Upload default images.', 'acrira' ),
+	) );
+
+	for( $i = 1; $i <= 10; $i++ ) {
+		$wp_customize->add_setting( 'acrira_homepage_slider_image_' . $i );
+		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'acrira_homepage_slider_image_' . $i, array(
+			'label'    => sprintf(__( 'Image %d', 'acrira' ), $i),
+			'section'  => 'acrira_homepage_slider_section',
+			'settings' => 'acrira_homepage_slider_image_' . $i,
+		) ) );
+	}
+}
+add_action( 'customize_register', 'acrira_theme_customizer' );
+
+/**
+ * Get homepage slider image src
+ *
+ * @param   string  $option
+ *
+ * @return  string
+ */
+function acrira_get_homepage_slider_image_src( $option ) {
+
+	$default_image_url = get_theme_mod( $option );
+	$default_image     = attachment_url_to_postid( $default_image_url );
+
+	if( empty( $default_image ) ) {
+		return;
+	}
+
+	$image = wp_get_attachment_image_src( $default_image, 'slider' );
+
+	return $image[0];
+
+}
+
+# in functions.php add hook & hook function
+add_filter("wp_nav_menu_objects",'acrira_wp_nav_menu_objects_start_in',10,2);
+
+# filter_hook function to react on start_in argument
+function acrira_wp_nav_menu_objects_start_in( $sorted_menu_items, $args ) {
+	if(isset($args->start_in)) {
+		$menu_item_parents = array();
+		foreach( $sorted_menu_items as $key => $item ) {
+			// init menu_item_parents
+			if( $item->object_id == (int)$args->start_in ) $menu_item_parents[] = $item->ID;
+
+			if( in_array($item->menu_item_parent, $menu_item_parents) ) {
+				// part of sub-tree: keep!
+				$menu_item_parents[] = $item->ID;
+			} 
+			else {
+				// not part of sub-tree: away with it!
+				unset($sorted_menu_items[$key]);
+			}
+		}
+		return $sorted_menu_items;
+	} 
+	else {
+		return $sorted_menu_items;
+	}
+}
