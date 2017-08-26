@@ -19,6 +19,18 @@ function acrira_enqueue_styles() {
 		array( $parent_style ),
 		wp_get_theme()->get('Version')
 	);
+
+	// JQuery UI Core
+	wp_enqueue_script ( 'jquery-ui-core' );
+
+	// JQuery UI Accordion
+	wp_enqueue_script ( 'jquery-ui-accordion' );
+
+	wp_enqueue_script ( 'acrira',
+		get_stylesheet_directory_uri() . '/assets/js/acrira.js',
+		array( 'jquery-ui-accordion' ),
+		wp_get_theme()->get('Version')
+	);
 }
 
 add_action( 'init', 'codex_cinema_init' );
@@ -58,7 +70,7 @@ function codex_cinema_init() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt' ),
 		'taxonomies'         => array( 'category' ), 
 	);
 
@@ -102,7 +114,7 @@ function codex_highschool_init() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt' ),
 		'taxonomies'         => array( 'category' ),
 	);
 
@@ -146,7 +158,7 @@ function codex_educationaltool_init() {
 		'has_archive'        => true,
 		'hierarchical'       => false,
 		'menu_position'      => null,
-		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+		'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt' )
 	);
 
 	register_post_type( 'Educational tool', $args );
@@ -195,4 +207,29 @@ function codex_film_init() {
 	register_post_type( 'Film', $args );
 }
 
-?>
+/**
+ * Filter Cinemas by sector
+ *
+ * @param   object  $query
+ *
+ * @return  object
+ */
+function acrira_pre_get_posts( $query ) {
+	
+	if( is_admin() ) {
+		return $query;
+	}
+
+	if( 
+		$query->is_main_query() &&
+		! empty( $query->query_vars['post_type'] ) && 
+		$query->query_vars['post_type'] === 'cinema' &&
+		! empty( $_GET[ 'secteur' ])
+	) {
+		$query->set( 'category_name', $_GET[ 'secteur' ] );
+	}
+
+	return $query;
+
+}
+add_action( 'pre_get_posts', 'acrira_pre_get_posts' );
