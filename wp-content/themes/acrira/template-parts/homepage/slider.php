@@ -1,7 +1,7 @@
 <?php
 	$images = array();
 	for( $i = 1; $i <= 10; $i++ ) {
-		$image_url = acrira_get_homepage_slider_image_src('acrira_homepage_slider_image_' . $i);
+		$image_url = acrira_get_slider_image_src('acrira_homepage_slider_image_' . $i);
 		if( $image_url != '' ) {
 			$images[] = $image_url;
 		}
