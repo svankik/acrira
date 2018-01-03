@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Theme setup
+ *
+ * @return  void
+ */
 function acrira_setup() {
 	/*
 	 * Make theme available for translation.
@@ -12,13 +18,17 @@ function acrira_setup() {
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
 
-add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
+/**
+ * Enqueue scripts and stylesheets
+ *
+ * @return  void
+ */
 function acrira_enqueue_styles() {
 	$parent_style = 'twentyseventeen-style'; // This is 'twentyseventeen-style' for the Twenty Seventeen theme.
 
 	wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
 	wp_enqueue_style( 'child-style',
-		get_stylesheet_directory_uri() . '/style.css',
+		get_stylesheet_directory_uri() . '/assets/css/style.css',
 		array( $parent_style ),
 		wp_get_theme()->get('Version')
 	);
@@ -35,8 +45,8 @@ function acrira_enqueue_styles() {
 		wp_get_theme()->get('Version')
 	);
 }
+add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
 
-add_action( 'init', 'codex_cinema_init' );
 /**
  * Register a cinema post type.
  *
@@ -79,8 +89,8 @@ function codex_cinema_init() {
 
 	register_post_type( 'cinema', $args );
 }
+add_action( 'init', 'codex_cinema_init' );
 
-add_action( 'init', 'codex_highschool_init' );
 /**
  * Register a highschool post type.
  *
@@ -123,8 +133,8 @@ function codex_highschool_init() {
 
 	register_post_type( 'High school', $args );
 }
+add_action( 'init', 'codex_highschool_init' );
 
-add_action( 'init', 'codex_educationaltool_init' );
 /**
  * Register a Educational tool post type.
  *
@@ -166,8 +176,8 @@ function codex_educationaltool_init() {
 
 	register_post_type( 'Educational tool', $args );
 }
+add_action( 'init', 'codex_educationaltool_init' );
 
-add_action( 'init', 'codex_film_init' );
 /**
  * Register a Film post type.
  *
@@ -209,6 +219,7 @@ function codex_film_init() {
 
 	register_post_type( 'Film', $args );
 }
+add_action( 'init', 'codex_film_init' );
 
 /**
  * Filter Cinemas by sector

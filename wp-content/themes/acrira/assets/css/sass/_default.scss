@@ -1,0 +1,34 @@
+
+body {
+	font-family: $ff-default;
+	font-size: 16px;
+	line-height: 20px;
+	color: #000;
+
+	b,
+	strong {
+		font-family: $ff-b;
+		font-weight: 400;
+	}
+}
+
+#page {
+	overflow-x: hidden;
+
+	// @media (max-width: $screen-xs-max) {
+	// 	padding: 0 $grid-gutter-width;
+	// }
+}
+
+a {
+	color: $brand-primary;
+	text-decoration: none;
+	@include smooth-transition();
+
+	&:focus,
+	&:hover {
+		color: #000;
+		text-decoration: none;
+		outline: none;
+	}
+}
