@@ -14,7 +14,7 @@ function acrira_setup() {
 	load_theme_textdomain( 'acrira', get_stylesheet_directory () . '/assets/lang' );
 
 	// Add image sizes
-	add_image_size ( 'slider', 1000, 500, true );
+	add_image_size ( 'aslider', 1200, 800, true );
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
 
@@ -44,6 +44,14 @@ function acrira_enqueue_styles() {
 		array( 'jquery-ui-accordion' ),
 		wp_get_theme()->get('Version')
 	);
+
+	if( is_front_page() || is_home() ) {
+		wp_enqueue_script ( 'aslider',
+			get_stylesheet_directory_uri() . '/assets/js/aslider.js',
+			array( 'jquery' ),
+			wp_get_theme()->get('Version')
+		);
+	}
 }
 add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
 

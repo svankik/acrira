@@ -1,76 +1,76 @@
-<?php
-	$images = array();
-	for( $i = 1; $i <= 10; $i++ ) {
-		$image_url = acrira_get_slider_image_src('acrira_homepage_slider_image_' . $i);
-		if( $image_url != '' ) {
-			$images[] = $image_url;
-		}
-	}
-?>
 
-<div id="slider">
-	
-	<div id="cinemas-en-reseau" style="background-image: url(<?php echo $images[0]; ?>);">
-		<div class="sector-title">
-			Cinémas en réseau
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 32,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+<section class="as-container">
+	<ul class="src">
 
-	<div id="lyceens-et-apprentis-au-cinema" style="background-image: url(<?php echo $images[1]; ?>);">
-		<div class="sector-title">
-			Lycéens & apprentis au cinéma
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 57,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+		<?php
+			// check if the repeater field has rows of data
+			if( have_rows('slider') ):
 
-	<div id="passeurs-dimages" style="background-image: url(<?php echo $images[2]; ?>);">
-		<div class="sector-title">
-			Passeurs d'images
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 92,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+				// loop through the rows of data
+				while ( have_rows('slider') ) : the_row();
 
-	<div id="le-cinema-a-portee-de-main" style="background-image: url(<?php echo $images[3]; ?>);">
-		<div class="sector-title">
-			Le cinéma à portée de main
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 107,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
-</div>
+					$image = get_sub_field('image');
+
+					?>
+						<li>
+							<img src="<?php echo $image['sizes']['aslider']; ?>" alt="<?php $image['alt'] ?>" />
+						</li>	
+					<?php
+
+				endwhile;
+
+			endif;
+		?>
+
+	</ul>
+</section>
+
+<section class="col-md-12">
+
+	<ul class="rows">
+
+		<?php
+			$cols = 12 / get_field('nombre_de_colonnes');
+
+			// check if the repeater field has rows of data
+			if( have_rows('colonne') ):
+
+				// loop through the rows of data
+				while ( have_rows('colonne') ) : the_row();
+
+					?>
+
+						<li class="col-md-<?php echo $cols; ?>">
+							
+							<div class="as-height">
+								<h2>
+									<?php the_sub_field('titre'); ?>
+								</h2>
+								
+								<div>
+									<?php the_sub_field('texte'); ?>
+								</div>								
+							</div>
+
+							<nav>							
+								<?php
+									wp_nav_menu( array( 
+										'theme_location' => 'top',
+										'start_in' => get_sub_field('id_menu'),
+										'container' => false,
+										'items_wrap' => '%3$s',
+									) );
+								?>
+							</nav>
+
+						</li>
+
+					<?php
+				endwhile;
+
+			endif;
+		?>
+
+	</ul>
+
+</section>
