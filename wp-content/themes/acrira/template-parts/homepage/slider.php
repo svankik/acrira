@@ -26,7 +26,7 @@
 		</div>
 	</div>
 
-	<div id="lyceens-et-apprentis-au-cinema" style="background-image: url(<?php echo $images[0]; ?>);">
+	<div id="lyceens-et-apprentis-au-cinema" style="background-image: url(<?php echo $images[1]; ?>);">
 		<div class="sector-title">
 			Lycéens & apprentis au cinéma
 		</div>
@@ -42,7 +42,7 @@
 		</div>
 	</div>
 
-	<div id="passeurs-dimages" style="background-image: url(<?php echo $images[0]; ?>);">
+	<div id="passeurs-dimages" style="background-image: url(<?php echo $images[2]; ?>);">
 		<div class="sector-title">
 			Passeurs d'images
 		</div>
@@ -58,7 +58,7 @@
 		</div>
 	</div>
 
-	<div id="le-cinema-a-portee-de-main" style="background-image: url(<?php echo $images[0]; ?>);">
+	<div id="le-cinema-a-portee-de-main" style="background-image: url(<?php echo $images[3]; ?>);">
 		<div class="sector-title">
 			Le cinéma à portée de main
 		</div>
