@@ -22,7 +22,7 @@ function acrira_setup() {
 	load_theme_textdomain( 'acrira', get_stylesheet_directory () . '/assets/lang' );
 
 	// Add image sizes
-	add_image_size ( 'aslider', 1200, 800, true );
+	add_image_size ( 'aslider', 1200, 545, true );
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
 

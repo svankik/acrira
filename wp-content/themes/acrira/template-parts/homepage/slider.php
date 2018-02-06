@@ -27,54 +27,103 @@
 		</ul>
 	</section>
 
-	<section class="as-content-container">
+	<?php
+		// check if the repeater field has rows of data
+		if( have_rows('colonne') ):
 
-		<ul class="thematics">
+			$thematics = array ();
 
-			<?php
-				$cols = 12 / get_field('nombre_de_colonnes');
+			// loop through the rows of data
+			while ( have_rows('colonne') ) : the_row();
 
-				// check if the repeater field has rows of data
-				if( have_rows('colonne') ):
+				$thematics[] = array(
+					'title'   => get_sub_field('titre'),
+					'text'    => get_sub_field('texte'),
+					'id_menu' => get_sub_field('id_menu'),
+				);
 
-					// loop through the rows of data
-					while ( have_rows('colonne') ) : the_row();
+			endwhile;
 
-						?>
-
-							<li>
-								
-								<div>
-									<h2>
-										<?php the_sub_field('titre'); ?>
-									</h2>
-									
-									<div>
-										<?php the_sub_field('texte'); ?>
-									</div>								
-
-									<nav>							
-										<?php
-											wp_nav_menu( array( 
-												'theme_location' => 'top',
-												'start_in'       => get_sub_field('id_menu'),
-												'container'      => false,
-												'items_wrap'     => '%3$s',
-											) );
-										?>
-									</nav>
-								</div>
-
-							</li>
-
-						<?php
-					endwhile;
-
-				endif;
 			?>
 
-		</ul>
+				<section class="as-content-container">
 
-	</section>
+					<ul class="titles">
+						<?php
+							foreach ( $thematics as $key => $thematic ) :
+								?>
+
+									<li>
+										
+										<div>
+											<h2>
+												<?php echo $thematic['title']; ?>
+											</h2>
+										</div>
+
+									</li>
+
+								<?php
+							endforeach;
+						?>
+					</ul>
+
+					<ul class="texts">
+						<?php
+							foreach ( $thematics as $key => $thematic ) :
+								?>
+
+									<li>
+										
+										<div>
+											<div>
+												<?php echo $thematic['text']; ?>
+											</div>								
+										</div>
+
+									</li>
+
+								<?php
+							endforeach;
+						?>
+					</ul>
+
+				</section>
+
+				<section class="as-navigation-container">
+
+					<ul class="navigations">
+						<?php
+							foreach ( $thematics as $key => $thematic ) :
+								?>
+
+									<li>
+										
+										<div>
+											<nav>							
+												<?php
+													wp_nav_menu( array( 
+														'theme_location' => 'top',
+														'start_in'       => $thematic['id_menu'],
+														'container'      => false,
+														'items_wrap'     => '%3$s',
+													) );
+												?>
+											</nav>
+										</div>
+
+									</li>
+
+								<?php
+							endforeach;
+						?>
+					</ul>
+
+				</section>
+
+			<?php
+
+		endif;
+	?>
 
 </div>

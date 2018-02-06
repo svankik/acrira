@@ -8,7 +8,7 @@
 		delay      = 0.15,
 		transition = 3000,
 		margin     = 2,
-		ratio      = 1.5
+		ratio      = 2.2
 	;
 
 	/**
@@ -66,7 +66,8 @@
 				'} '
 		;
 
-		style += '.thematics > li { ' +
+		style += '.as-navigation-container > ul > li, ' +
+				'.as-content-container > .titles > li { ' +
 					'width: ' + (itemW - 2 * margin) + 'px;' +
 					'margin: 0 ' + margin + 'px;' +
 				'} '
