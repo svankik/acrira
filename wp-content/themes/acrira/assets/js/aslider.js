@@ -62,7 +62,13 @@
 		style += '#' + selector + ' li { ' +
 					'width: ' + (itemW - 2 * margin) + 'px;' +
 					'height: ' + gridH + 'px;' +
-					'margin: ' + margin + 'px;' +
+					'margin: 0 ' + margin + 'px;' +
+				'} '
+		;
+
+		style += '.thematics > li { ' +
+					'width: ' + (itemW - 2 * margin) + 'px;' +
+					'margin: 0 ' + margin + 'px;' +
 				'} '
 		;
 

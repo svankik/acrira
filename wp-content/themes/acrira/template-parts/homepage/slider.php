@@ -42,9 +42,9 @@
 
 						?>
 
-							<li class="col-md-<?php echo $cols; ?>">
+							<li>
 								
-								<div class="as-height">
+								<div>
 									<h2>
 										<?php the_sub_field('titre'); ?>
 									</h2>
@@ -52,18 +52,18 @@
 									<div>
 										<?php the_sub_field('texte'); ?>
 									</div>								
-								</div>
 
-								<nav>							
-									<?php
-										wp_nav_menu( array( 
-											'theme_location' => 'top',
-											'start_in'       => get_sub_field('id_menu'),
-											'container'      => false,
-											'items_wrap'     => '%3$s',
-										) );
-									?>
-								</nav>
+									<nav>							
+										<?php
+											wp_nav_menu( array( 
+												'theme_location' => 'top',
+												'start_in'       => get_sub_field('id_menu'),
+												'container'      => false,
+												'items_wrap'     => '%3$s',
+											) );
+										?>
+									</nav>
+								</div>
 
 							</li>
 

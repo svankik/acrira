@@ -1,10 +1,10 @@
 
 .as-wrapper {
 	position: relative;
+	margin-top: 2*$grid-gutter-width/3;
 }
 
 .as-slider-container { 
-	padding-top: $grid-gutter-width;
 	
 	.src {
 		display: none;
@@ -19,7 +19,7 @@
 
 	.as-grid {
 		position: relative;
-		margin: 20px auto;
+		margin: 0 -2px;
 		padding: 0;
 		list-style: none;
 		text-align: center;
@@ -71,7 +71,22 @@
 	right: 0;
 	z-index: 3;
 
+	.thematics {
+		list-style: none;
+		height: 100%;
+		margin: 0 0;
+		@include clearfix();
 
+		> li {
+			display: block;
+			float: left;
+			height: 100%;
+			
+			> div {
+				padding: $grid-gutter-width;
+			}
+		}
+	}
 }
 
 /* Slide and reveal */
