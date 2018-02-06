@@ -95,7 +95,7 @@
 
 	function init() {
 
-		$( '.as-container' ).each( function( index, el ) {
+		$( '.as-slider-container' ).each( function( index, el ) {
 
 			var $src        = $( el ).find( '.src' ),
 				slideCount  = $src.find( 'li' ).length,
