@@ -2,7 +2,7 @@
 
 	$menu_parent_id = acrira_get_menu_parent_ID( 'top');
 
-	print 'menu_parent_id' . $menu_parent_id;
+	// print 'menu_parent_id' . $menu_parent_id;
 
 	switch ($menu_parent_id) {
 		case '32':

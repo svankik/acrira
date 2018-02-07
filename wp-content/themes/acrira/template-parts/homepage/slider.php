@@ -40,6 +40,7 @@
 					'title'   => get_sub_field('titre'),
 					'text'    => get_sub_field('texte'),
 					'id_menu' => get_sub_field('id_menu'),
+					'color'   => get_sub_field('couleur'),
 				);
 
 			endwhile;
@@ -48,59 +49,21 @@
 
 				<section class="as-content-container">
 
-					<ul class="titles">
+					<ul class="thematics">
 						<?php
 							foreach ( $thematics as $key => $thematic ) :
 								?>
 
-									<li>
+									<li data-key="<?php echo $key; ?>">
 										
 										<div>
 											<h2>
-												<?php echo $thematic['title']; ?>
+												<span><span class="dot" style="background-color: <?php echo $thematic['color']; ?>"></span><?php echo $thematic['title']; ?></span>
 											</h2>
-										</div>
-
-									</li>
-
-								<?php
-							endforeach;
-						?>
-					</ul>
-
-					<ul class="texts">
-						<?php
-							foreach ( $thematics as $key => $thematic ) :
-								?>
-
-									<li>
-										
-										<div>
-											<div>
+											<div class="text">
 												<?php echo $thematic['text']; ?>
 											</div>								
-										</div>
-
-									</li>
-
-								<?php
-							endforeach;
-						?>
-					</ul>
-
-				</section>
-
-				<section class="as-navigation-container">
-
-					<ul class="navigations">
-						<?php
-							foreach ( $thematics as $key => $thematic ) :
-								?>
-
-									<li>
-										
-										<div>
-											<nav>							
+											<nav class="visible-xs-block visible-sm-block" style="background-color: <?php echo $thematic['color']; ?>">							
 												<?php
 													wp_nav_menu( array( 
 														'theme_location' => 'top',
@@ -127,3 +90,34 @@
 	?>
 
 </div>
+
+<section class="as-navigation-container visible-md-block visible-lg-block">
+
+	<ul class="navigations">
+		<?php
+			foreach ( $thematics as $key => $thematic ) :
+				?>
+
+					<li>
+						
+						<div style="background-color: <?php echo $thematic['color']; ?>" class="equal-height">
+							<nav>							
+								<?php
+									wp_nav_menu( array( 
+										'theme_location' => 'top',
+										'start_in'       => $thematic['id_menu'],
+										'container'      => false,
+										'items_wrap'     => '%3$s',
+									) );
+								?>
+							</nav>
+						</div>
+
+					</li>
+
+				<?php
+			endforeach;
+		?>
+	</ul>
+
+</section>

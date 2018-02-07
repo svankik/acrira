@@ -19,24 +19,16 @@
 
 	.as-grid {
 		position: relative;
-		margin: 0 -2px;
+		margin: 0;
 		padding: 0;
 		list-style: none;
 		text-align: center;
-
-		&:before,
-		&:after {
-			display: table;
-			content: ' ';
-		}
-
-		&:after {
-			clear: both;
-		}
+		@include clearfix();
 
 		li {
 			position: relative;
-			display: inline-block;
+			display: block;
+			float: left;
 			@include backface-visibility(hidden);
 
 			.as-item,
@@ -83,52 +75,161 @@
 		}
 	}
 
-	.titles {
-		height: 2*$grid-gutter-width;
+	.thematics {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 4;
 
 		> li {
 			display: block;
 			float: left;
 			height: 100%;
-			
-			> div {
-				margin: 2*$grid-gutter-width/3;
-				height: 2*$grid-gutter-width/3;
-				line-height: 2*$grid-gutter-width/3;
+			position: relative;
+			cursor: pointer;
+
+			h2 {
+				color: #fff;
+				height: 2*$grid-gutter-width;
+				z-index: 5;
+				background-color: transparentize(#000, 0.5);
+				margin: 0;
+				padding: 0 $grid-gutter-width;
+				position: relative;
+
+				> span {
+					display: block;
+					line-height: 1;
+					position: absolute;
+					top: 50%;
+					font-weight: 700;
+					@include translate(0, -50%);
+
+					.dot {
+						display: block;
+						width: 4*$grid-gutter-width/3;
+						height: 4*$grid-gutter-width/3;
+						position: absolute;
+						top: 50%;
+						left: 0;
+						z-index: -1;
+						@include translate(-50%, -50%);
+						@include border-top-radius(100px);
+						@include border-bottom-radius(100px);
+					}
+				}
+			}
+
+			&.active {
+				@include opacity(1);
+			}
+
+			.text {
+				color: #fff;
+				background-color: transparentize(#000, 0.5);
+				position: absolute;
+				top: 2*$grid-gutter-width;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				padding: $grid-gutter-width;
+				@include opacity(0);
+				@include smooth-transition(0.3s);
+				
+				@media (max-width: $screen-sm-max) {
+					position: relative;
+					top: 0;
+					background-color: transparentize(#000, 0.7);
+					@include opacity(1);
+				}
+			}
+
+			&:focus,
+			&:hover {
+
+				.text {
+					@include opacity(1);
+				}
+			}
+
+			@media (max-width: $screen-sm-max) {
+				height: auto;
+				width: 100% !important;
 			}
 		}
+
+		@media (max-width: $screen-sm-max) {
+			position: relative;
+		}
+
 	}
 
-	.texts {
-		height: calc(100% - 60px);
+	@media (max-width: $screen-sm-max) {
 		position: relative;
-
-		> li {
-			position: absolute;
-			top: 0;
-			left: 0;
-			bottom: 0;
-			right: 0;
-			padding: 2*$grid-gutter-width;
-
-			> div {
-
-			}
-		}
+		margin-top: $grid-gutter-width;
 	}
 }
 
 .as-navigation-container {
-	position: relative;
+
+	ul {
+		list-style: none;
+	}
 	
 	> ul {
-		list-style: none;
 		margin: 0 0;
 		@include clearfix();
 
 		> li {
 			display: block;
 			float: left;
+
+			> div {
+				padding: $grid-gutter-width/2;
+			}
+
+			a {
+				display: block;
+				color: #fff;
+				border-bottom: 1px solid #fff;
+
+				&:hover {
+					color: #eee;
+					@include translate(-($grid-gutter-width/6), 0);
+				}
+			}
+
+			svg {
+				display: none;
+			}
+		}
+	}
+}
+
+.as-content-container {
+
+	ul {
+		list-style: none;
+	}
+
+	nav {
+		padding: $grid-gutter-width/2;
+
+		a {
+			display: block;
+			color: #fff;
+			border-bottom: 1px solid #fff;
+
+			&:hover {
+				color: #eee;
+				@include translate(-($grid-gutter-width/6), 0);
+			}
+		}
+
+		svg {
+			display: none;
 		}
 	}
 }

@@ -67,7 +67,7 @@
 		;
 
 		style += '.as-navigation-container > ul > li, ' +
-				'.as-content-container > .titles > li { ' +
+				'.as-content-container > .thematics > li { ' +
 					'width: ' + (itemW - 2 * margin) + 'px;' +
 					'margin: 0 ' + margin + 'px;' +
 				'} '
@@ -98,6 +98,22 @@
 
 		$stylesheet.appendTo( 'head' );
 
+	}
+
+	function equalizeHeight() {
+		var maxH     = 0,
+			$targets = $( '.as-navigation-container .equal-height' )
+		;
+
+		$targets.css( 'height', 'auto' );
+
+		$targets.each( function () {
+			var h = $( this ).height();
+			
+			maxH = maxH < h ? h : maxH;
+		} );
+
+		$targets.height( maxH );
 	}
 
 	function init() {
@@ -149,6 +165,7 @@
 			$items = $grid.find( 'li' );
 
 			resizeAs( $grid );
+			equalizeHeight();
 
 			function play( i ) {
 				isAnimating = true;
@@ -224,10 +241,12 @@
 					// clearTimeout( dTimer );
 					resizeAs( $grid );
 					play( current );
+					equalizeHeight();
 				}, 250 );
 			} );
 
-		} );		
+		} );
+
 	}
 
 	$( window ).on( 'load', init );
