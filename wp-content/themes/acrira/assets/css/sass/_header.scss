@@ -25,3 +25,43 @@
 		font-weight: 700;
 	}
 }
+
+.custom-header {
+	z-index: 10;
+}
+
+.header-slider-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+
+	.header-slider {
+		position: relative;
+		z-index: 1;
+		height: 300px;
+
+		> div {
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-position: 50% 50%;
+		}
+	}
+
+	.bx-wrapper {
+		border: none;
+	}
+
+	&:after {
+		content: ' ';
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 2;
+		background-color: transparentize(#fff, 0.2);
+	}
+}
