@@ -1,67 +1,119 @@
 
-.custom-logo-link {
+#masthead {
 
-	img {
-		max-height: 100%;
-		max-width: 100%;
-		height: auto;
-	}
-}
-
-.navigation-top {
-	z-index: 100;
-	font-size: 14px !important;
-	
-	.wrap {
-		max-width: 100%;
-	}
-}
-
-.site-description {
-	font-size: 30px;
-	line-height: 35px;
-
-	span {
-		font-weight: 700;
-	}
-}
-
-.custom-header {
-	z-index: 10;
-}
-
-.header-slider-container {
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-
-	.header-slider {
+	.logo-container {
 		position: relative;
-		z-index: 1;
-		height: 300px;
+	}
+	
+	.custom-logo-link {
+		@include opacity(1);
+		
+		&:hover {
+			@include opacity(1);
+		}
 
-		> div {
-			width: 100%;
-			height: 100%;
-			background-size: cover;
-			background-position: 50% 50%;
+		img {
+			max-height: 100%;
+			max-width: 100%;
+			height: auto;
+		}
+
+		&:last-child {
+			position: absolute;
+			top: 0;
+			left: 0;
+			will-change: opacity;
+			@include opacity(0);
+			@include smooth-transition(0.5s);
+
+			img {
+				@include filter(brightness(10000%));
+			}
 		}
 	}
 
-	.bx-wrapper {
-		border: none;
+	.navigation-top {
+		z-index: 100;
+		font-size: 14px !important;
+		
+		.wrap {
+			max-width: 100%;
+		}
 	}
 
-	&:after {
-		content: ' ';
+	.site-description {
+		font-size: 30px;
+		line-height: 35px;
+
+		span {
+			font-weight: 700;
+		}
+	}
+
+	.custom-header {
+		z-index: 10;
+	}
+
+	.header-slider-container {
 		position: absolute;
 		top: 0;
 		left: 0;
 		bottom: 0;
 		right: 0;
-		z-index: 2;
-		background-color: transparentize(#fff, 0.2);
+
+		.header-slider {
+			position: relative;
+			z-index: 1;
+			height: 300px;
+
+			> div {
+				width: 100%;
+				height: 100%;
+				background-size: cover;
+				background-position: 50% 50%;
+			}
+		}
+
+		.bx-wrapper {
+			border: none;
+		}
+
+		&:after {
+			content: ' ';
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			z-index: 2;
+			background-color: transparentize(#fff, 0.2);
+			@include smooth-transition(0.5s);
+		}
+	}
+
+	.site-branding-text {
+		@include opacity(1);
+		@include smooth-transition(0.5s);
+	}
+
+	&:hover {
+
+		.site-branding-text {
+			@include opacity(0);
+		}
+
+		.custom-logo-link {
+
+			&:last-child {			
+				@include opacity(1);
+			}
+		}
+
+		.header-slider-container {
+
+			&:after {
+				@include opacity(0);
+			}
+		}	
 	}
 }

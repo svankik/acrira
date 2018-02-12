@@ -12,7 +12,10 @@
 <div class="site-branding container">
 	<div class="row">
 		<div class="col-sm-3">
-			<?php the_custom_logo(); ?>
+			<div class="logo-container">
+				<?php the_custom_logo(); ?>
+				<?php the_custom_logo(); ?>
+			</div>
 		</div>
 
 		<div class="site-branding-text col-sm-9">
