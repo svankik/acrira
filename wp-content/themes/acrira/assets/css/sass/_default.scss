@@ -3,7 +3,7 @@ body {
 	font-family: $ff-default;
 	font-size: 16px;
 	line-height: 20px;
-	color: #000;
+	color: $gray-base;
 
 	b,
 	strong {
@@ -21,13 +21,13 @@ body {
 }
 
 a {
-	color: $brand-primary;
+	color: $gray-dark;
 	text-decoration: none;
 	@include smooth-transition();
 
 	&:focus,
 	&:hover {
-		color: #000;
+		color: $gray;
 		text-decoration: none;
 		outline: none;
 	}
