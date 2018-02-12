@@ -70,37 +70,37 @@ function acrira_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
 
-/**
- * Filter Cinemas by sector
- *
- * @param   object  $query
- *
- * @return  object
- */
-function acrira_pre_get_posts( $query ) {
+// /**
+//  * Filter Cinemas by sector
+//  *
+//  * @param   object  $query
+//  *
+//  * @return  object
+//  */
+// function acrira_pre_get_posts( $query ) {
 	
-	if( is_admin() ) {
-		return $query;
-	}
+// 	if( is_admin() ) {
+// 		return $query;
+// 	}
 
-	if( 
-		$query->is_main_query() &&
-		! empty( $query->query_vars['post_type'] ) && 
-		$query->query_vars['post_type'] === 'cinema' &&
-		! empty( $_GET[ 'secteur' ])
-	) {
-		$query->set( 'category_name', $_GET[ 'secteur' ] );
-		$query->set( 'posts_per_page', -1 );
-		$query->set( 'orderby', 'title' );
-		$query->set( 'order', 'ASC' );
-	}
+// 	if( 
+// 		$query->is_main_query() &&
+// 		! empty( $query->query_vars['post_type'] ) && 
+// 		$query->query_vars['post_type'] === 'cinema' &&
+// 		! empty( $_GET[ 'secteur' ])
+// 	) {
+// 		$query->set( 'category_name', $_GET[ 'secteur' ] );
+// 		$query->set( 'posts_per_page', -1 );
+// 		$query->set( 'orderby', 'title' );
+// 		$query->set( 'order', 'ASC' );
+// 	}
 
 
 
-	return $query;
+// 	return $query;
 
-}
-add_action( 'pre_get_posts', 'acrira_pre_get_posts' );
+// }
+// // add_action( 'pre_get_posts', 'acrira_pre_get_posts' );
 
 /**
  * Add some custom them options

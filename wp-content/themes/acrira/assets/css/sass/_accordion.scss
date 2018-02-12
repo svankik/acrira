@@ -1,0 +1,51 @@
+
+.accordion {
+
+	article {
+		margin-bottom: $grid-gutter-width/2;
+
+		.entry-header {
+			position: relative;
+			padding-bottom: 0;
+			cursor: pointer;
+			padding: $grid-gutter-width/3 $grid-gutter-width;
+
+			&.active {
+
+				& + .entry-content {
+					max-height: 500px;
+					padding: $grid-gutter-width/3 $grid-gutter-width;
+				}
+			}
+
+			.entry-title {
+				font-size: 15px;
+				line-height: 20px;
+				color: $gray-dark;
+			}
+
+			.subtitle {
+				position: absolute;
+				right: $grid-gutter-width;
+				top: 50%;
+				background-color: lighten($gray-lighter, 4);
+				padding: 0 $grid-gutter-width;
+				font-size: 12px;
+				@include border-top-radius(50px);
+				@include border-bottom-radius(50px);
+				@include translate(0, -50%);
+			}
+		}
+
+		.entry-content {
+			max-height: 0;
+			overflow: hidden;
+			padding: 0 $grid-gutter-width;
+			@include smooth-transition(0.75s);
+		}
+
+		&:nth-child(2n+1) {
+			background-color: $gray-lighter;
+		}
+	}
+}

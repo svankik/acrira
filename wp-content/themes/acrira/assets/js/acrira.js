@@ -3,12 +3,6 @@
 	
 	$ ( function() {
 		
-		$ ( "#accordion" ).accordion ( {
-			active     : false,
-			collapsible: true,
-			header     : "header"
-		} );
-
 		/**
 		 * Header Slider
 		 */
@@ -16,6 +10,24 @@
 			mode: 'fade',
 			auto: true,
 			controls: false,
+		} );
+
+
+		/**
+		 * Accordion
+		 */
+		$( '.accordion' ).each( function () {
+
+			$( 'article', $( this ) ).each( function() {
+
+				$( '.entry-header', $( this ) ).on( 'click', function(e) {
+					e.preventDefault();
+
+					$( this ).toggleClass( 'active' );
+				} );
+
+			} );
+
 		} );
 
 	} );

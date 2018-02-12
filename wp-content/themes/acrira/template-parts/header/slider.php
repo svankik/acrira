@@ -1,8 +1,6 @@
 <?php
 	
-	$menu_parent_id = acrira_get_menu_parent_ID( 'top');
-
-	// print 'menu_parent_id' . $menu_parent_id;
+	$menu_parent_id = acrira_get_menu_parent_ID( 'top' );
 
 	switch ($menu_parent_id) {
 		case '32':
@@ -60,7 +58,7 @@
 						?>
 
 					</div>
-					
+
 				</div>
 
 			<?php

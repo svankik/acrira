@@ -14,19 +14,14 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
-		<div class="cinema-title">
+		<div class="title">
 			<?php
 				the_title( '<h3 class="entry-title">', '</h3>' );
 			?>
 		</div>
-		<div class="cinema-town">
+		<div class="subtitle">
 			<?php
-				the_field( 'ville' );
-			?>
-		</div>
-		<div class="cinema-department">
-			<?php
-				the_field( 'departement' );
+				printf( '%s (%s)', get_field( 'ville' ), get_field( 'departement' ) );
 			?>
 		</div>
 	</header><!-- .entry-header -->
