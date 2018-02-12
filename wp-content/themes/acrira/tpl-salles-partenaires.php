@@ -19,7 +19,7 @@ get_header(); ?>
 
 <div class="container">
 
-	<div id="primary" class="content-area row">
+	<div class="content-area row">
 
 		<main id="main" class="site-main col-md-12" role="main">
 
