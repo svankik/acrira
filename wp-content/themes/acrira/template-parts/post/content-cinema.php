@@ -16,7 +16,7 @@
 	<header class="entry-header">
 		<div class="title">
 			<?php
-				the_title( '<h3 class="entry-title">', '</h3>' );
+				the_title( '<h2 class="entry-title">', '</h2>' );
 			?>
 		</div>
 		<div class="subtitle">

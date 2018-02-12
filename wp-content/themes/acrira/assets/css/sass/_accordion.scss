@@ -15,12 +15,14 @@
 				& + .entry-content {
 					max-height: 500px;
 					padding: $grid-gutter-width/3 $grid-gutter-width;
+					@include smooth-transition(0.75s);
+
 				}
 			}
 
 			.entry-title {
-				font-size: 15px;
-				line-height: 20px;
+				font-size: 14px !important;
+				line-height: 19px !important;
 				color: $gray-dark;
 			}
 
@@ -41,7 +43,7 @@
 			max-height: 0;
 			overflow: hidden;
 			padding: 0 $grid-gutter-width;
-			@include smooth-transition(0.75s);
+			@include transition(all 0.5s ease-in);
 		}
 
 		&:nth-child(2n+1) {
