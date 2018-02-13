@@ -15,6 +15,7 @@
 				& + .entry-content {
 					max-height: 500px;
 					padding: $grid-gutter-width/3 $grid-gutter-width;
+					border-width: 1px;
 					@include smooth-transition(0.75s);
 
 				}
@@ -43,6 +44,7 @@
 			max-height: 0;
 			overflow: hidden;
 			padding: 0 $grid-gutter-width;
+			border-top: 0 solid $gray-dark;
 			@include transition(all 0.5s ease-in);
 		}
 
