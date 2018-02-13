@@ -11,6 +11,7 @@
 			letter-spacing: -2px;
 			text-align: center;
 			text-shadow: 4px 4px 10px #dda236;
+			@include rotate(-2deg);
 		}
 
 		.info-row {
@@ -29,10 +30,17 @@
 				padding: $grid-gutter-width/2;
 				height: 100%;
 				color: #fff;
+				@include rotate(-2deg);
+
+				> div {
+					@include rotate(2deg);
+				}
 
 				h2 {
 					color: #fff;
 					font-family: $ff-itty;
+					font-size: 30px;
+					line-height: 35px;
 				}
 
 				a {

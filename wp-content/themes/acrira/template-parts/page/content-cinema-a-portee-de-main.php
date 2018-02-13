@@ -39,7 +39,9 @@
 						?>
 							<div class="info-bloc">
 								<div style="background-color: <?php print $color; ?>">
-									<?php echo $text ?>
+									<div>
+										<?php echo $text ?>
+									</div>
 								</div>
 							</div>	
 						<?php
