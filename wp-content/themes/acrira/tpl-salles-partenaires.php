@@ -49,7 +49,7 @@ get_header(); ?>
 
 				while ( $cinemas->have_posts() ) : $cinemas->the_post();
 
-					get_template_part( 'template-parts/post/content', 'cinema' );
+					get_template_part( 'template-parts/post/content', 'accordion' );
 
 				endwhile; // End of the loop.
 

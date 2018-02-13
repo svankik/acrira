@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Cinémas Adhérents (Cinémas en réseau)
+ * Template Name: Lycées Partenaires (Lycéens et apprentis au cinema)
  *
  * This is the template that displays all pages by default.
  * Please note that this is the WordPress construct of pages
@@ -39,8 +39,8 @@ get_header(); ?>
 
 				$cinemas = new WP_Query( 
 					array(
-						'post_type'      => 'cinema',
-						'category_name'  => 'cinemas-en-reseau',
+						'post_type'      => 'highschool',
+						'category_name'  => 'lyceens-et-apprentis-au-cinema',
 						'orderby'        => 'title',
 						'order'          => 'ASC',
 						'posts_per_page' => -1,
