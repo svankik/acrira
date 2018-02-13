@@ -124,6 +124,7 @@
 
 				&:after {
 					@include opacity(0);
+					@include smooth-transition(1s);
 				}
 			}	
 		}
