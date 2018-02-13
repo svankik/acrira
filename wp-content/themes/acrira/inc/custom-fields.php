@@ -14,6 +14,9 @@ if( function_exists( 'register_field_group') ) {
 	// Informations Outil Pédagogique
 	include get_stylesheet_directory() . '/inc/custom-fields/informations-outil-pedagogique.php';
 	
+	// Informations Cinéma à portée de main
+	include get_stylesheet_directory() . '/inc/custom-fields/informations-cinema-a-portee-de-main.php';
+	
 	// // Team
 	// include get_stylesheet_directory() . '/inc/custom-fields/team.php';
 	
