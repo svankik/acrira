@@ -1,26 +1,53 @@
 
 .page-template-tpl-cinema-a-portee-de-main {
 
-	.info-row {
-		@include make-row($grid-gutter-width/3);
-	}
+	#page {		
 
-	.info-bloc {
-		@include make-md-column(6, $grid-gutter-width/3);
-		padding-bottom: $grid-gutter-width/3;
-
-		&:nth-child(2n+1) {
-			clear: both;
+		h1 {
+			color: $c-red;
+			font-family: $ff-itty;
+			font-size: 100px;
+			line-height: 105px;
+			letter-spacing: -2px;
+			text-align: center;
+			text-shadow: 4px 4px 10px #dda236;
 		}
 
-		> div {
-			padding: $grid-gutter-width/2;
-			height: 100%;
+		.info-row {
+			@include make-row($grid-gutter-width/3);
 		}
 
-		img {
-			@include border-top-radius(2*$grid-gutter-width/3);
-			@include border-bottom-radius(2*$grid-gutter-width/3);
+		.info-bloc {
+			@include make-md-column(6, $grid-gutter-width/3);
+			padding-bottom: $grid-gutter-width/3;
+
+			&:nth-child(2n+1) {
+				clear: both;
+			}
+
+			> div {
+				padding: $grid-gutter-width/2;
+				height: 100%;
+				color: #fff;
+
+				h2 {
+					color: #fff;
+					font-family: $ff-itty;
+				}
+
+				a {
+					color: #fff;
+
+					&:hover {
+						color: $gray-lighter;
+					}
+				}
+			}
+
+			img {
+				@include border-top-radius(2*$grid-gutter-width/3);
+				@include border-bottom-radius(2*$grid-gutter-width/3);
+			}
 		}
 	}
 }
