@@ -30,6 +30,26 @@
 
 		} );
 
+		var equalizeHeight = function () {
+			var maxH       = 0,
+				$infoBlocs = $( '.info-bloc', '.page-template-tpl-cinema-a-portee-de-main' )
+			;
+
+			$infoBlocs.css( 'height', 'auto' );
+
+			$infoBlocs.each( function() {
+				var h = parseInt( $( this ).height() );
+
+				if( h > maxH ) {
+					maxH = h;
+				}
+			} );
+
+			$infoBlocs.height( maxH );
+		}
+
+		$( window ).on( 'load resize', equalizeHeight );
+
 	} );
 
 } )( jQuery );
