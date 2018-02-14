@@ -240,6 +240,25 @@ function acrira_theme_customizer( $wp_customize ) {
 		) ) );
 	}
 
+	// Menu Entries : Les id des entrées de menu
+	$wp_customize->add_section( 'acrira_menu_entries' , array(
+		'title'       => __( 'Menu Entries', 'acrira' ),
+		'priority'    => 30,
+		'description' => __( 'Ids of menu entries.', 'acrira' ),
+	) );
+	for( $i = 1; $i <= 4; $i++ ) {
+		$wp_customize->add_setting( 'acrira_menu_entry_' . $i );
+		$wp_customize->add_control(
+			'acrira_menu_entry_' . $i,
+				array(
+					'label'    => sprintf(__( 'Menu Entry %d', 'acrira' ), $i),
+					'section'  => 'acrira_menu_entries',
+					'settings' => 'acrira_menu_entry_' . $i,
+					'type'     => 'number',
+				)
+			);
+	}
+
 	// END Admin for header images of each sections
 }
 add_action( 'customize_register', 'acrira_theme_customizer' );

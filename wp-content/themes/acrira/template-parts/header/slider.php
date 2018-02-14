@@ -2,20 +2,24 @@
 	
 	$menu_parent_id = acrira_get_menu_parent_ID( 'top' );
 
+	?>
+		<!-- <?php echo '@@ menu parent id: ' . $menu_parent_id ?> -->
+	<?php
+
 	switch ($menu_parent_id) {
-		case '32':
+		case get_theme_mod( 'acrira_menu_entry_1' ):
 			$section = 'section1';
 			break;
 
-		case '57':
+		case get_theme_mod( 'acrira_menu_entry_2' ):
 			$section = 'section2';
 			break;
 		
-		case '92':
+		case get_theme_mod( 'acrira_menu_entry_3' ):
 			$section = 'section3';
 			break;
 
-		case '107':
+		case get_theme_mod( 'acrira_menu_entry_4' ):
 			$section = 'section4';
 			break;
 

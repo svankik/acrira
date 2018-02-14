@@ -32,11 +32,11 @@
 				height: 100%;
 				color: #fff;
 				@include rotate(-2deg);
-				@include smooth-transition(0.5s);
+				@include smooth-transition(0.25s);
 
 				> div {
 					// @include rotate(2deg);
-					@include smooth-transition(0.5s);
+					// @include smooth-transition(0.5s);
 				}
 
 				h2 {
