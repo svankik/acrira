@@ -1,8 +1,6 @@
 <?php
-
-	$menu_parent_id = acrira_get_menu_parent_ID( 'top');
-
-	print 'menu_parent_id' . $menu_parent_id;
+	
+	$menu_parent_id = acrira_get_menu_parent_ID( 'top' );
 
 	switch ($menu_parent_id) {
 		case '32':
@@ -22,22 +20,49 @@
 			break;
 
 		default:
-			$section = 'home';
+			$section = false;
 			break;
 	}
 
-	if( $section != 'home' ) {
+	if( $section ) :
+		
 		$images = array();
+		
 		for( $i = 1; $i <= 3; $i++ ) {
-			$image_url = acrira_get_slider_image_src('acrira_header_images_' . $section . '_image_' . $i);
-			if( $image_url != '' ) {
+			$image_url = acrira_get_slider_image_src( 'acrira_header_images_' . $section . '_image_' . $i );
+			if( $image_url ) {
 				$images[] = $image_url;
 			}
 		}
-	}
-?>
 
-<?php if( $section != 'home' ): ?>
-	<div id="header-slider" style="position:absolute; top:0; width: 100%; height: 400px; background-image: url(<?php echo $images[0]; ?>);">
-	</div>
-<?php endif; ?>
+		if( ! empty( $images ) ) :
+
+			?>
+
+				<div class="header-slider-container">
+
+					<div class="header-slider">
+								
+						<?php
+							
+							foreach ( $images as $key => $image ) :
+								
+								?>
+
+									<div style="background-image: url(<?php echo $image; ?>);"></div>
+
+								<?php
+								 
+							endforeach;
+
+						?>
+
+					</div>
+
+				</div>
+
+			<?php
+
+		endif;
+
+	endif;

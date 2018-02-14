@@ -1,0 +1,38 @@
+
+body {
+	font-family: $ff-default;
+	font-size: 16px;
+	line-height: 20px;
+	color: $gray-base;
+
+	b,
+	strong {
+		font-family: $ff-b;
+		font-weight: 400;
+	}
+
+	#page {
+		overflow-x: hidden;
+
+		// @media (max-width: $screen-xs-max) {
+		// 	padding: 0 $grid-gutter-width;
+		// }
+	}
+
+	a {
+		color: $gray-dark;
+		text-decoration: none;
+		@include smooth-transition();
+
+		&:focus,
+		&:hover {
+			color: $gray;
+			text-decoration: none;
+			outline: none;
+		}
+	}
+
+	.entry-header {
+		margin: 0 !important;
+	}
+}

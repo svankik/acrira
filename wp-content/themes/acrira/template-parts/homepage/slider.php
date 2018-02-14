@@ -1,76 +1,123 @@
-<?php
-	$images = array();
-	for( $i = 1; $i <= 10; $i++ ) {
-		$image_url = acrira_get_slider_image_src('acrira_homepage_slider_image_' . $i);
-		if( $image_url != '' ) {
-			$images[] = $image_url;
-		}
-	}
-?>
 
-<div id="slider">
+<div class="as-wrapper">
 	
-	<div id="cinemas-en-reseau" style="background-image: url(<?php echo $images[0]; ?>);">
-		<div class="sector-title">
-			Cinémas en réseau
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 32,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+	<section class="as-slider-container">
+		<ul class="src">
 
-	<div id="lyceens-et-apprentis-au-cinema" style="background-image: url(<?php echo $images[0]; ?>);">
-		<div class="sector-title">
-			Lycéens & apprentis au cinéma
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 57,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+			<?php
+				// check if the repeater field has rows of data
+				if( have_rows('slider') ):
 
-	<div id="passeurs-dimages" style="background-image: url(<?php echo $images[0]; ?>);">
-		<div class="sector-title">
-			Passeurs d'images
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 92,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
-			?>
-		</div>
-	</div>
+					// loop through the rows of data
+					while ( have_rows('slider') ) : the_row();
 
-	<div id="le-cinema-a-portee-de-main" style="background-image: url(<?php echo $images[0]; ?>);">
-		<div class="sector-title">
-			Le cinéma à portée de main
-		</div>
-		<div class="menu">
-			<?php 
-			wp_nav_menu( array( 
-				'theme_location' => 'top',
-				'start_in' => 107,
-				'container' => false,
-				'items_wrap' => '%3$s',
-			) );
+						$image = get_sub_field('image');
+
+						?>
+							<li>
+								<img src="<?php echo $image['sizes']['aslider']; ?>" alt="<?php $image['alt'] ?>" />
+							</li>	
+						<?php
+
+					endwhile;
+
+				endif;
 			?>
-		</div>
-	</div>
+
+		</ul>
+	</section>
+
+	<?php
+		// check if the repeater field has rows of data
+		if( have_rows('colonne') ):
+
+			$thematics = array ();
+
+			// loop through the rows of data
+			while ( have_rows('colonne') ) : the_row();
+
+				$thematics[] = array(
+					'title'   => get_sub_field('titre'),
+					'text'    => get_sub_field('texte'),
+					'id_menu' => get_sub_field('id_menu'),
+					'color'   => get_sub_field('couleur'),
+				);
+
+			endwhile;
+
+			?>
+
+				<section class="as-content-container">
+
+					<ul class="thematics">
+						<?php
+							foreach ( $thematics as $key => $thematic ) :
+								?>
+
+									<li data-key="<?php echo $key; ?>">
+										
+										<div>
+											<h2>
+												<span><span class="dot" style="background-color: <?php echo $thematic['color']; ?>"></span><?php echo $thematic['title']; ?></span>
+											</h2>
+											<div class="text">
+												<?php echo $thematic['text']; ?>
+											</div>								
+											<nav class="visible-xs-block visible-sm-block" style="background-color: <?php echo $thematic['color']; ?>">							
+												<?php
+													wp_nav_menu( array( 
+														'theme_location' => 'top',
+														'start_in'       => $thematic['id_menu'],
+														'container'      => false,
+														'items_wrap'     => '%3$s',
+													) );
+												?>
+											</nav>
+										</div>
+
+									</li>
+
+								<?php
+							endforeach;
+						?>
+					</ul>
+
+				</section>
+
+			<?php
+
+		endif;
+	?>
+
 </div>
+
+<section class="as-navigation-container visible-md-block visible-lg-block">
+
+	<ul class="navigations">
+		<?php
+			foreach ( $thematics as $key => $thematic ) :
+				?>
+
+					<li>
+						
+						<div style="background-color: <?php echo $thematic['color']; ?>" class="equal-height">
+							<nav>							
+								<?php
+									wp_nav_menu( array( 
+										'theme_location' => 'top',
+										'start_in'       => $thematic['id_menu'],
+										'container'      => false,
+										'items_wrap'     => '%3$s',
+									) );
+								?>
+							</nav>
+						</div>
+
+					</li>
+
+				<?php
+			endforeach;
+		?>
+	</ul>
+
+</section>

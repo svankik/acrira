@@ -12,56 +12,16 @@
 
 get_header(); ?>
 
-<div class="wrap">
+<div class="container">
 
-	<?php if ( have_posts() ) : ?>
-		<header class="page-header">
+	<div class="content-area row">
+		<main id="main" class="site-main col-md-12" role="main">
+
 			<?php
-				switch($_GET['secteur']) {
-					case 'lyceens-et-apprentis-au-cinema':
-						$title = 'Lycées partenaires';
-						$introduction = __( '%% lycéens et apprentis au cinema / lycées partenaires introduction', 'acrira' );
-						break;
-				}
-				echo '<h1 class="page-title">'.$title.'</h1>' ;
-				echo $introduction;
+
+				get_template_part( 'template-parts/post/content', 'none' );
+
 			?>
-		</header><!-- .page-header -->
-	<?php endif; ?>
-
-	<?php get_sidebar(); ?>
-
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
-
-		<?php
-		if ( have_posts() ) : ?>
-			<div id="accordion">
-				<?php
-				/* Start the Loop */
-				while ( have_posts() ) : the_post();
-
-					/*
-					 * Include the Post-Format-specific template for the content.
-					 * If you want to override this in a child theme, then include a file
-					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-					 */
-					get_template_part( 'template-parts/post/content', get_post_type() );
-
-				endwhile;
-
-				the_posts_pagination( array(
-					'prev_text' => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous page', 'twentyseventeen' ) . '</span>',
-					'next_text' => '<span class="screen-reader-text">' . __( 'Next page', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
-					'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'twentyseventeen' ) . ' </span>',
-				) ); ?>
-			</div>
-		<?php
-		else :
-
-			get_template_part( 'template-parts/post/content', 'none' );
-
-		endif; ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->

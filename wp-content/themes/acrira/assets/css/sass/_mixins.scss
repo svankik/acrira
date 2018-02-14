@@ -1,0 +1,58 @@
+
+@mixin smooth-transition($duration: 0.3s) {
+	@include transition(all $duration ease-out);
+}
+
+@mixin smooth-zoom() {
+	display: block;
+	overflow: hidden;
+	
+	img {
+		will-change: transform;
+		@include smooth-transition();
+		@include translate3d(0, 0, 0);
+	}
+
+	&:hover {
+
+		img {
+			@include transform-origin(50% 50%);
+			@include transform(scale(1.05) translate3d(0, 0, 0));
+		}
+	}
+}
+
+@mixin background-smooth-zoom {
+	display: block;
+
+	&:before {
+		z-index: -1;
+		will-change: transform;
+		@include smooth-transition();
+		@include translate3d(0, 0, 0);
+	}
+
+	&:hover {
+
+		&:before {
+			@include transform-origin(50% 50%);
+			@include transform(scale(1.05) translate3d(0, 0, 0));
+		}
+	}
+}
+
+@mixin hover-smooth-zoom {
+	will-change: transform;
+	@include translate3d(0, 0, 0);
+	
+	&:focus,
+	&:hover{
+		@include transform-origin(50% 50%);
+		@include transform(scale(1.1) translate3d(0, 0, 0));				
+	}
+}
+
+@mixin filter($filter) {
+	-webkit-filter: $filter;
+	filter: $filter;
+}

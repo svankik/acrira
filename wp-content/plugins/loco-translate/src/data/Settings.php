@@ -27,13 +27,17 @@ class Loco_data_Settings extends Loco_data_Serializable {
         // alternative names for POT files in priority order
         'pot_alias' => array( 'default.po', 'en_US.po', 'en.po' ),
         // alternative file extensions for PHP files
-        'php_alias' => array( 'php' ),
+        'php_alias' => array( 'php', 'twig' ),
         // whether to remember file system credentials in session
         'fs_persist' => false,
+        // prevent modification of files in system folders (0:off, 1:warn, 2:block)
+        'fs_protect' => 1,
         // skip PHP source files this size or larger
         'max_php_size' => '100K',
         // whether to prepend PO and POT files with UTF-8 byte order mark
         'po_utf8_bom' => false,
+        // po/pot file maximum line width (wrapping) zero to disable
+        'po_width' => '79',
         /*/ Legacy options from 1.x branch:
         // whether to use external msgfmt command (1), or internal (default)
         'use_msgfmt' => false,
@@ -67,6 +71,8 @@ class Loco_data_Settings extends Loco_data_Serializable {
             $opts = self::create();
             $opts->fetch();
             self::$current = $opts;
+            // allow hooks to modify settings
+            do_action('loco_settings', $opts );
         }
         return $opts;
     }
@@ -206,7 +212,7 @@ class Loco_data_Settings extends Loco_data_Serializable {
             }
         }
         // enforce missing values that must have default
-        foreach( array('php_alias','max_php_size') as $prop ){
+        foreach( array('php_alias','max_php_size','po_width') as $prop ){
             if( isset($data[$prop]) && '' === $data[$prop] ){
                 parent::offsetSet( $prop, self::$defaults[$prop] );
             }
