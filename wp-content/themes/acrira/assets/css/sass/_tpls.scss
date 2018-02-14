@@ -32,9 +32,11 @@
 				height: 100%;
 				color: #fff;
 				@include rotate(-2deg);
+				@include smooth-transition(0.5s);
 
 				> div {
-					@include rotate(2deg);
+					// @include rotate(2deg);
+					@include smooth-transition(0.5s);
 				}
 
 				h2 {
@@ -49,6 +51,14 @@
 
 					&:hover {
 						color: $gray-lighter;
+					}
+				}
+
+				&:hover {
+					@include rotate(0deg);
+
+					> div {
+						// @include rotate(0deg);
 					}
 				}
 			}
