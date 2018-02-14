@@ -15,11 +15,17 @@
 get_header(); ?>
 
 <div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="site-main container" role="main">
 
-		<?php 
-			// Slider
-			get_template_part( 'template-parts/homepage/slider' );
+		<?php
+
+			while ( have_posts() ) : the_post();
+
+				// Slider
+				get_template_part( 'template-parts/homepage/slider' );
+
+			endwhile; // End of the loop.
+			
 		?>
 
 	</main><!-- #main -->
