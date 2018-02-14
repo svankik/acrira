@@ -18,47 +18,6 @@ body {
 		// 	padding: 0 $grid-gutter-width;
 		// }
 	}
-	 
-	#content {
-
-		h1 {
-			font-size: 25px;
-			line-height: 30px;
-			text-transform: inherit;
-		}
-
-		h2 {
-			font-size: 20px;
-			line-height: 25px;
-			text-transform: inherit;
-		}
-
-		h3 {
-			font-size: 15px;
-			line-height: 20px;
-			text-transform: inherit;
-		}
-
-		ul {
-			list-style: disc;
-
-			ul {
-				list-style: circle;
-			}
-
-			li {
-				margin-left: $grid-gutter-width/2;
-			}
-		}
-
-		.alignleft {
-			margin-right: $grid-gutter-width/2;
-		}
-
-		.alignright {
-			margin-left: $grid-gutter-width/2;
-		}
-	}
 
 	a {
 		color: $gray-dark;

@@ -70,37 +70,84 @@ function acrira_enqueue_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
 
-// /**
-//  * Filter Cinemas by sector
-//  *
-//  * @param   object  $query
-//  *
-//  * @return  object
-//  */
-// function acrira_pre_get_posts( $query ) {
+/**
+ * Callback function to filter the MCE settings
+ *
+ * @param   array  $init_array
+ *
+ * @return  array
+ */
+function acrira_mce_before_init_insert_formats( $init_array ) {  
 	
-// 	if( is_admin() ) {
-// 		return $query;
-// 	}
+	$style_formats = array(  
+		array(  
+			'title'   => __ ( 'Sub Title (Educational tool)', 'acrira' ),  
+			'inline'  => 'span',  
+			'classes' => 'et-sub-title',
+		),  
+		array(  
+			'title'   => __ ( 'Informations (Educational tool)', 'acrira' ),  
+			'inline'  => 'span',  
+			'classes' => 'et-infos',
+		),  
+		// array(  
+		// 	'title'   => __ ( 'Justify', 'acrira' ),  
+		// 	'block'   => 'p',  
+		// 	'classes' => 'justify',
+		// ),  
+		// array(  
+		// 	'title'   => __ ( 'Bold', 'acrira' ),  
+		// 	'inline'  => 'span',  
+		// 	'classes' => 'bold',
+		// ),  
+		// array(  
+		// 	'title'   => __ ( 'Condensed', 'acrira' ),  
+		// 	'inline'  => 'span',  
+		// 	'classes' => 'condensed',
+		// ),  
+		// array(  
+		// 	'title'   => __ ( 'Italic', 'acrira' ),  
+		// 	'inline'  => 'span',  
+		// 	'classes' => 'italic',
+		// ),  
+		// array(  
+		// 	'title'   => __ ( 'Clearfix', 'acrira' ),  
+		// 	'block'   => 'div',  
+		// 	'classes' => 'clearfix',
+		// ),  
+		// array(  
+		// 	'title'    => __ ( 'Document', 'acrira' ),  
+		// 	'inline'   => 'a',  
+		// 	'classes'  => 'document',
+		// 	'selector' => 'a',
+		// ),  
+		// array(  
+		// 	'title'    => __ ( 'Rounded Button', 'acrira' ),  
+		// 	'inline'   => 'a',  
+		// 	'classes'  => 'rounded-button',
+		// 	'selector' => 'a',
+		// ),  
+	); 
 
-// 	if( 
-// 		$query->is_main_query() &&
-// 		! empty( $query->query_vars['post_type'] ) && 
-// 		$query->query_vars['post_type'] === 'cinema' &&
-// 		! empty( $_GET[ 'secteur' ])
-// 	) {
-// 		$query->set( 'category_name', $_GET[ 'secteur' ] );
-// 		$query->set( 'posts_per_page', -1 );
-// 		$query->set( 'orderby', 'title' );
-// 		$query->set( 'order', 'ASC' );
-// 	}
+	// Insert the array, JSON ENCODED, into 'style_formats'
+	$init_array['style_formats'] = json_encode( $style_formats );  
+	
+	return $init_array;  
+  
+} 
+add_filter( 'tiny_mce_before_init', 'acrira_mce_before_init_insert_formats' ); 
 
+/**
+ * Registers an editor stylesheet for the theme.
+ *
+ * @return  void
+ */
+function acrira_add_editor_styles() {
 
+	add_editor_style( get_stylesheet_directory_uri () . '/assets/css/editor.css' );
 
-// 	return $query;
-
-// }
-// // add_action( 'pre_get_posts', 'acrira_pre_get_posts' );
+}
+add_action( 'admin_init', 'acrira_add_editor_styles' );
 
 /**
  * Add some custom them options
@@ -112,20 +159,20 @@ add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
 function acrira_theme_customizer( $wp_customize ) {
 
 	// Admin for homepage slider images
-	$wp_customize->add_section( 'acrira_homepage_slider_section' , array(
-		'title'       => __( 'Homepage slider images', 'acrira' ),
-		'priority'    => 30,
-		'description' => __( 'Upload images for homepage slider.', 'acrira' ),
-	) );
+	// $wp_customize->add_section( 'acrira_homepage_slider_section' , array(
+	// 	'title'       => __( 'Homepage slider images', 'acrira' ),
+	// 	'priority'    => 30,
+	// 	'description' => __( 'Upload images for homepage slider.', 'acrira' ),
+	// ) );
 
-	for( $i = 1; $i <= 10; $i++ ) {
-		$wp_customize->add_setting( 'acrira_homepage_slider_image_' . $i );
-		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'acrira_homepage_slider_image_' . $i, array(
-			'label'    => sprintf(__( 'Image %d', 'acrira' ), $i),
-			'section'  => 'acrira_homepage_slider_section',
-			'settings' => 'acrira_homepage_slider_image_' . $i,
-		) ) );
-	}
+	// for( $i = 1; $i <= 10; $i++ ) {
+	// 	$wp_customize->add_setting( 'acrira_homepage_slider_image_' . $i );
+	// 	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'acrira_homepage_slider_image_' . $i, array(
+	// 		'label'    => sprintf(__( 'Image %d', 'acrira' ), $i),
+	// 		'section'  => 'acrira_homepage_slider_section',
+	// 		'settings' => 'acrira_homepage_slider_image_' . $i,
+	// 	) ) );
+	// }
 
 	// Admin for header images of each sections
 

@@ -29,6 +29,7 @@
 			position: relative;
 			display: block;
 			float: left;
+			margin: 0;
 			@include backface-visibility(hidden);
 
 			.as-item,

@@ -1,13 +1,13 @@
 
 .page-template-tpl-cinema-a-portee-de-main {
 
-	#page {		
+	#content {		
 
 		h1 {
 			color: $c-red;
 			font-family: $ff-itty;
-			font-size: 100px;
-			line-height: 105px;
+			font-size: 100px !important;
+			line-height: 105px !important;
 			letter-spacing: -2px;
 			text-align: center;
 			text-shadow: 4px 4px 10px #dda236;
