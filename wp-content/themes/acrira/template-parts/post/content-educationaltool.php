@@ -38,6 +38,8 @@
 		</div>
 	</header><!-- .entry-header -->
 
+	<hr />
+
 	<div class="infos">
 
 		<?php 
@@ -61,6 +63,8 @@
 		
 		</p>
 	</div>
+
+	<hr />
 	
 	<div class="entry-content">
 		<?php

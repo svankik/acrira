@@ -12,7 +12,7 @@
 
 get_header(); ?>
 
-<div class="container">
+<div class="container-small">
 	<div class="content-area row">
 		<main id="main" class="site-main col-md-12" role="main">
 
