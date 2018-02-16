@@ -1,0 +1,44 @@
+
+.single-educationaltool {
+
+	h1 {
+		color: $c-red;
+		font-family: $ff-et-title;
+		font-size: 100px !important;
+		line-height: 105px !important;
+		letter-spacing: -2px;
+		text-align: right;
+		text-shadow: 4px 4px 10px #dda236;
+		text-transform: inherit;
+	}
+
+	h2 {
+		color: $c-red;
+		font-family: $ff-et-title;
+		font-size: 40px !important;
+		line-height: 45px !important;
+		letter-spacing: -2px;
+		text-align: right;
+		text-shadow: 4px 4px 10px #dda236;
+		text-transform: inherit;
+		padding: 0;
+	}
+
+	.infos {
+		
+		img {
+			max-width: 40%;
+			@include border-top-radius(2*$grid-gutter-width/3);
+			@include border-bottom-radius(2*$grid-gutter-width/3);
+		}
+
+		> p,
+		> h3 {
+			display: inline-block;
+		}
+	}
+
+	.entry-content {
+		clear: both;
+	}
+}
