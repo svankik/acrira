@@ -35,6 +35,16 @@
 				@include filter(brightness(0) invert(1));
 			}
 		}
+
+		body.home & {
+
+			&:last-child {
+
+				img {
+					@include filter(brightness(0) invert(0.4));
+				}
+			}
+		}
 	}
 
 	.navigation-top {
@@ -103,7 +113,7 @@
 
 	&:hover {
 
-		body:not(.home) & {			
+		body & {			
 
 			.site-branding-text {
 				@include opacity(0);
@@ -127,20 +137,6 @@
 					@include smooth-transition(1s);
 				}
 			}	
-		}
-
-		body.home & {			
-
-			.site-branding-text {
-				@include opacity(0);
-			}
-
-			.custom-logo-link {
-
-				&:first-child {			
-					@include opacity(0.75);
-				}
-			}
 		}
 	}
 }

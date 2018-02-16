@@ -70,3 +70,45 @@
 		}
 	}
 }
+
+.page-template-tpl-partenaires {
+
+	.entry-partners-filters {
+		text-align: center;
+		font-size: 16px;
+		line-height: 21px;
+		margin-bottom: $grid-gutter-width;
+	}
+
+	.entry-partners {
+
+		.partner {
+			text-align: center;
+
+			img {
+				margin-bottom: $grid-gutter-width/2;
+			}
+
+			@media (max-width: $screen-xs-max) {
+
+				&:nth-child(3n+1) {
+					@include clearfix();
+				}				
+			}
+
+			@media (min-width: $screen-sm) and (max-width: $screen-sm-max) {
+
+				&:nth-child(4n+1) {
+					@include clearfix();
+				}				
+			}
+
+			@media (min-width: $screen-md) {
+
+				&:nth-child(6n+1) {
+					@include clearfix();
+				}				
+			}
+		}
+	}
+}
