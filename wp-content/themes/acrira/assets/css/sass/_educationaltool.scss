@@ -30,10 +30,12 @@
 		height: 2px;
 		border-top: 1px solid $c-blue;
 		border-bottom: 1px solid $c-blue;
+		margin-bottom: $grid-gutter-width;
 		@include rotate(-2deg);
 	}
 
 	.entry-header {
+		padding-bottom: $grid-gutter-width !important;
 
 		div {
 			color: $c-blue;
@@ -56,7 +58,7 @@
 			position: relative;
 			z-index: 1;
 			max-width: 50%;
-			margin-top: -2*$grid-gutter-width;
+			margin-top: -2.5*$grid-gutter-width;
 			@include border-top-radius(2*$grid-gutter-width/3);
 			@include border-bottom-radius(2*$grid-gutter-width/3);
 
@@ -79,6 +81,7 @@
 			letter-spacing: -1px;
 			text-transform: inherit;
 			font-weight: 800;
+			padding: 0;
 		}
 	}
 
