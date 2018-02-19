@@ -6,6 +6,10 @@
 	}
 	
 	.custom-logo-link {
+		display: inline-block;
+		padding-right: 0;
+		width: 100%;
+		text-align: center;
 		@include opacity(1);
 		
 		&:hover {
@@ -16,6 +20,11 @@
 			max-height: 100%;
 			max-width: 100%;
 			height: auto;
+			margin: 0 auto;
+
+			@media (max-width: $screen-sm-max) {
+				max-height: 200px;
+			}
 		}
 
 		&:first-child {
@@ -53,6 +62,70 @@
 		
 		.wrap {
 			max-width: 100%;
+			padding: $grid-gutter-width/2 0;
+		}
+
+		.main-navigation {
+
+			> .menu-toggle {
+				font-size: 14px;
+
+				@media (max-width: $screen-sm-max) {
+					display: block;
+				}
+
+				@media (min-width: $screen-md-min) {
+					display: none;
+				}
+			}
+
+			> .container {
+
+				@media (max-width: $screen-sm-max) {
+					max-height: 0;
+					overflow: hidden;
+					@include transition(all 0.5s ease-out);
+				}
+			}
+
+			&.toggled-on {
+
+				> .container {
+
+					@media (max-width: $screen-sm-max) {
+						max-height: 2000px;
+						overflow: hidden;
+						@include transition(all 0.3s ease-in);
+					}
+				}
+			}
+		}
+
+		@media (max-width: $screen-sm-max) {
+			position: inherit;
+
+			.menu {
+
+				li {
+					display: block;
+				}
+
+				> li {
+					border-bottom: 1px solid $gray-light;
+				}
+
+				.sub-menu {
+					position: inherit;
+					top: inherit;
+					left: inherit;
+					border: none;
+					padding-left: $grid-gutter-width;
+				}
+
+				svg {
+					display: none;
+				}
+			}
 		}
 	}
 
