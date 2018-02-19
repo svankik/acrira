@@ -37,6 +37,13 @@
 				@include border-top-radius(50px);
 				@include border-bottom-radius(50px);
 				@include translate(0, -50%);
+
+				@media (max-width: $screen-sm-max) {
+					position: inherit;
+					display: block;
+					background-color: transparent;
+					@include translate(0, 0);
+				}
 			}
 		}
 

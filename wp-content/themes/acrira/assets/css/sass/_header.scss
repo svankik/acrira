@@ -105,6 +105,7 @@
 			position: inherit;
 
 			.menu {
+				display: block;
 
 				li {
 					display: block;
@@ -120,6 +121,7 @@
 					left: inherit;
 					border: none;
 					padding-left: $grid-gutter-width;
+					display: block;
 				}
 
 				svg {
