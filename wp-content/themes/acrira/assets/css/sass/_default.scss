@@ -35,4 +35,23 @@ body {
 	.entry-header {
 		margin: 0 !important;
 	}
+
+	.nav-subtitle {
+		font-size: 11px;
+	}
+
+	.nav-title {
+		font-size: 14px;
+	}
+}
+
+.container-small {
+	@include container-fixed;
+
+	@media (min-width: $screen-sm-min) {
+		width: $container-sm;
+	}
+	@media (min-width: $screen-md-min) {
+		width: 900;
+	}
 }

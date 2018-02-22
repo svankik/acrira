@@ -11,14 +11,14 @@
 ?>
 <div class="site-branding container">
 	<div class="row">
-		<div class="col-sm-3">
+		<div class="col-md-3 col-sm-6 col-xs-12">
 			<div class="logo-container">
 				<?php the_custom_logo(); ?>
 				<?php the_custom_logo(); ?>
 			</div>
 		</div>
 
-		<div class="site-branding-text col-sm-9">
+		<div class="site-branding-text col-md-9 col-sm-6 hidden-xs">
 			<?php if ( is_front_page() ) : ?>
 				<h1 class="site-title sr-only"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 			<?php else : ?>

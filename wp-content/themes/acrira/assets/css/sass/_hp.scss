@@ -158,6 +158,7 @@
 			@media (max-width: $screen-sm-max) {
 				height: auto;
 				width: 100% !important;
+				margin-bottom: $grid-gutter-width !important;
 			}
 		}
 
