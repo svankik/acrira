@@ -30,6 +30,9 @@
 
 		} );
 
+		/**
+		 * Equalize Height
+		 */
 		var equalizeHeight = function () {
 			var maxH       = 0,
 				$infoBlocs = $( '.info-bloc', '.page-template-tpl-cinema-a-portee-de-main' )
@@ -50,6 +53,34 @@
 
 		$( window ).on( 'load resize', equalizeHeight );
 
+		/**
+		 * Partners Filters
+		 */
+		var $partners = $( '.partner', '.entry-partners' ),
+			$filters  = $( 'a', '.entry-partners-filters' )
+		;
+
+		$filters.on( 'click', function(e) {
+			e.preventDefault();
+
+			var filter = $( this ).data( 'key' );
+
+			switch( filter ) {
+				case 'all' : 
+					$partners.fadeIn(400);
+					break;
+
+				case 'cultural' : 
+					$partners.not( '.culturel' ).fadeOut(200);
+					$partners.filter( '.culturel' ).fadeIn(400);
+					break;
+
+				case 'financial' : 
+					$partners.not( '.financier' ).fadeOut(200);
+					$partners.filter( '.financier' ).fadeIn(400);
+					break;
+			} 
+		} );
 	} );
 
 } )( jQuery );

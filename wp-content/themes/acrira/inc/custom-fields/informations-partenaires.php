@@ -1,0 +1,92 @@
+<?php 
+
+register_field_group ( array (
+	'id'     => 'acf_informations-partenaires',
+	'title'  => 'Informations partenaires',
+	'fields' => array (
+		array (
+			'key'        => 'field_5a86a3c257cd1',
+			'label'      => 'Partenaires',
+			'name'       => 'partenaires',
+			'type'       => 'repeater',
+			'required'   => 1,
+			'sub_fields' => array (
+				array (
+					'key'           => 'field_5a86a3f357cd2',
+					'label'         => 'Nom',
+					'name'          => 'nom',
+					'type'          => 'text',
+					'required'      => 1,
+					'column_width'  => '',
+					'default_value' => '',
+					'placeholder'   => '',
+					'prepend'       => '',
+					'append'        => '',
+					'formatting'    => 'none',
+					'maxlength'     => '',
+				),
+				array (
+					'key'          => 'field_5a86a42d57cd3',
+					'label'        => 'Image',
+					'name'         => 'image',
+					'type'         => 'image',
+					'required'     => 1,
+					'column_width' => '',
+					'save_format'  => 'object',
+					'preview_size' => 'thumbnail',
+					'library'      => 'all',
+				),
+				array (
+					'key'          => 'field_5a86a44157cd4',
+					'label'        => 'Type',
+					'name'         => 'type',
+					'type'         => 'checkbox',
+					'required'     => 1,
+					'column_width' => '',
+					'choices'      => array (
+						'culturel'  => 'Culturel',
+						'financier' => 'Financier',
+					),
+					'default_value' => '',
+					'layout'        => 'vertical',
+				),
+				array (
+					'key'           => 'field_5a86a4f857cd5',
+					'label'         => 'Lien',
+					'name'          => 'lien',
+					'type'          => 'text',
+					'required'      => 1,
+					'column_width'  => '',
+					'default_value' => '',
+					'placeholder'   => '',
+					'prepend'       => '',
+					'append'        => '',
+					'formatting'    => 'none',
+					'maxlength'     => '',
+				),
+			),
+			'row_min'      => '',
+			'row_limit'    => '',
+			'layout'       => 'table',
+			'button_label' => 'Ajouter un partenaire',
+		),
+	),
+	'location' => array (
+		array (
+			array (
+				'param'    => 'page_template',
+				'operator' => '==',
+				'value'    => 'tpl-partenaires.php',
+				'order_no' => 0,
+				'group_no' => 0,
+			),
+		),
+	),
+	'options' => array (
+		'position'       => 'normal',
+		'layout'         => 'default',
+		'hide_on_screen' => array (
+		),
+	),
+	'menu_order' => 0,
+) );
