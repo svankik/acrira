@@ -40,11 +40,11 @@
 			get_template_part( 'template-parts/header/slider' );
 		?>
 
-		<?php if ( has_nav_menu( 'top' ) ) : ?>
+		<?php if ( ! is_front_page() && has_nav_menu( 'top' ) ) : ?>
 			<div class="navigation-top">
-			<div class="wrap">
-				<?php get_template_part( 'template-parts/navigation/navigation', 'top' ); ?>
-			</div><!-- .navigation-top -->
+				<div class="wrap">
+					<?php get_template_part( 'template-parts/navigation/navigation', 'top' ); ?>
+				</div><!-- .navigation-top -->
 			</div><!-- .navigation-top -->
 		<?php endif; ?>
 	</header><!-- #masthead -->
