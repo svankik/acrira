@@ -261,6 +261,23 @@ function acrira_theme_customizer( $wp_customize ) {
 			);
 	}
 
+	// Menu Entries : Les Couleurs des entrées de menu
+	$wp_customize->add_section( 'acrira_menu_colors' , array(
+		'title'       => __( 'Menu Colors', 'acrira' ),
+		'priority'    => 30,
+		'description' => __( 'Colors of menu entries.', 'acrira' ),
+	) );
+	for( $i = 1; $i <= 4; $i++ ) {
+		$menu_id = get_theme_mod( 'acrira_menu_entry_' . $i, $i );
+		$wp_customize->add_setting( 'acrira_menu_color_' . $menu_id );
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, '
+			acrira_menu_color_' . $i, array(
+			'label'    => sprintf(__( 'Colors of menu entry %d', 'acrira' ), $menu_id),
+			'section'  => 'acrira_menu_colors',
+			'settings' => 'acrira_menu_color_' . $menu_id,
+		) ) );
+	}
+
 	// END Admin for header images of each sections
 }
 add_action( 'customize_register', 'acrira_theme_customizer' );

@@ -8,7 +8,16 @@
  * @version 1.2
  */
 
+$menu_parent_id = acrira_get_menu_parent_ID( 'top' );
+$color = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' );
+
 ?>
+<style type="text/css">
+	.navigation-top,
+	.navigation-top .sub-menu {
+		background-color: <?php echo $color; ?>;
+	}
+</style>
 <nav id="site-navigation" class="main-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Top Menu', 'twentyseventeen' ); ?>">
 	<button class="menu-toggle" aria-controls="top-menu" aria-expanded="false">
 		<?php
