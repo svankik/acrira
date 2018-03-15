@@ -82,6 +82,12 @@
 
 			> .menu-toggle {
 				font-size: 14px;
+				color: #fff;
+
+				&:focus {
+					outline: thin solid #fff;
+				}
+
 
 				@media (max-width: $screen-sm-max) {
 					display: block;
@@ -125,7 +131,7 @@
 				}
 
 				> li {
-					border-bottom: 1px solid $gray-light;
+					border-bottom: 1px solid #fff;
 				}
 
 				.sub-menu {
