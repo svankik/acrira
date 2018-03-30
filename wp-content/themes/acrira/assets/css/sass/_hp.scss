@@ -89,10 +89,10 @@
 			float: left;
 			height: 100%;
 			position: relative;
-			cursor: pointer;
+			border-width: 0 0 10px 0;
+			border-style: solid;
 
 			h2 {
-				color: #fff;
 				height: 2*$grid-gutter-width;
 				z-index: 5;
 				background-color: transparentize(#000, 0.5);
@@ -100,7 +100,8 @@
 				padding: 0 $grid-gutter-width;
 				position: relative;
 
-				> span {
+				a > span {
+					color: #fff;
 					display: block;
 					line-height: 1;
 					position: absolute;
@@ -127,15 +128,18 @@
 				@include opacity(1);
 			}
 
-			.text {
+			.navigation {
 				color: #fff;
 				background-color: transparentize(#000, 0.5);
 				position: absolute;
-				top: 2*$grid-gutter-width;
+				top: 100%;
 				left: 0;
 				bottom: 0;
 				right: 0;
-				padding: $grid-gutter-width;
+				overflow: hidden;
+				padding: $grid-gutter-width/2;
+				border-width: 0 0 0 0;
+				border-style: solid;
 				@include opacity(0);
 				@include smooth-transition(0.3s);
 				
@@ -150,8 +154,14 @@
 			&:focus,
 			&:hover {
 
-				.text {
+				.navigation {
+					top: 2*$grid-gutter-width;
+					border-width: 0 0 10px 0;
 					@include opacity(1);
+				
+					@media (max-width: $screen-sm-max) {
+						top: 0;
+					}
 				}
 			}
 
