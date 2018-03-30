@@ -29,7 +29,7 @@
 
 	<?php
 		// check if the repeater field has rows of data
-		if( have_rows('colonne') ):
+		if ( have_rows('colonne') ) :
 
 			$thematics = array ();
 
