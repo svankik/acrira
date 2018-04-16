@@ -57,9 +57,21 @@ function acrira_enqueue_styles() {
 		wp_get_theme()->get('Version')
 	);
 
+	$dependencies = array( 'jquery-ui-accordion', 'bx-slider' );
+
+	if( is_front_page() || is_home() ) {
+		wp_enqueue_script ( 'iscroll',
+			get_stylesheet_directory_uri() . '/assets/js/iscroll.js',
+			array(),
+			wp_get_theme()->get('Version')
+		);
+
+		$dependencies[] = 'iscroll';
+	}
+
 	wp_enqueue_script ( 'acrira',
 		get_stylesheet_directory_uri() . '/assets/js/acrira.js',
-		array( 'jquery-ui-accordion', 'bx-slider' ),
+		$dependencies,
 		wp_get_theme()->get('Version')
 	);
 

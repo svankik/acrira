@@ -24,43 +24,51 @@
 				?>					
 
 					<div class="col-md-9 col-sm-6 hidden-xs">
+
+						<h2><?php _e( 'News', 'acrira' ); ?></h2>
+
 						<div class="news">
 
-							<h2><?php _e( 'News', 'acrira' ); ?></h2>
+							<div class="wrapper">
+								<div class="scroll">
 
-							<?php 
+									<?php 
 
-							
-								while ( have_rows('actualites') ) : the_row();
+									
+										while ( have_rows('actualites') ) : the_row();
 
-										$title  = get_sub_field( 'titre' );
-										$text   = get_sub_field( 'texte' );
-										$photo  = get_sub_field( 'photo' );
-										$link   = get_sub_field( 'lien' );
-										$color  = get_sub_field( 'secteur' );
-										$target = strpos( $link, get_bloginfo( 'url' ) ) !== false ? '_blank' : '';
+												$title  = get_sub_field( 'titre' );
+												$text   = get_sub_field( 'texte' );
+												$photo  = get_sub_field( 'photo' );
+												$link   = get_sub_field( 'lien' );
+												$color  = get_sub_field( 'secteur' );
+												$target = strpos( $link, get_bloginfo( 'url' ) ) !== false ? '_blank' : '';
 
-										?>					
+												?>					
 
-											<h3>
-												<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-													<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
-													<?php echo $title; ?>
-												<?php if ( $link ) : ?></a><?php endif; ?>
-											</h3>
+													<div class="news-item"> 
+														<h3>
+															<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+																<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
+																<?php echo $title; ?>
+															<?php if ( $link ) : ?></a><?php endif; ?>
+														</h3>
 
-											<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-												<img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" />
-											<?php if ( $link ) : ?></a><?php endif; ?>
+														<?php if ( $link ) : ?><a href="<?php echo $link; ?>" class="smooth-zoom" target="<?php echo $target; ?>"><?php endif; ?>
+															<img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" />
+														<?php if ( $link ) : ?></a><?php endif; ?>
 
-											<?php echo $text; ?>
+														<?php echo $text; ?>
+													</div>
 
-										<?php 
+												<?php 
 
-								endwhile;
+										endwhile;
 
-							?>					
+									?>					
 
+								</div><!-- .scroll -->
+							</div><!-- .wrapper -->
 						</div><!-- .news -->
 					</div>
 
