@@ -55,7 +55,7 @@
 														</h3>
 
 														<?php if ( $link && $photo ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-															<img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" />
+															<?php if ( $photo ) : ?><img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" /><?php endif; ?>
 														<?php if ( $link && $photo ) : ?></a><?php endif; ?>
 
 														<?php echo $text; ?>

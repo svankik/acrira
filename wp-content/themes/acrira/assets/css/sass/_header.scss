@@ -280,15 +280,17 @@
 				font-size: 20px;
 				line-height: 25px;
 				position: relative;
+				margin-left: $grid-gutter-width/2;
+				color: #fff;
 			}
 
 			.dot {
 				display: inline-block;
-				width: $grid-gutter-width;
-				height: $grid-gutter-width;
+				width: 3*$grid-gutter-width/2;
+				height: 3*$grid-gutter-width/2;
 				position: absolute;
-				left: -5px;
-				top: -5px;
+				left: -10px;
+				top: -10px;
 				z-index: -1;
 				@include border-top-radius(100px);
 				@include border-bottom-radius(100px);
