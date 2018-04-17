@@ -52,7 +52,7 @@
 
 			$infoBlocs.height( maxH );
 
-			if ( $( 'body' ).hasClass( 'home' ) ) {			
+			if ( $( '.site-branding .news .wrapper' ).length ) {			
 				$newsH = $logo.height() - $news.prev().outerHeight() - 30 - 2;
 				$news.height( $newsH );
 				// $news.find( '.wrapper' ).height( $newsH );
@@ -94,7 +94,7 @@
 		/**
 		 * News
 		 */
-		if ( $( 'body' ).hasClass( 'home' ) ) {
+		if ( $( '.site-branding .news .wrapper' ).length ) {
 			var newsScroll = new IScroll('.site-branding .news .wrapper', {
 				mouseWheel: true,
 				click: true,
