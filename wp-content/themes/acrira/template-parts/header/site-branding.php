@@ -42,7 +42,7 @@
 												$photo  = get_sub_field( 'photo' );
 												$link   = get_sub_field( 'lien' );
 												$color  = get_sub_field( 'secteur' );
-												$target = strpos( $link, get_bloginfo( 'url' ) ) !== false ? '_blank' : '';
+												$target = strpos( $link, get_bloginfo( 'url' ) ) === false ? '_blank' : '';
 
 												?>					
 
