@@ -25,6 +25,7 @@ function acrira_setup() {
 	add_image_size ( 'aslider', 1200, 545, true );
 	add_image_size ( 'hslider', 1200, 400, true );
 	add_image_size ( 'partner', 300, 300 );
+	add_image_size ( 'news', 200, 150, true );
 	add_image_size ( 'educationaltool', 600, 600 );
 }
 add_action( 'after_setup_theme', 'acrira_setup' );
@@ -56,9 +57,21 @@ function acrira_enqueue_styles() {
 		wp_get_theme()->get('Version')
 	);
 
+	$dependencies = array( 'jquery-ui-accordion', 'bx-slider' );
+
+	if( is_front_page() || is_home() ) {
+		wp_enqueue_script ( 'iscroll',
+			get_stylesheet_directory_uri() . '/assets/js/iscroll.js',
+			array(),
+			wp_get_theme()->get('Version')
+		);
+
+		$dependencies[] = 'iscroll';
+	}
+
 	wp_enqueue_script ( 'acrira',
 		get_stylesheet_directory_uri() . '/assets/js/acrira.js',
-		array( 'jquery-ui-accordion', 'bx-slider' ),
+		$dependencies,
 		wp_get_theme()->get('Version')
 	);
 
@@ -283,13 +296,13 @@ function acrira_theme_customizer( $wp_customize ) {
 add_action( 'customize_register', 'acrira_theme_customizer' );
 
 /**
- * Get slider image src
+ * Get slider image
  *
  * @param   string  $option
  *
  * @return  string
  */
-function acrira_get_slider_image_src( $option ) {
+function acrira_get_slider_image( $option ) {
 
 	$default_image_url = get_theme_mod( $option );
 	$default_image     = attachment_url_to_postid( $default_image_url );
@@ -300,7 +313,10 @@ function acrira_get_slider_image_src( $option ) {
 
 	$image = wp_get_attachment_image_src( $default_image, 'hslider' );
 
-	return $image[0];
+	return array( 
+		'url'       => $image[0],
+		'copyright' => wp_get_attachment_caption( $default_image ),
+	);
 }
 
 # filter_hook function to react on start_in argument

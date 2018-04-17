@@ -20,6 +20,9 @@ if( function_exists( 'register_field_group') ) {
 	// Informations Partenaires
 	include get_stylesheet_directory() . '/inc/custom-fields/informations-partenaires.php';
 	
+	// Secteur
+	include get_stylesheet_directory() . '/inc/custom-fields/sector.php';
+	
 	// // Team
 	// include get_stylesheet_directory() . '/inc/custom-fields/team.php';
 	

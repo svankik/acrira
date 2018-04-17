@@ -35,7 +35,9 @@
 		 */
 		var equalizeHeight = function () {
 			var maxH       = 0,
-				$infoBlocs = $( '.info-bloc', '.page-template-tpl-cinema-a-portee-de-main' )
+				$infoBlocs = $( '.info-bloc', '.page-template-tpl-cinema-a-portee-de-main' ),
+				$logo      = $( '.logo-container', '.site-branding' ),
+				$news      = $( '.news', '.site-branding' )
 			;
 
 			$infoBlocs.css( 'height', 'auto' );
@@ -49,6 +51,13 @@
 			} );
 
 			$infoBlocs.height( maxH );
+
+			if ( $( 'body' ).hasClass( 'home' ) ) {			
+				$newsH = $logo.height() - $news.prev().outerHeight() - 30 - 2;
+				$news.height( $newsH );
+				// $news.find( '.wrapper' ).height( $newsH );
+				newsScroll.refresh();
+			}
 		}
 
 		$( window ).on( 'load resize', equalizeHeight );
@@ -81,6 +90,18 @@
 					break;
 			} 
 		} );
+
+		/**
+		 * News
+		 */
+		if ( $( 'body' ).hasClass( 'home' ) ) {
+			var newsScroll = new IScroll('.site-branding .news .wrapper', {
+				mouseWheel: true,
+				click: true,
+				scrollbars: true
+			} );			
+		}
+
 	} );
 
 } )( jQuery );

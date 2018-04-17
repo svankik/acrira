@@ -25,3 +25,12 @@
 		}
 	}
 }
+
+.site-description {
+	text-align: center;
+	margin-bottom: $grid-gutter-width/2;
+
+	span {
+		font-weight: bold;
+	}
+}
