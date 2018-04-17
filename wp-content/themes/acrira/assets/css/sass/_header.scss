@@ -57,9 +57,21 @@
 		// }
 	}
 
+	.menu-top-menu-container {
+		text-align: center;
+
+		> .menu {
+			display: inline-block;
+		}
+	}
+
 	.navigation-top {
 		z-index: 100;
 		font-size: 14px !important;
+		// position: relative;
+		// bottom: inherit;
+		// left: inherit;
+		// right: inherit;
 		
 		.wrap {
 			max-width: 100%;
@@ -73,15 +85,21 @@
 			}
 
 			.current-menu-item,
-			.current_page_item {
+			.current-menu-ancestor {
 
 				> a {
-					color: #ccc;
+					color: #ddd;
 				}
 			}
 
 			> .menu-toggle {
 				font-size: 14px;
+				color: #fff;
+
+				&:focus {
+					outline: thin solid #fff;
+				}
+
 
 				@media (max-width: $screen-sm-max) {
 					display: block;
@@ -114,6 +132,16 @@
 			}
 		}
 
+		li {
+
+			li {
+
+				&:hover {
+					background-color: transparentize(#333, 0.6);
+				}
+			}
+		}
+
 		@media (max-width: $screen-sm-max) {
 			position: inherit;
 
@@ -125,7 +153,7 @@
 				}
 
 				> li {
-					border-bottom: 1px solid $gray-light;
+					border-bottom: 1px solid #fff;
 				}
 
 				.sub-menu {
@@ -175,6 +203,13 @@
 				height: 100%;
 				background-size: cover;
 				background-position: 50% 50%;
+
+				.copyright {
+					position: absolute;
+					bottom: $grid-gutter-width;
+					right: $grid-gutter-width;
+					color: #fff;
+				}
 			}
 		}
 
@@ -227,5 +262,74 @@
 			// 	}
 			// }	
 		}
+	}
+
+	.news {
+		background-color: transparentize(#4c4c4c, 0.3);
+		border: 1px solid #fff;
+		color: #fff;
+		padding: $grid-gutter-width/2;
+		@include border-top-radius(4px);
+		@include border-bottom-radius(4px);
+
+		.wrapper {
+			height: 100%;
+			overflow: hidden;
+			position: relative;
+		}
+
+		a {
+			color: #fff;
+		}
+
+		.news-item {
+			border-width: 0 0 5px 0;
+			border-style: solid;
+			padding-top: $grid-gutter-width;
+			padding-bottom: $grid-gutter-width/2;
+			@include clearfix();
+
+			&:first-child {
+				padding-top: 0;
+			}
+
+			.align-left {
+				float: left;
+				margin-right: $grid-gutter-width/2;
+				margin-bottom: $grid-gutter-width/2;
+			}
+
+			h3 {
+				font-family: $ff-b;
+				font-weight: 600;
+				font-size: 20px;
+				line-height: 25px;
+				position: relative;
+				margin-left: $grid-gutter-width/2;
+				color: #fff;
+			}
+
+			.dot {
+				display: inline-block;
+				width: 3*$grid-gutter-width/2;
+				height: 3*$grid-gutter-width/2;
+				position: absolute;
+				left: -10px;
+				top: -10px;
+				z-index: -1;
+				@include border-top-radius(100px);
+				@include border-bottom-radius(100px);
+			}
+		}
+	}
+
+	h2 {
+		margin: 0;
+		padding-bottom: $grid-gutter-width/6;
+		color: #fff;
+		font-family: $ff-b;
+		font-weight: 800;
+		font-size: 26px;
+		line-height: 31px;
 	}
 }

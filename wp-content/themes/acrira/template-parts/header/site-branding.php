@@ -14,37 +14,80 @@
 		<div class="col-md-3 col-sm-6 col-xs-12">
 			<div class="logo-container">
 				<?php the_custom_logo(); ?>
-				<?php // the_custom_logo(); ?>
 			</div>
 		</div>
 
-		<div class="site-branding-text col-md-9 col-sm-6 hidden-xs">
-			<?php if ( is_front_page() ) : ?>
-				<h1 class="site-title sr-only"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
-			<?php else : ?>
-				<p class="site-title sr-only"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-			<?php endif; ?>
+		<?php 
 
-			<?php
-			$description = get_bloginfo( 'description', 'display' );
+			if ( is_front_page() && have_rows('actualites') ) :
 
-			if ( $description || is_customize_preview() ) :
-			?>
-				<!-- <p class="site-description"><?php echo $description; ?></p> -->
-				<p class="site-description">
+				?>					
 
-					<span>A</span>ssociation des <br />
-					<span>C</span>inémas de <br />
-					<span>R</span>echerche <br />
-					<span>I</span>ndépendants de la <br />
-					<span>R</span>égion <span>A</span>lpine
+					<div class="col-md-9 col-sm-6 hidden-xs">
 
-				</p>
-			<?php endif; ?>
-		</div><!-- .site-branding-text -->
+						<h2><?php _e( 'News', 'acrira' ); ?></h2>
 
-		<?php if ( ( twentyseventeen_is_frontpage() || ( is_home() && is_front_page() ) ) && ! has_nav_menu( 'top' ) ) : ?>
-		<a href="#content" class="menu-scroll-down"><?php echo twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ); ?><span class="screen-reader-text"><?php _e( 'Scroll down to content', 'twentyseventeen' ); ?></span></a>
-		<?php endif; ?>
+						<div class="news">
+
+							<div class="wrapper">
+								<div class="scroll">
+
+									<?php 
+
+									
+										while ( have_rows('actualites') ) : the_row();
+
+												$title  = get_sub_field( 'titre' );
+												$text   = get_sub_field( 'texte' );
+												$photo  = get_sub_field( 'photo' );
+												$link   = get_sub_field( 'lien' );
+												$color  = get_sub_field( 'secteur' );
+												$target = strpos( $link, get_bloginfo( 'url' ) ) === false ? '_blank' : '';
+
+												?>					
+
+													<div class="news-item" style="border-color: <?php echo $color; ?>;"> 
+														<h3>
+															<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+																<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
+																<?php echo $title; ?>
+															<?php if ( $link ) : ?></a><?php endif; ?>
+														</h3>
+
+														<?php if ( $link && $photo ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+															<?php if ( $photo ) : ?><img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" /><?php endif; ?>
+														<?php if ( $link && $photo ) : ?></a><?php endif; ?>
+
+														<?php echo $text; ?>
+													</div>
+
+												<?php 
+
+										endwhile;
+
+									?>					
+
+								</div><!-- .scroll -->
+							</div><!-- .wrapper -->
+						</div><!-- .news -->
+					</div>
+
+				<?php 
+
+
+			endif;
+
+		?>
+
+		<?php 
+			if ( ( twentyseventeen_is_frontpage() || ( is_home() && is_front_page() ) ) && ! has_nav_menu( 'top' ) ) : 
+				?>
+					<a href="#content" class="menu-scroll-down">
+						<?php echo twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ); ?>
+						<span class="screen-reader-text"><?php _e( 'menu-scroll-downll down to content', 'twentyseventeen' ); ?></span>
+					</a>
+				<?php 
+			endif; 
+		?>
 	</div><!-- .row -->
 </div><!-- .site-branding -->

@@ -138,12 +138,16 @@
 			$grid.appendTo( $( el ) );
 
 			$src.find( 'li' ).each( function( i, item ) {
-				var itemSrc = $( item ).find( 'img' ).attr( 'src' );
+				var itemSrc   = $( item ).find( 'img' ).attr( 'src' ),
+					copyright = $( item ).find( 'span' ).text();
 				
 				allItems[i] = [];
 
 				for (var j = 0; j < split; j++) {
-					allItems[i][j] = itemSrc;
+					allItems[i][j] = {
+						'src'      : itemSrc,
+						'copyright': copyright
+					};
 
 					if( i === 0 ) {
 						$grid.append( 
@@ -151,7 +155,10 @@
 								html: $( '<div />', {
 									 class: 'as-item',
 									 html: $( '<div />', {
-									 	class: 'part'
+									 	class: 'part',
+									 	html: j === split - 1 ? $( '<span />', {
+									 		html: copyright !== '' ? copyright : ''
+									 	} ) : ''
 									 } ).css( {
 									 	backgroundImage: 'url(' + itemSrc + ')'
 									 } )
@@ -187,10 +194,12 @@
 				dTimer = setTimeout( function() {
 					
 					// append new elements
-					$( newItems ).each( function( i, itemSrc ) {
-						var $parent  = $( $items[ i ] ),
-							$oldItem = $parent.find( '.as-item' ),
-							$newItem = $oldItem.clone()
+					$( newItems ).each( function( i, item ) {
+						var $parent       = $( $items[ i ] ),
+							$oldItem      = $parent.find( '.as-item' ),
+							$newItem      = $oldItem.clone(),
+							itemSrc       = item.src,
+							itemCopyright = item.copyright
 						;
 
 						$oldItem.addClass( 'as-old' );
@@ -198,6 +207,8 @@
 						$newItem.find( '.part' ).css( {
 							backgroundImage: 'url(' + itemSrc + ')'
 						} );
+
+						$newItem.find( 'span' ).text( itemCopyright );
 
 						$newItem.appendTo( $parent );
 					} );
