@@ -52,10 +52,12 @@
 
 			$infoBlocs.height( maxH );
 
-			$newsH = $logo.height() - $news.prev().outerHeight() - 30 - 2;
-			$news.height( $newsH );
-			// $news.find( '.wrapper' ).height( $newsH );
-			newsScroll.refresh();
+			if ( $( 'body' ).hasClass( 'home' ) ) {			
+				$newsH = $logo.height() - $news.prev().outerHeight() - 30 - 2;
+				$news.height( $newsH );
+				// $news.find( '.wrapper' ).height( $newsH );
+				newsScroll.refresh();
+			}
 		}
 
 		$( window ).on( 'load resize', equalizeHeight );
@@ -92,11 +94,13 @@
 		/**
 		 * News
 		 */
-		var newsScroll = new IScroll('.site-branding .news .wrapper', {
-			mouseWheel: true,
-			click: true,
-			scrollbars: true
-		} );
+		if ( $( 'body' ).hasClass( 'home' ) ) {
+			var newsScroll = new IScroll('.site-branding .news .wrapper', {
+				mouseWheel: true,
+				click: true,
+				scrollbars: true
+			} );			
+		}
 
 	} );
 
