@@ -57,6 +57,14 @@
 		// }
 	}
 
+	.menu-top-menu-container {
+		text-align: center;
+
+		> .menu {
+			display: inline-block;
+		}
+	}
+
 	.navigation-top {
 		z-index: 100;
 		font-size: 14px !important;
