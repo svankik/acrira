@@ -46,7 +46,7 @@
 
 												?>					
 
-													<div class="news-item"> 
+													<div class="news-item" style="border-color: <?php echo $color; ?>;"> 
 														<h3>
 															<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
 																<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
@@ -54,9 +54,9 @@
 															<?php if ( $link ) : ?></a><?php endif; ?>
 														</h3>
 
-														<?php if ( $link ) : ?><a href="<?php echo $link; ?>" class="smooth-zoom" target="<?php echo $target; ?>"><?php endif; ?>
+														<?php if ( $link && $photo ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
 															<img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" />
-														<?php if ( $link ) : ?></a><?php endif; ?>
+														<?php if ( $link && $photo ) : ?></a><?php endif; ?>
 
 														<?php echo $text; ?>
 													</div>
