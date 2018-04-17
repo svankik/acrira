@@ -8,8 +8,9 @@
  * @version 1.2
  */
 
-$menu_parent_id = acrira_get_menu_parent_ID( 'top' );
-$color = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' );
+$sector         = get_field( 'secteur' );
+$menu_parent_id = ! empty( $sector ) ? get_theme_mod( 'acrira_menu_entry_' . $sector ) : acrira_get_menu_parent_ID( 'top' );
+$color          = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' );
 
 ?>
 <style type="text/css">

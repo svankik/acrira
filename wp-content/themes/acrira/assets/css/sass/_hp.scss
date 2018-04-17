@@ -51,6 +51,19 @@
 					z-index: 1;
 					// visibility: hidden;
 				}
+
+				.part {
+					text-align: center;
+
+					span {
+						color: #fff;
+						position: absolute;
+						bottom: $grid-gutter-width;
+						left: 50%;
+						display: inline-block;
+						@include translate(-50%, 0);
+					}
+				}
 			}
 		}
 	}
@@ -260,6 +273,10 @@
 					overflow: hidden;
 					margin: 0;
 					@include animation(slideOut 1s forwards);
+
+					span {
+						@include animation(fadeOut 0.2s forwards);
+					}
 				}
 
 				&:only-child {

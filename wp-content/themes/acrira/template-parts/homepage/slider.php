@@ -15,7 +15,8 @@
 
 						?>
 							<li>
-								<img src="<?php echo $image['sizes']['aslider']; ?>" alt="<?php $image['alt'] ?>" />
+								<img src="<?php echo $image['sizes']['aslider']; ?>" alt="<?php echo $image['alt'] ?>" />
+								<span><?php if( $image['caption'] ) : ?><?php printf( '&copy; %s', $image['caption'] ); ?><?php endif; ?></span>
 							</li>	
 						<?php
 

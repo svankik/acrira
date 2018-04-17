@@ -33,9 +33,9 @@
 		$images = array();
 		
 		for( $i = 1; $i <= 3; $i++ ) {
-			$image_url = acrira_get_slider_image_src( 'acrira_header_images_' . $section . '_image_' . $i );
-			if( $image_url ) {
-				$images[] = $image_url;
+			$image = acrira_get_slider_image( 'acrira_header_images_' . $section . '_image_' . $i );
+			if( $image ) {
+				$images[] = $image;
 			}
 		}
 
@@ -53,7 +53,11 @@
 								
 								?>
 
-									<div style="background-image: url(<?php echo $image; ?>);"></div>
+									<div style="background-image: url(<?php echo $image['url']; ?>);">
+										<?php if( $image['copyright'] ) : ?>
+											<span class="copyright"><?php printf( '&copy; %s', $image['copyright'] ); ?></span>
+										<?php endif; ?>
+									</div>
 
 								<?php
 								 

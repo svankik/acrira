@@ -132,6 +132,16 @@
 			}
 		}
 
+		li {
+
+			li {
+
+				&:hover {
+					background-color: transparentize(#333, 0.6);
+				}
+			}
+		}
+
 		@media (max-width: $screen-sm-max) {
 			position: inherit;
 
@@ -193,6 +203,13 @@
 				height: 100%;
 				background-size: cover;
 				background-position: 50% 50%;
+
+				.copyright {
+					position: absolute;
+					bottom: $grid-gutter-width;
+					right: $grid-gutter-width;
+					color: #fff;
+				}
 			}
 		}
 

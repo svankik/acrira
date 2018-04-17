@@ -296,13 +296,13 @@ function acrira_theme_customizer( $wp_customize ) {
 add_action( 'customize_register', 'acrira_theme_customizer' );
 
 /**
- * Get slider image src
+ * Get slider image
  *
  * @param   string  $option
  *
  * @return  string
  */
-function acrira_get_slider_image_src( $option ) {
+function acrira_get_slider_image( $option ) {
 
 	$default_image_url = get_theme_mod( $option );
 	$default_image     = attachment_url_to_postid( $default_image_url );
@@ -313,7 +313,10 @@ function acrira_get_slider_image_src( $option ) {
 
 	$image = wp_get_attachment_image_src( $default_image, 'hslider' );
 
-	return $image[0];
+	return array( 
+		'url'       => $image[0],
+		'copyright' => wp_get_attachment_caption( $default_image ),
+	);
 }
 
 # filter_hook function to react on start_in argument
