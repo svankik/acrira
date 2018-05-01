@@ -2,295 +2,363 @@ msgid ""
 msgstr ""
 "Project-Id-Version: acrira\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-26 14:10+0000\n"
-"PO-Revision-Date: 2017-08-26 14:10+0000\n"
+"POT-Creation-Date: 2018-04-17 12:27+0000\n"
+"PO-Revision-Date: 2018-04-17 12:36+0000\n"
 "Last-Translator: ACRIRA_admin <bruyas@gmail.com>\n"
 "Language-Team: French (France)\n"
-"Language: fr-FR\n"
-"Plural-Forms: nplurals=2; plural=n > 1\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco - https://localise.biz/"
+"X-Generator: Loco https://localise.biz/"
 
-#: functions.php:58
-msgid "Parent Cinemas:"
+#: archive-film.php:23
+#, php-format
+msgid "%% lycéens et apprentis au cinema / films introduction"
 msgstr ""
 
-#: functions.php:102
-msgid "Parent High schools:"
-msgstr ""
+#. Name of the template
+msgid "Cinémas Adhérents (Cinémas en réseau)"
+msgstr "Cinémas Adhérents (Cinémas en réseau)"
 
-#: functions.php:146
-msgid "Parent Educational tools:"
-msgstr ""
+#. Name of the template
+msgid "Salles Partenaires (Lycéens et apprentis au cinema)"
+msgstr "Salles Partenaires (Lycéens et apprentis au cinema)"
 
-#: functions.php:189
-msgid "Parent Films:"
-msgstr ""
+#. Name of the template
+msgid "Le Cinéma à portée de main"
+msgstr "Le Cinéma à portée de main"
 
-#: functions.php:250
-msgid "Homepage slider images"
-msgstr ""
+#: functions.php:99
+msgid "Sub Title (Educational tool)"
+msgstr "Sous-Titre (Outil Pédagogique)"
 
-#: functions.php:252
-msgid "Upload default images."
-msgstr ""
+#: functions.php:104
+msgid "Informations (Educational tool)"
+msgstr "Informations (Outil Pédagogique)"
 
-#: functions.php:258
+#: functions.php:196
+msgid "Header images Cinémas en réseau"
+msgstr "Image d'en-tête Cinémas en réseau"
+
+#: functions.php:198 functions.php:214 functions.php:230 functions.php:246
+msgid "Upload images for header."
+msgstr "Téléverser les images d'en-tête."
+
+#: functions.php:204 functions.php:220 functions.php:236
 #, php-format
 msgid "Image %d"
-msgstr ""
+msgstr "Image %d"
 
-#: archive-cinema.php:23
+#: functions.php:212
+msgid "Header images Lycéens et apprentis au cinéma"
+msgstr "Image d'en-tête Lycéens et apprentis au cinéma"
+
+#: functions.php:228
+msgid "Header images Passeurs d'images"
+msgstr "Image d'en-tête Passeurs d'images"
+
+#: functions.php:244
+msgid "Header images Le cinéma à portée de main"
+msgstr "Image d'en-tête Le cinéma à portée de main"
+
+#: functions.php:252
 #, php-format
-msgid "%% cinémas en réseau / cinémas adhérents introduction"
-msgstr ""
-"L’AcrirA est un réseau associatif de salles de cinéma qui mène un travail "
-"collectif autour des films. Voici la liste et les coordonnées des cinémas "
-"qui animent ce réseau :"
+msgid "Le cinéma à portée de main - Image %d"
+msgstr "Le cinéma à portée de main - Image %d"
 
-#: archive-cinema.php:27
+#: functions.php:260
+msgid "Menu Entries"
+msgstr "Entrées de Menu"
+
+#: functions.php:262
+msgid "Ids of menu entries."
+msgstr "Identifiants des entrées de menu."
+
+#: functions.php:269
 #, php-format
-msgid "%% lycéens et apprentis au cinema / salles partenaires introduction"
-msgstr ""
+msgid "Menu Entry %d"
+msgstr "Entrée de Menu %d"
 
-#. Description of the theme
-msgid "Acrira - child of Twenty Seventeen Theme"
-msgstr ""
+#: functions.php:279
+msgid "Menu Colors"
+msgstr "Couleurs des Menus"
 
-#. Author of the theme
-msgid "Sylvain BRUYAS"
-msgstr ""
+#: functions.php:281
+msgid "Colors of menu entries."
+msgstr "Couleurs des entrées de menu."
 
-#: functions.php:47
+#: functions.php:288
+#, php-format
+msgid "Colors of menu entry %d"
+msgstr "Couleur de l'entrée de menu %d"
+
+#. Name of the template
+msgid "Pages Partenaires"
+msgstr "Pages Partenaires"
+
+#. Name of the template
+msgid "Lycées Partenaires (Lycéens et apprentis au cinema)"
+msgstr "Lycées Partenaires (Lycéens et apprentis au cinema)"
+
+#: inc/custom-post-types.php:10
 msgctxt "post type general name"
 msgid "Cinemas"
 msgstr "Cinémas"
 
-#: functions.php:48
+#: inc/custom-post-types.php:11
 msgctxt "post type singular name"
 msgid "Cinema"
 msgstr "Cinéma"
 
-#: functions.php:49
+#: inc/custom-post-types.php:12
 msgctxt "admin menu"
 msgid "Cinemas"
 msgstr "Cinémas"
 
-#: functions.php:50
+#: inc/custom-post-types.php:13
 msgctxt "add new on admin bar"
 msgid "Cinema"
 msgstr "Cinéma"
 
-#: functions.php:51
+#: inc/custom-post-types.php:14
 msgctxt "cinema"
 msgid "Add New"
 msgstr "Ajouter un nouveau"
 
-#: functions.php:52
+#: inc/custom-post-types.php:15
 msgid "Add New Cinema"
 msgstr "Ajouter un cinéma"
 
-#: functions.php:53
+#: inc/custom-post-types.php:16
 msgid "New Cinema"
 msgstr "Nouveau cinéma"
 
-#: functions.php:54
+#: inc/custom-post-types.php:17
 msgid "Edit Cinema"
 msgstr "Editer cinéma"
 
-#: functions.php:55
+#: inc/custom-post-types.php:18
 msgid "View Cinema"
 msgstr "Voir cinéma"
 
-#: functions.php:56
+#: inc/custom-post-types.php:19
 msgid "All Cinemas"
 msgstr "Tous les cinémas"
 
-#: functions.php:57
+#: inc/custom-post-types.php:20
 msgid "Search Cinemas"
 msgstr "Rechercher un cinéma"
 
-#: functions.php:59
+#: inc/custom-post-types.php:21
+msgid "Parent Cinemas:"
+msgstr ""
+
+#: inc/custom-post-types.php:22
 msgid "No cinema found."
 msgstr "Pas de cinéma trouvé."
 
-#: functions.php:60
+#: inc/custom-post-types.php:23
 msgid "No cinemas found in Trash."
 msgstr "Pas de cinéma trouvé dans la poubelle."
 
-#: functions.php:65 functions.php:109 functions.php:153 functions.php:196
+#: inc/custom-post-types.php:28 inc/custom-post-types.php:72
+#: inc/custom-post-types.php:116 inc/custom-post-types.php:159
 msgid "Description."
 msgstr "Description."
 
-#: functions.php:91
+#: inc/custom-post-types.php:54
 msgctxt "post type general name"
 msgid "High schools"
 msgstr "Lycées"
 
-#: functions.php:92
+#: inc/custom-post-types.php:55
 msgctxt "post type singular name"
 msgid "High school"
 msgstr "Lycée"
 
-#: functions.php:93
+#: inc/custom-post-types.php:56
 msgctxt "admin menu"
 msgid "High schools"
 msgstr "Lycées"
 
-#: functions.php:94
+#: inc/custom-post-types.php:57
 msgctxt "add new on admin bar"
 msgid "High school"
 msgstr "Lycée"
 
-#: functions.php:95
+#: inc/custom-post-types.php:58
 msgctxt "High school"
 msgid "Add New"
 msgstr "Ajouter un nouveau"
 
-#: functions.php:96
+#: inc/custom-post-types.php:59
 msgid "Add New High school"
 msgstr "Ajouter un nouveau lycée"
 
-#: functions.php:97
+#: inc/custom-post-types.php:60
 msgid "New High school"
 msgstr "Nouveau lycée"
 
-#: functions.php:98
+#: inc/custom-post-types.php:61
 msgid "Edit High school"
 msgstr "Editer lycée"
 
-#: functions.php:99
+#: inc/custom-post-types.php:62
 msgid "View High school"
 msgstr "Voir lycée"
 
-#: functions.php:100
+#: inc/custom-post-types.php:63
 msgid "All High schools"
 msgstr "Tous les lycées"
 
-#: functions.php:101
+#: inc/custom-post-types.php:64
 msgid "Search High schools"
 msgstr "Rechercher un lycée"
 
-#: functions.php:103
+#: inc/custom-post-types.php:65
+msgid "Parent High schools:"
+msgstr ""
+
+#: inc/custom-post-types.php:66
 msgid "No High school found."
 msgstr "Pas de lycée trouvé."
 
-#: functions.php:104
+#: inc/custom-post-types.php:67
 msgid "No High schools found in Trash."
 msgstr "Pas de lycée trouvé dans la poubelle."
 
-#: functions.php:135
+#: inc/custom-post-types.php:98
 msgctxt "post type general name"
 msgid "Educational tools"
 msgstr "Outils pédagogiques"
 
-#: functions.php:136
+#: inc/custom-post-types.php:99
 msgctxt "post type singular name"
 msgid "Educational tool"
 msgstr "Outil pédagogique"
 
-#: functions.php:137
+#: inc/custom-post-types.php:100
 msgctxt "admin menu"
 msgid "Educational tools"
 msgstr "Outils pédagogiques"
 
-#: functions.php:138
+#: inc/custom-post-types.php:101
 msgctxt "add new on admin bar"
 msgid "Educational tool"
 msgstr "Outil pédagogique"
 
-#: functions.php:139
+#: inc/custom-post-types.php:102
 msgctxt "Educational tool"
 msgid "Add New"
 msgstr "Ajouter un nouveau"
 
-#: functions.php:140
+#: inc/custom-post-types.php:103
 msgid "Add New Educational tool"
 msgstr "Ajouter un nouveau outil pédagogique"
 
-#: functions.php:141
+#: inc/custom-post-types.php:104
 msgid "New Educational tool"
 msgstr "Nouveau outil pédagogique"
 
-#: functions.php:142
+#: inc/custom-post-types.php:105
 msgid "Edit Educational tool"
 msgstr "Editer outil pédagogique"
 
-#: functions.php:143
+#: inc/custom-post-types.php:106
 msgid "View Educational tool"
 msgstr "Voir outil pédagogique"
 
-#: functions.php:144
+#: inc/custom-post-types.php:107
 msgid "All Educational tools"
 msgstr "Tous les outils pédagogiques"
 
-#: functions.php:145
+#: inc/custom-post-types.php:108
 msgid "Search Educational tools"
 msgstr "Rechercher un outil pédagogique"
 
-#: functions.php:147
+#: inc/custom-post-types.php:109
+msgid "Parent Educational tools:"
+msgstr ""
+
+#: inc/custom-post-types.php:110
 msgid "No Educational tool found."
 msgstr "Pas d'outil pédagogique trouvé."
 
-#: functions.php:148
+#: inc/custom-post-types.php:111
 msgid "No Educational tools found in Trash."
 msgstr "Pas d'outil pédagogique trouvé dans la poubelle."
 
-#: functions.php:178
+#: inc/custom-post-types.php:141
 msgctxt "post type general name"
 msgid "Films"
 msgstr "Films"
 
-#: functions.php:179
+#: inc/custom-post-types.php:142
 msgctxt "post type singular name"
 msgid "Film"
 msgstr "Film"
 
-#: functions.php:180
+#: inc/custom-post-types.php:143
 msgctxt "admin menu"
 msgid "Films"
 msgstr "Films"
 
-#: functions.php:181
+#: inc/custom-post-types.php:144
 msgctxt "add new on admin bar"
 msgid "Film"
 msgstr "Film"
 
-#: functions.php:182
+#: inc/custom-post-types.php:145
 msgctxt "Film"
 msgid "Add New"
 msgstr "Ajouter un nouveau"
 
-#: functions.php:183
+#: inc/custom-post-types.php:146
 msgid "Add New Film"
 msgstr "Ajouter un nouveau film"
 
-#: functions.php:184
+#: inc/custom-post-types.php:147
 msgid "New Film"
 msgstr "Nouveau film"
 
-#: functions.php:185
+#: inc/custom-post-types.php:148
 msgid "Edit Film"
 msgstr "Editer film"
 
-#: functions.php:186
+#: inc/custom-post-types.php:149
 msgid "View Film"
 msgstr "Voir film"
 
-#: functions.php:187
+#: inc/custom-post-types.php:150
 msgid "All Films"
 msgstr "Tous les films"
 
-#: functions.php:188
+#: inc/custom-post-types.php:151
 msgid "Search Films"
 msgstr "Rechercher un film"
 
-#: functions.php:190
+#: inc/custom-post-types.php:152
+msgid "Parent Films:"
+msgstr ""
+
+#: inc/custom-post-types.php:153
 msgid "No Film found."
 msgstr "Pas de film trouvé."
 
-#: functions.php:191
+#: inc/custom-post-types.php:154
 msgid "No Films found in Trash."
 msgstr "Pas de film trouvé dans la poubelle."
+
+#: template-parts/header/site-branding.php:28
+msgid "News"
+msgstr "Actualités"
+
+#. Description of the theme
+msgid "Acrira - child of Twenty Seventeen Theme"
+msgstr "Acrira - Thème enfant de Twenty Seventeen"
+
+#. Author of the theme
+msgid "Sylvain BRUYAS"
+msgstr "Sylvain BRUYAS"
