@@ -23,3 +23,5 @@ wp-config-prod.php
 srdb3/
 
 FILES/
+
+.idea
