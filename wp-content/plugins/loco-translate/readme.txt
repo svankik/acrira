@@ -3,8 +3,8 @@ Contributors: timwhitlock
 Tags: translation, translators, localization, localisation, l10n, i18n, Gettext, PO, MO, productivity, multilingual, internationalization
 Requires at least: 4.1
 Requires PHP: 5.2.4
-Tested up to: 4.9.4
-Stable tag: 2.1.0
+Tested up to: 4.9.5
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,10 +82,35 @@ Help is provided via the [plugin support forum](https://wordpress.org/support/pl
 1. Translating strings in the browser with the Loco PO Editor
 2. Showing translation progress for theme language files
 3. PO source view with text filter and clickable file references
+4. Restore tab showing PO diff view with revert function
+5. Showing access to translations by installed language
 
 
 
 == Changelog ==
+
+= 2.1.3 =
+* Added loco_locale_name filter and updated locale data
+* Fixed editor column sorting to update as values change
+* Supporting RTL text in editor preview rows
+* Minor refactor of debug mode routing check 
+* Minor PO parser improvements
+* Bumped WP compatibility to 4.9.5
+
+= 2.1.2 =
+* Fixed undeclared property in admin hook
+* Fixed incompatibility with older WordPress
+* Fixed incorrect millisecond reporting in footer
+* Removed locale progress column for en_US locale
+* Tweaks to debugging and error logging
+
+= 2.1.1 =
+* Setting `Project-Id-Version` on new POT files
+* Added source view to quick links in file tables
+* Supporting only WordPress style locale codes
+* Editor screen tolerates missing PO headers
+* Ajax debugging improvements for issue reporting
+* Added loco_parse_locale action callback
 
 = 2.1.0 =
 * Add `fs_protect` setting to avoid overwriting system files
@@ -228,7 +253,7 @@ Help is provided via the [plugin support forum](https://wordpress.org/support/pl
 
 == Upgrade Notice ==
 
-= 2.1.0 =
+= 2.1.3 =
 * Various bug fixes and improvements
 
 

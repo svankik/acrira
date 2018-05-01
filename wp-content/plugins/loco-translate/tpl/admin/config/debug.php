@@ -6,21 +6,27 @@ $this->extend('../layout');
 ?> 
     
         <div class="panel" id="loco-versions">
-            <h3>Versions</h3>
+            <h3>
+                Versions
+                <a href="#loco-versions" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
             <dl><?php
-            foreach( $versions as $key => $value ):?> 
+            foreach( $versions as $key => $value ): if( $value ):?> 
                 <dt>
                     <?php echo $versions->escape($key)?>:
                 </dt>
                 <dd>
                     <code class="path"><?php $versions->e($key)?></code>
                 </dd><?php
-            endforeach?> 
+            endif; endforeach?> 
             </dl>
         </div>
     
         <div class="panel" id="loco-unicode">
-            <h3>Unicode</h3>
+            <h3>
+                Unicode
+                <a href="#loco-unicode" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
             <dl>
                 <dt>UTF-8 rendering:</dt>
                 <dd><?php echo $encoding->OK?> <span id="loco-utf8-check"><?php echo $encoding->tick?></span></dd>
@@ -31,7 +37,10 @@ $this->extend('../layout');
         </div>
     
         <div class="panel" id="loco-ajax">
-            <h3>Ajax</h3>
+            <h3>
+                Ajax
+                <a href="#loco-ajax" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
             <dl>
                 <dt>Endpoint:</dt>
                 <dd><code id="loco-ajax-url" class="path">/wp-admin/admin-ajax.php</code></dd>
@@ -45,7 +54,10 @@ $this->extend('../layout');
         </div>
     
         <div class="panel" id="loco-sizes">
-            <h3>Size limits</h3>
+            <h3>
+                Limits
+                <a href="#loco-sizes" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
             <dl><?php
             foreach( $memory as $key => $value ):?> 
                 <dt>
@@ -59,7 +71,10 @@ $this->extend('../layout');
         </div>
         
         <div class="panel" id="loco-files">
-            <h3>Filesystem</h3>
+            <h3>
+                Filesystem
+                <a href="#loco-files" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
             <dl>
                 <dt>Custom languages directory:</dt>
                 <dd><code class="path"><?php $fs->e('langdir')?></code></dd>
@@ -69,5 +84,26 @@ $this->extend('../layout');
     
                 <dt>File mods disallowed:</dt>
                 <dd><?php echo $fs->disabled?'Yes':'No'?></dd>
+                
+                <dt>File mod safety level:</dt>
+                <dd><?php $fs->e('fs_protect')?></dd>
+                
+            </dl>
+        </div>
+
+        <div class="panel" id="loco-debug">
+            <h3>
+                Debug settings
+                <a href="#loco-debug" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
+            <dl><?php
+            foreach( $debug as $key => $value ):?> 
+                <dt>
+                    <?php echo $debug->escape($key)?>:
+                </dt>
+                <dd>
+                    <?php $debug->e($key)?> 
+                </dd><?php
+            endforeach?> 
             </dl>
         </div>
