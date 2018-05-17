@@ -14,7 +14,7 @@ register_field_group ( array (
 				1 => 'Cinémas en réseau',
 				2 => 'Lycéens & apprentis au cinéma',
 				3 => 'Passeurs d\'images',
-				4 => 'Le cinéma à portée de main',
+				4 => 'Outils d\'animation',
 			),
 			'default_value' => 1,
 			'allow_null'    => 0,
