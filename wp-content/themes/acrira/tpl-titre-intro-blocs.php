@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Le Cinéma à portée de main
+ * Template Name: Page Titre / Intro / Bloc(s)
  *
  * This is the template that displays all pages by default.
  * Please note that this is the WordPress construct of pages
@@ -26,7 +26,7 @@ get_header(); ?>
 			<?php
 				while ( have_posts() ) : the_post();
 
-					get_template_part( 'template-parts/page/content', 'cinema-a-portee-de-main' );
+					get_template_part( 'template-parts/page/content', 'titre-intro-blocs' );
 
 				endwhile; // End of the loop.
 			?>

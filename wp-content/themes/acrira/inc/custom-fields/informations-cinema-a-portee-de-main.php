@@ -42,7 +42,7 @@ register_field_group ( array (
 			array (
 				'param'    => 'page_template',
 				'operator' => '==',
-				'value'    => 'tpl-cinema-a-portee-de-main.php',
+				'value'    => 'tpl-titre-intro-blocs.php',
 				'order_no' => 0,
 				'group_no' => 0,
 			),

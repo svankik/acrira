@@ -35,7 +35,7 @@
 		 */
 		var equalizeHeight = function () {
 			var maxH       = 0,
-				$infoBlocs = $( '.info-bloc', '.page-template-tpl-cinema-a-portee-de-main' ),
+				$infoBlocs = $( '.info-bloc', '.page-template-tpl-titre-intro-blocs' ),
 				$logo      = $( '.logo-container', '.site-branding' ),
 				$news      = $( '.news', '.site-branding' )
 			;
