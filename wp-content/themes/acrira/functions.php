@@ -82,8 +82,47 @@ function acrira_enqueue_styles() {
 			wp_get_theme()->get('Version')
 		);
 	}
+
+	// Gmap API KEY
+	$googleapis_map_url = 'https://maps.googleapis.com/maps/api/js';
+	$googleapis_map_url .= defined ( 'GOOGLE_MAP_API_KEY' ) ? '?key=' . GOOGLE_MAP_API_KEY : '';
+
+	wp_enqueue_script ( 'googleapis-map',
+		$googleapis_map_url,
+		array(),
+		wp_get_theme ()->get ('Version')
+	);
+
+	wp_enqueue_script ( 'acf-gmap',
+		get_stylesheet_directory_uri () . '/assets/js/gmap.js',
+		array( 'jquery', 'googleapis-map' ),
+		wp_get_theme ()->get ('Version')
+	);
+
+	wp_localize_script ( 'acf-gmap',
+		'acfgmapParams',
+		array (
+			'themeUrl' => get_stylesheet_directory_uri (),
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
+
+/**
+ * ACF Google Map API Key
+ *
+ * @param   [type]  $api  [description]
+ *
+ * @return  [type]        [description]
+ */
+function acrira_acf_google_map_api( $api ){
+
+	$api['key'] = defined ( 'GOOGLE_MAP_API_KEY' ) ? GOOGLE_MAP_API_KEY : '';
+
+	return $api;
+
+}
+add_filter('acf/fields/google_map/api', 'acrira_acf_google_map_api');
 
 /**
  * Callback function to filter the MCE settings
