@@ -134,6 +134,17 @@ register_field_group ( array (
 			'toolbar'       => 'full',
 			'media_upload'  => 'yes',
 		),
+		array (
+			'key' => 'field_5ae85d55ec12d',
+			'label' => 'Localisation',
+			'name' => 'location',
+			'type' => 'google_map',
+			'required' => 1,
+			'center_lat' => '45.16667',
+			'center_lng' => '5.71667',
+			'zoom' => '8',
+			'height' => '',
+		),
 	),
 	'location' => array (
 		array (
