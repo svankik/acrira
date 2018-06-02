@@ -102,7 +102,11 @@
 				$newsItems.each( function(i, el) {
 					$(el).data( 'scroll', new IScroll(el, {
 						mouseWheel: true,
-						click: true,
+						// click: true,
+						// tap: true,
+						disablePointer: false,
+						disableTouch: false,
+						disableMouse: false,
 						scrollbars: true
 					} ) );
 				} );
