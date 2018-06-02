@@ -347,6 +347,10 @@
 				@include border-top-radius(100px);
 				@include border-bottom-radius(100px);
 			}
+
+			.scroll {
+				padding-right: $grid-gutter-width;
+			}
 		}
 
 		.bx-pager {
