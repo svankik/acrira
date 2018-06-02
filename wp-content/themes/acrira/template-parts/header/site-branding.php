@@ -25,15 +25,14 @@
 
 					<div class="col-md-9 col-sm-6 hidden-xs">
 
-						<h2><?php _e( 'News', 'acrira' ); ?></h2>
-
 						<div class="news">
 
+							<h2><?php _e( 'News', 'acrira' ); ?></h2>
+
 							<div class="wrapper">
-								<div class="scroll">
+								<ul class="news-slider">
 
 									<?php 
-
 									
 										while ( have_rows('actualites') ) : the_row();
 
@@ -46,20 +45,24 @@
 
 												?>					
 
-													<div class="news-item" style="border-color: <?php echo $color; ?>;"> 
-														<h3>
-															<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-																<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
-																<?php echo $title; ?>
-															<?php if ( $link ) : ?></a><?php endif; ?>
-														</h3>
+													<li class="news-item" style="border-color: <?php echo $color; ?>;"> 
+														<ul class="scroll">
+															<li>
+																<h3>
+																	<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+																		<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
+																		<?php echo $title; ?>
+																	<?php if ( $link ) : ?></a><?php endif; ?>
+																</h3>
 
-														<?php if ( $link && $photo ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-															<?php if ( $photo ) : ?><img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" /><?php endif; ?>
-														<?php if ( $link && $photo ) : ?></a><?php endif; ?>
+																<?php if ( $link && $photo ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+																	<?php if ( $photo ) : ?><img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" /><?php endif; ?>
+																<?php if ( $link && $photo ) : ?></a><?php endif; ?>
 
-														<?php echo $text; ?>
-													</div>
+																<?php echo $text; ?>
+															</li>															
+														</ul>
+													</li>
 
 												<?php 
 
@@ -67,7 +70,7 @@
 
 									?>					
 
-								</div><!-- .scroll -->
+								</ul><!-- .scroll -->
 							</div><!-- .wrapper -->
 						</div><!-- .news -->
 					</div>
@@ -77,17 +80,6 @@
 
 			endif;
 
-		?>
-
-		<?php 
-			if ( ( twentyseventeen_is_frontpage() || ( is_home() && is_front_page() ) ) && ! has_nav_menu( 'top' ) ) : 
-				?>
-					<a href="#content" class="menu-scroll-down">
-						<?php echo twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ); ?>
-						<span class="screen-reader-text"><?php _e( 'menu-scroll-downll down to content', 'twentyseventeen' ); ?></span>
-					</a>
-				<?php 
-			endif; 
 		?>
 	</div><!-- .row -->
 </div><!-- .site-branding -->
