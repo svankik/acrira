@@ -34,11 +34,12 @@
 					while ( have_rows('bloc') ) : the_row();
 
 						$text  = get_sub_field( 'texte' );
-						$color = get_sub_field( 'couleur' );
+						$bg    = get_sub_field( 'couleur' );
+						$color = get_sub_field( 'couleur-texte' );
 
 						?>
 							<div class="info-bloc">
-								<div style="background-color: <?php print $color; ?>">
+								<div style="background-color: <?php print $bg; ?>; color: <?php print $color; ?>;">
 									<div>
 										<?php echo $text ?>
 									</div>

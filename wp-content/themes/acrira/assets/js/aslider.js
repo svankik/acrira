@@ -256,6 +256,16 @@
 				}, 250 );
 			} );
 
+			$( window ).on( 'blur', function () {
+				clearTimeout( tTimer );
+			} );
+
+			$( window ).on( 'focus', function () {
+				tTimer = setTimeout( function() {
+					play( current );
+				}, transition );
+			} );
+
 		} );
 
 	}
