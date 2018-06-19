@@ -16,8 +16,8 @@
 		 * Header Slider
 		 */
 		$( '.header-slider' ).bxSlider( {
-			mode: 'fade',
-			auto: true,
+			mode    : 'fade',
+			auto    : true,
 			controls: false,
 		} );
 
@@ -112,10 +112,12 @@
 				} );
 
 				$newsSlider.bxSlider( {
-					mode: 'fade',
-					auto: false,
-					controls: true,
-					onSliderLoad: function () {
+					mode          : 'fade',
+					auto          : true,
+					controls      : true,
+					autoControls  : true,
+					pause         : 6000,
+					onSliderLoad  : function () {
 					},
 					onSliderResize: function () {
 						// var $newsH = $logo.height();
@@ -126,7 +128,7 @@
 						// 	$(el).data( 'scroll' ).refresh();
 						// } );
 					},
-					onSlideAfter: function ($item) {
+					onSlideAfter  : function ($item) {
 						$item.data( 'scroll' ).refresh();
 					}
 				} );

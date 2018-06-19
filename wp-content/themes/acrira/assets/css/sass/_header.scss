@@ -270,6 +270,7 @@
 		color: #fff;
 		padding: $grid-gutter-width/2;
 		position: relative;
+		margin-left: -$grid-gutter-width;
 		@include border-top-radius(4px);
 		@include border-bottom-radius(4px);
 
@@ -356,8 +357,56 @@
 			}
 		}
 
+		.bx-controls {
+			text-align: center;
+			position: relative;
+			bottom: -20px;
+		}
+
+		.bx-controls-direction {
+			display: none;
+		}
+
+		.bx-controls-auto {
+			position: relative;
+			display: inline-block;
+			bottom: 0;
+			right: 0;
+			top: $grid-gutter-width/6;
+			left: 0;
+
+			a {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				background-repeat: no-repeat;
+				background-position: 50% 50%;
+
+				&.active {
+					display: none;
+				}
+			}
+
+			.bx-start {
+				background-image: url(../img/play.png);
+			}
+
+			.bx-stop {
+				background-image: url(../img/pause.png);
+			}
+		}
+
 		.bx-pager {
-			bottom: -4*$grid-gutter-width/3;
+			position: relative;
+			display: inline-block;
+			bottom: inherit;
+			width: auto;
+			text-align: center;
+			bottom: 0;
+			right: 0;
+			top: 0;
+			left: 0;
+			padding-top: 0;
 
 			a {
 				background-color: #999;
