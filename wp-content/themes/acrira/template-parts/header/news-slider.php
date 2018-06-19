@@ -10,7 +10,7 @@
 
 ?>					
 
-<div class="col-md-9 col-sm-6 hidden-xs">
+<div class="col-md-6 col-md-push-3 col-sm-6 hidden-xs">
 
 	<div class="news">
 
