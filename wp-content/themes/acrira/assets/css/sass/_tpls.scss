@@ -83,10 +83,17 @@
 	.entry-partners {
 
 		.partner {
+			position: relative;
 			text-align: center;
+			height: 200px;
+			margin-bottom: $grid-gutter-width/2;
 
-			img {
-				margin-bottom: $grid-gutter-width/2;
+			a {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 95%;
+				@include translate(-50%, -50%);
 			}
 
 			@media (max-width: $screen-xs-max) {
