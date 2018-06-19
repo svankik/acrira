@@ -49,6 +49,7 @@
 
 		.entry-content {
 			max-height: 0;
+			text-align: right;
 			overflow: hidden;
 			padding: 0 $grid-gutter-width;
 			border-top: 0 solid $gray-lighter;
@@ -60,6 +61,32 @@
 
 			.entry-content {
 				border-color: #fff;
+			}
+		}
+	}
+
+	.toggle-accrodion {
+		@include clearfix();
+
+		&:before {
+			content: '+';
+			color: #fff;
+			background-color: #c0c0c0;
+			display: inline-block;
+			float: right;
+			font-size: 20px;
+			text-align: center;
+			width: $grid-gutter-width;
+			height: $grid-gutter-width;
+			line-height: $grid-gutter-width;
+			@include border-top-radius(100px); 
+			@include border-bottom-radius(100px); 
+		}
+
+		&.active {
+	
+			&:before {
+				content: '-';
 			}
 		}
 	}

@@ -27,7 +27,9 @@
 		 */
 		$( '.accordion' ).each( function () {
 
-			$( 'article', $( this ) ).each( function() {
+			var $accordion =  $( this );
+
+			$( 'article', $accordion ).each( function() {
 
 				$( '.entry-header', $( this ) ).on( 'click', function(e) {
 					e.preventDefault();
@@ -36,6 +38,25 @@
 				} );
 
 			} );
+
+			var $accordionToggler = $( '<a />', {
+				class: 'toggle-accrodion',
+				href : '#',
+			} );
+
+			$accordionToggler.on( 'click', function(e) {
+				e.preventDefault();
+
+				if( $(this).hasClass( 'active' ) ) {
+					$( '.entry-header', $accordion ).removeClass( 'active' )
+				}
+				else {
+					$( '.entry-header', $accordion ).addClass( 'active' )
+				}
+				$(this).toggleClass( 'active' );
+			} );
+
+			$accordion.prepend( $accordionToggler );
 
 		} );
 
