@@ -376,12 +376,14 @@
 		line-height: 31px;
 		text-align: right;
 		position: absolute;
-		top: 1px;
-		right: #{$grid-gutter-width/2 + 1};
+		top: 50%;
+		right: 0;
 		padding: 0 $grid-gutter-width/2;
-		background-color: transparentize(#000, 0.6);
+		// background-color: transparentize(#000, 0.6);
 		border-top-right-radius: 4px;
 		border-bottom-left-radius: 4px;
 		z-index: 10;
+		@include transform(rotate(90deg) translate(50%, -50%));
+		@include transform-origin(100% 0);
 	}
 }
