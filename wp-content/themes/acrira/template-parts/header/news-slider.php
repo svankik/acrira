@@ -39,14 +39,14 @@
 												<?php if ( $photo ) : ?><img src="<?php echo $photo['sizes']['news']; ?>" alt="<?php $photo['alt'] ?>" class="align-left" /><?php endif; ?>
 											<?php if ( $link && $photo ) : ?></a><?php endif; ?>
 
-											<div class="text-wrapper">
-												<h3>
-													<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
-														<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
-														<?php echo $title; ?>
-													<?php if ( $link ) : ?></a><?php endif; ?>
-												</h3>												
-											</div>
+											<h3>
+												<?php if ( $link ) : ?><a href="<?php echo $link; ?>" target="<?php echo $target; ?>"><?php endif; ?>
+													<span class="dot" style="background-color: <?php echo $color; ?>;"></span>
+													<?php echo $title; ?>
+												<?php if ( $link ) : ?></a><?php endif; ?>
+											</h3>
+
+											<br />
 
 											<?php echo $text; ?>
 										</li>															
