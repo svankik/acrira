@@ -48,9 +48,9 @@ get_header(); ?>
 
 		?>
 
-		<div class="entry-map">
+		<div class="entry-map col-md-12">
 				
-			<div class="acf-map" style="width:100%; height: 400px;">
+			<div class="acf-map">
 
 				<?php
 
