@@ -81,12 +81,16 @@
 			line-height: $grid-gutter-width;
 			@include border-top-radius(100px); 
 			@include border-bottom-radius(100px); 
+			@include smooth-transition(); 
+			// @include rotate(90deg);
+			// @include transform-origin(50% 50%); 
 		}
 
 		&.active {
 	
 			&:before {
 				content: '-';
+				// @include rotate(-90deg);
 			}
 		}
 	}
