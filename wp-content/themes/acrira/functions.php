@@ -82,8 +82,47 @@ function acrira_enqueue_styles() {
 			wp_get_theme()->get('Version')
 		);
 	}
+
+	// Gmap API KEY
+	$googleapis_map_url = 'https://maps.googleapis.com/maps/api/js';
+	$googleapis_map_url .= defined ( 'GOOGLE_MAP_API_KEY' ) ? '?key=' . GOOGLE_MAP_API_KEY : '';
+
+	wp_enqueue_script ( 'googleapis-map',
+		$googleapis_map_url,
+		array(),
+		wp_get_theme ()->get ('Version')
+	);
+
+	wp_enqueue_script ( 'acf-gmap',
+		get_stylesheet_directory_uri () . '/assets/js/gmap.js',
+		array( 'jquery', 'googleapis-map' ),
+		wp_get_theme ()->get ('Version')
+	);
+
+	wp_localize_script ( 'acf-gmap',
+		'acfgmapParams',
+		array (
+			'themeUrl' => get_stylesheet_directory_uri (),
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'acrira_enqueue_styles' );
+
+/**
+ * ACF Google Map API Key
+ *
+ * @param   [type]  $api  [description]
+ *
+ * @return  [type]        [description]
+ */
+function acrira_acf_google_map_api( $api ){
+
+	$api['key'] = defined ( 'GOOGLE_MAP_API_KEY' ) ? GOOGLE_MAP_API_KEY : '';
+
+	return $api;
+
+}
+add_filter('acf/fields/google_map/api', 'acrira_acf_google_map_api');
 
 /**
  * Callback function to filter the MCE settings
@@ -356,17 +395,26 @@ function acrira_get_menu_parent_ID( $menu_name ) {
 	if( !isset($menu_name) ){
 		return "No menu name provided in arguments";
 	}
-	$menu_slug = $menu_name;
-	$locations = get_nav_menu_locations();
-	$menu_id   = $locations[$menu_slug];
+
+	$menu_slug      = $menu_name;
+	$locations      = get_nav_menu_locations();
+	$menu_id        = $locations[$menu_slug];
 	$post_id        = get_the_ID();
 	$menu_items     = wp_get_nav_menu_items( $menu_id );
 	$parent_item_id = wp_filter_object_list( $menu_items, array( 'object_id' => $post_id ), 'and', 'menu_item_parent');
 	$parent_item_id = array_shift( $parent_item_id );
+	
 	if( !empty($parent_item_id) ) {
 		return acrira_checkForParent( $parent_item_id, $menu_items );
 	}
-	else {
+	else if( ! is_front_page() ) {
+		$secteur = get_field( 'secteur', $post_id );
+
+		if( ! empty ( $secteur ) ) {
+			return get_theme_mod( sprintf( 'acrira_menu_entry_%d', $secteur ) );
+		}
+
+
 		return $post_id;
 	}
 }
@@ -375,6 +423,7 @@ function acrira_checkForParent( $parent_item_id, $menu_items ) {
 	$parent_post_id = wp_filter_object_list( $menu_items, array( 'ID' => $parent_item_id ), 'and', 'object_id' );
 	$parent_item_id = wp_filter_object_list( $menu_items, array( 'ID' => $parent_item_id ), 'and', 'menu_item_parent');
 	$parent_item_id = array_shift( $parent_item_id );
+	
 	if( $parent_item_id == "0" ) {
 		$parent_post_id = array_shift( $parent_post_id );
 		return $parent_post_id;

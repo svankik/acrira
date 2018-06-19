@@ -16,12 +16,12 @@
 	<header class="entry-header">
 		<div class="title">
 			<?php
-				the_title( '<h2 class="entry-title">', '</h2>' );
+				printf( '%s (%s)', get_field( 'ville' ), get_field( 'departement' ) );
 			?>
 		</div>
 		<div class="subtitle">
 			<?php
-				printf( '%s (%s)', get_field( 'ville' ), get_field( 'departement' ) );
+				the_title( '<h2 class="entry-title">', '</h2>' );
 			?>
 		</div>
 	</header><!-- .entry-header -->
