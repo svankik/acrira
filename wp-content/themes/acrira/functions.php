@@ -395,17 +395,26 @@ function acrira_get_menu_parent_ID( $menu_name ) {
 	if( !isset($menu_name) ){
 		return "No menu name provided in arguments";
 	}
-	$menu_slug = $menu_name;
-	$locations = get_nav_menu_locations();
-	$menu_id   = $locations[$menu_slug];
+
+	$menu_slug      = $menu_name;
+	$locations      = get_nav_menu_locations();
+	$menu_id        = $locations[$menu_slug];
 	$post_id        = get_the_ID();
 	$menu_items     = wp_get_nav_menu_items( $menu_id );
 	$parent_item_id = wp_filter_object_list( $menu_items, array( 'object_id' => $post_id ), 'and', 'menu_item_parent');
 	$parent_item_id = array_shift( $parent_item_id );
+	
 	if( !empty($parent_item_id) ) {
 		return acrira_checkForParent( $parent_item_id, $menu_items );
 	}
-	else {
+	else if( ! is_front_page() ) {
+		$secteur = get_field( 'secteur', $post_id );
+
+		if( ! empty ( $secteur ) ) {
+			return get_theme_mod( sprintf( 'acrira_menu_entry_%d', $secteur ) );
+		}
+
+
 		return $post_id;
 	}
 }
@@ -414,6 +423,7 @@ function acrira_checkForParent( $parent_item_id, $menu_items ) {
 	$parent_post_id = wp_filter_object_list( $menu_items, array( 'ID' => $parent_item_id ), 'and', 'object_id' );
 	$parent_item_id = wp_filter_object_list( $menu_items, array( 'ID' => $parent_item_id ), 'and', 'menu_item_parent');
 	$parent_item_id = array_shift( $parent_item_id );
+	
 	if( $parent_item_id == "0" ) {
 		$parent_post_id = array_shift( $parent_post_id );
 		return $parent_post_id;
