@@ -49,6 +49,11 @@
 				a {
 					color: #fff;
 
+					&.bloc-link {
+						font-size: 16px;
+						line-height: 20px;					
+					}
+
 					&:hover {
 						color: $gray-lighter;
 					}

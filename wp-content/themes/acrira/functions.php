@@ -135,6 +135,11 @@ function acrira_mce_before_init_insert_formats( $init_array ) {
 	
 	$style_formats = array(  
 		array(  
+			'title'   => __ ( 'Bloc Link', 'acrira' ),  
+			'inline'  => 'a',  
+			'classes' => 'bloc-link',
+		),  
+		array(  
 			'title'   => __ ( 'Sub Title (Educational tool)', 'acrira' ),  
 			'inline'  => 'span',  
 			'classes' => 'et-sub-title',
