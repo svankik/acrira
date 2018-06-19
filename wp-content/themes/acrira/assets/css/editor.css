@@ -1145,6 +1145,9 @@ body {
     margin-bottom: 15px; }
   #tinymce .mce-preview-object {
     display: block; }
+  #tinymce .bloc-link {
+    font-size: 16px;
+    line-height: 20px; }
 
 body:not(.home) #content h1 {
   font-size: 25px;
