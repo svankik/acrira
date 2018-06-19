@@ -93,9 +93,15 @@ function acrira_enqueue_styles() {
 		wp_get_theme ()->get ('Version')
 	);
 
+	wp_enqueue_script ( 'markerclusterer',
+		get_stylesheet_directory_uri () . '/assets/js/markerclusterer.js',
+		array( 'googleapis-map' ),
+		wp_get_theme ()->get ('Version')
+	);
+
 	wp_enqueue_script ( 'acf-gmap',
 		get_stylesheet_directory_uri () . '/assets/js/gmap.js',
-		array( 'jquery', 'googleapis-map' ),
+		array( 'jquery', 'markerclusterer' ),
 		wp_get_theme ()->get ('Version')
 	);
 
