@@ -268,7 +268,7 @@
 			var marker = new google.maps.Marker({
 				position: latlng,
 				map     : map,
-				//icon    : acfgmapParams.themeUrl + '/assets/img/pin.png'
+				icon    : acfgmapParams.themeUrl + '/assets/img/pin.png'
 			});
 
 			// add to array
