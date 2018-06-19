@@ -46,8 +46,9 @@
 				?>
 					<div class="partner col-md-2 col-sm-3 col-xs-4 <?php echo $type; ?>">
 						
-						<img src="<?php echo $image['sizes']['partner']; ?>" alt="<?php echo $name; ?>" />
-						<a href="<?php echo $link; ?>" target="_blank"><?php echo $name ?></a>
+						<a href="<?php echo $link; ?>" target="_blank">
+							<img src="<?php echo $image['sizes']['partner']; ?>" alt="<?php echo $name; ?>" />
+						</a>
 
 					</div>	
 				<?php
