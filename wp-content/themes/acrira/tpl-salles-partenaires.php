@@ -41,7 +41,8 @@ get_header(); ?>
 					array(
 						'post_type'      => 'cinema',
 						'category_name'  => 'lyceens-et-apprentis-au-cinema',
-						'orderby'        => 'title',
+						'orderby'        => 'meta_value',
+						'meta_key'		 => 'ville',
 						'order'          => 'ASC',
 						'posts_per_page' => -1,
 					)
