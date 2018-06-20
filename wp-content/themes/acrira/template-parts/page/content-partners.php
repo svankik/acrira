@@ -25,11 +25,15 @@
 		?>
 	</div><!-- .entry-content -->
 
-	<div class="entry-partners-filters">
-		
-		Filtrer par : <a href="#" data-key="all">Tous</a> |	<a href="#" data-key="cultural">Partenaires culturels</a> | <a href="#" data-key="financial">Partenaires financiers</a>
+	<?php if( get_field( 'filtres' ) ) : ?>
 
-	</div>
+		<div class="entry-partners-filters">
+			
+			Filtrer par : <a href="#" data-key="all">Tous</a> |	<a href="#" data-key="cultural">Partenaires culturels</a> | <a href="#" data-key="financial">Partenaires financiers</a>
+
+		</div>
+
+	<?php endif; ?>
 
 	<div class="entry-partners row">
 		
