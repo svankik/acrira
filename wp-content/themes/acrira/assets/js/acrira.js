@@ -42,6 +42,7 @@
 			var $accordionToggler = $( '<a />', {
 				class: 'toggle-accrodion',
 				href : '#',
+				title: 'Tout déplier / replier',
 			} );
 
 			$accordionToggler.on( 'click', function(e) {

@@ -5,6 +5,15 @@ register_field_group ( array (
 	'title'  => 'Informations partenaires',
 	'fields' => array (
 		array (
+			'key'           => 'field_5b2a0acad4aeb',
+			'label'         => 'Filtres',
+			'name'          => 'filtres',
+			'type'          => 'true_false',
+			'instructions'  => 'Cocher la case pour afficher les filtres de recherche sur la page.',
+			'message'       => '',
+			'default_value' => 1,
+		),
+		array (
 			'key'        => 'field_5a86a3c257cd1',
 			'label'      => 'Partenaires',
 			'name'       => 'partenaires',
