@@ -3,7 +3,9 @@
 
 	$ ( function () {
 
-		var gmapZoom = 15;
+		var gmapZoom  = 15,
+			currentIW = false
+		;
 
 		/*
 		*  new_map
@@ -236,6 +238,10 @@
 			});
 			
 			
+			// add marker clusters
+			add_markerCluster( map );
+			
+			
 			// center map
 			center_map( map );
 			
@@ -285,7 +291,13 @@
 				// show info window when marker is clicked
 				google.maps.event.addListener(marker, 'click', function() {
 
+					if( currentIW ) {
+						currentIW.close();
+					}
+
 					infowindow.open( map, marker );
+
+					currentIW = infowindow;
 
 				});
 			}
@@ -331,6 +343,35 @@
 				// fit to bounds
 				map.fitBounds( bounds );
 			}
+
+		}
+
+		/*
+		*  add_markerCluster
+		*
+		*  This function will add marker clusters
+		*
+		*  @type	function
+		*  @date	8/11/2013
+		*  @since	4.3.0
+		*
+		*  @param	map (Google Map object)
+		*  @return	n/a
+		*/
+
+		function add_markerCluster( map ) {
+
+			var markerCluster = new MarkerClusterer( map, map.markers, {
+					styles: [{
+						url          : acfgmapParams.themeUrl + '/assets/img/markercluster.png',
+						width        : 100,
+						height       : 100,
+						// anchor       : [50, 0],
+						textColor    : '#fff',
+						textSize     : 15
+					}]
+				} )
+			;
 
 		}
 
