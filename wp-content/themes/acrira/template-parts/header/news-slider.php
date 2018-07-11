@@ -14,8 +14,6 @@
 
 	<div class="news">
 
-		<h2><?php _e( 'News', 'acrira' ); ?></h2>
-
 		<div class="wrapper">
 			<ul class="news-slider">
 
