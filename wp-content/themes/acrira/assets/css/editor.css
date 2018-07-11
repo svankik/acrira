@@ -1031,7 +1031,7 @@ body {
   color: #000; }
   body b,
   body strong {
-    font-family: "Arial";
+    font-family: "ArialRoundedMTBold";
     font-weight: 400; }
   body #page {
     overflow-x: hidden; }
@@ -1051,6 +1051,8 @@ body {
     font-size: 11px; }
   body .nav-title {
     font-size: 14px; }
+  body .site-content {
+    padding-top: 60px; }
 
 .container-small {
   margin-right: auto;
@@ -1094,21 +1096,31 @@ body {
   src: url("../fonts/JDDaring-Regular.eot?#iefix") format("embedded-opentype"), url("../fonts/JDDaring-Regular.woff") format("woff"), url("../fonts/JDDaring-Regular.ttf") format("truetype"), url("../fonts/JDDaring-Regular.svg#JDDaring-Regular") format("svg");
   font-weight: normal;
   font-style: normal; }
+@font-face {
+  font-family: 'ArialRoundedMTBold';
+  src: url("../fonts/ArialRoundedMTBold.eot?#iefix") format("embedded-opentype"), url("../fonts/ArialRoundedMTBold.woff") format("woff"), url("../fonts/ArialRoundedMTBold.ttf") format("truetype"), url("../fonts/ArialRoundedMTBold.svg#ArialRoundedMTBold") format("svg");
+  font-weight: normal;
+  font-style: normal; }
 #tinymce {
   font-size: 16px;
   line-height: 20px; }
   #tinymce h1 {
-    font-size: 25px;
-    line-height: 30px;
-    text-transform: inherit; }
+    font-size: 60px;
+    line-height: 65px;
+    text-transform: inherit;
+    font-family: "ArialRoundedMTBold";
+    text-align: right;
+    letter-spacing: 0; }
   #tinymce h2 {
     font-size: 20px;
     line-height: 25px;
-    text-transform: inherit; }
+    text-transform: inherit;
+    font-family: "ArialRoundedMTBold"; }
   #tinymce h3 {
     font-size: 15px;
     line-height: 20px;
-    text-transform: inherit; }
+    text-transform: inherit;
+    font-family: "ArialRoundedMTBold"; }
   #tinymce ul {
     list-style: disc; }
     #tinymce ul ul {
@@ -1150,17 +1162,22 @@ body {
     line-height: 20px; }
 
 body:not(.home) #content h1 {
-  font-size: 25px;
-  line-height: 30px;
-  text-transform: inherit; }
+  font-size: 60px;
+  line-height: 65px;
+  text-transform: inherit;
+  font-family: "ArialRoundedMTBold";
+  text-align: right;
+  letter-spacing: 0; }
 body:not(.home) #content h2 {
   font-size: 20px;
   line-height: 25px;
-  text-transform: inherit; }
+  text-transform: inherit;
+  font-family: "ArialRoundedMTBold"; }
 body:not(.home) #content h3 {
   font-size: 15px;
   line-height: 20px;
-  text-transform: inherit; }
+  text-transform: inherit;
+  font-family: "ArialRoundedMTBold"; }
 body:not(.home) #content ul {
   list-style: disc; }
   body:not(.home) #content ul ul {

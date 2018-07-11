@@ -14,6 +14,10 @@ $color          = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' 
 
 ?>
 <style type="text/css">
+	article h1 {
+		color: <?php echo $color; ?> !important;
+	}
+
 	.navigation-top,
 	.navigation-top .sub-menu {
 		background-color: <?php echo $color; ?>;

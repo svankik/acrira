@@ -1,21 +1,26 @@
 
 @mixin editor-style() {
 	h1 {
-		font-size: 25px;
-		line-height: 30px;
+		font-size: 60px;
+		line-height: 65px;
 		text-transform: inherit;
+		font-family: $ff-b;
+		text-align: right;
+		letter-spacing: 0;
 	}
 
 	h2 {
 		font-size: 20px;
 		line-height: 25px;
 		text-transform: inherit;
+		font-family: $ff-b;
 	}
 
 	h3 {
 		font-size: 15px;
 		line-height: 20px;
 		text-transform: inherit;
+		font-family: $ff-b;
 	}
 
 	ul {

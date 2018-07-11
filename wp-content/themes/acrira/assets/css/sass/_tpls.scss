@@ -3,17 +3,17 @@
 
 	#content {		
 
-		h1 {
-			color: $c-red;
-			font-family: $ff-et-title;
-			font-size: 100px !important;
-			line-height: 105px !important;
-			letter-spacing: -2px;
-			text-align: center;
-			text-shadow: 4px 4px 10px #dda236;
-			text-transform: inherit;
-			@include rotate(-2deg);
-		}
+		// h1 {
+		// 	color: $c-red;
+		// 	font-family: $ff-et-title;
+		// 	font-size: 100px !important;
+		// 	line-height: 105px !important;
+		// 	letter-spacing: -2px;
+		// 	text-align: center;
+		// 	text-shadow: 4px 4px 10px #dda236;
+		// 	text-transform: inherit;
+		// 	@include rotate(-2deg);
+		// }
 
 		.info-row {
 			@include make-row($grid-gutter-width/3);
