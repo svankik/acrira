@@ -43,6 +43,10 @@ body {
 	.nav-title {
 		font-size: 14px;
 	}
+
+	.site-content {
+		padding-top: 2*$grid-gutter-width;
+	}
 }
 
 .container-small {
