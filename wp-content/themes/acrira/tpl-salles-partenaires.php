@@ -62,23 +62,9 @@ get_header(); ?>
 
                     <div class="marker" data-lat="<?php echo $map['lat']; ?>" data-lng="<?php echo $map['lng']; ?>">
 
-                        <div class="sr-only">
+                        <div>
 
-                            <h1 class="bold"><?php bloginfo( 'name' ); ?></h1>
-
-							<?php
-
-							$description = get_bloginfo( 'description', 'display' );
-
-							if ( $description || is_customize_preview() ) :
-
-								?>
-                                <p class="bold"><?php echo $description; ?></p>
-							<?php
-
-							endif;
-
-							?>
+                            <h2><?php the_title(); ?></h2>
 
                         </div>
 
