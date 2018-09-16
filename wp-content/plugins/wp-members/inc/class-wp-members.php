@@ -25,7 +25,16 @@ class WP_Members {
 	 * @access public
 	 * @var    string
 	 */
-	public $version;
+	public $version = WPMEM_VERSION;
+	
+	/**
+	 * Database version
+	 *
+	 * @since  3.2.2
+	 * @access public
+	 * @var    string
+	 */
+	public $db_version = WPMEM_DB_VERSION;
 	
 	/**
 	 * Content block settings.
@@ -188,7 +197,34 @@ class WP_Members {
 	 * @var    boolean
 	 */
 	public $texturize;
-
+	
+	/**
+	 * Enable product creation.
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 * @var boolean
+	 */
+	public $enable_products;
+	
+	/**
+	 * Enable logged-in menu clones.
+	 *
+	 * @since  3.2.0
+	 * @access public
+	 * @var    string
+	 */
+	public $clone_menus;
+	
+	/**
+	 * Container for error messages.
+	 *
+	 * @since  3.2.0
+	 * @access public
+	 * @var    string
+	 */
+	public $error;
+	
 	/**
 	 * Plugin initialization function.
 	 *
@@ -211,12 +247,16 @@ class WP_Members {
 		$settings = apply_filters( 'wpmem_settings', get_option( 'wpmembers_settings' ) );
 
 		// Validate that v3 settings are loaded.
-		if ( ! isset( $settings['version'] ) || $settings['version'] != WPMEM_VERSION ) {
+		if ( ! isset( $settings['version'] ) 
+			|| $settings['version'] != $this->version
+			|| ! isset( $settings['db_version'] ) 
+			|| $settings['db_version'] != $this->db_version ) {
 			/**
 			 * Load installation routine.
 			 */
 			require_once( WPMEM_PATH . 'wp-members-install.php' );
 			// Update settings.
+			/** This filter is documented in /inc/class-wp-members.php */
 			$settings = apply_filters( 'wpmem_settings', wpmem_do_install() );
 		}
 		
@@ -226,27 +266,20 @@ class WP_Members {
 		}
 		
 		$this->load_user_pages();
-
-		// Set the stylesheet.
-		$this->cssurl = ( isset( $this->style ) && $this->style == 'use_custom' ) ? $this->cssurl : $this->style;
-		
-		// Load forms.
-		$this->forms = new WP_Members_Forms;
-		
-		// Load api.
-		$this->api = new WP_Members_API;
-		
-		// Load user functions.
-		$this->user = new WP_Members_User;
+		$this->cssurl     = ( isset( $this->style ) && $this->style == 'use_custom' ) ? $this->cssurl : $this->style; // Set the stylesheet.
+		$this->forms      = new WP_Members_Forms;         // Load forms.
+		$this->api        = new WP_Members_API;           // Load api.
+		$this->user       = new WP_Members_User( $this ); // Load user functions.
+		$this->shortcodes = new WP_Members_Shortcodes();  // Load shortcodes.
+		$this->membership = new WP_Members_Products();    // Load membership plans
+		$this->email      = new WP_Members_Email;         // Load email functions
+		$this->menus      = ( $this->clone_menus ) ? new WP_Members_Menus() : null; // Load clone menus.
 		
 		/**
 		 * Fires after main settings are loaded.
 		 *
 		 * @since 3.0
-		 * @todo Consider deprecating this action. It is undocumented (and unlikely used by users),
-		 *       With the move of the remaining initial loading to the constructor, the object is
-		 *       no longer available to this action, and moving it doesn't make much sense since
-		 *       wpmem_after_init would come right after it.
+		 * @deprecated 3.2.0 Use wpmem_after_init instead.
 		 */
 		do_action( 'wpmem_settings_loaded' );
 	
@@ -256,12 +289,6 @@ class WP_Members {
 	
 		// Load actions and filters.
 		$this->load_hooks();
-	
-		// Load shortcodes.
-		$this->load_shortcodes();
-	
-		// Load fields.
-		//$this->load_fields();
 		
 		// Load contants.
 		$this->load_constants();
@@ -270,48 +297,6 @@ class WP_Members {
 		if ( $this->dropins ) {
 			$this->load_dropins();
 		}
-	}
-
-	/**
-	 * Plugin initialization function to load shortcodes.
-	 *
-	 * @since 3.0.0
-	 * @since 3.0.7 Added wpmem_show_count.
-	 * @since 3.1.0 Added wpmem_profile.
-	 * @since 3.1.1 Added wpmem_loginout.
-	 * @since 3.1.6 Dependencies now loaded by object.
-	 */
-	function load_shortcodes() {
-
-		/**
-		 * Fires before shortcodes load.
-		 *
-		 * @since 3.0.0
-		 * @since 3.1.6 Fires before shortcodes load.
-		 */
-		do_action( 'wpmem_load_shortcodes' );
-		
-		add_shortcode( 'wp-members',       'wpmem_shortcode'       );
-		add_shortcode( 'wpmem_field',      'wpmem_sc_fields'       );
-		add_shortcode( 'wpmem_logged_in',  'wpmem_sc_logged_in'    );
-		add_shortcode( 'wpmem_logged_out', 'wpmem_sc_logged_out'   );
-		add_shortcode( 'wpmem_logout',     'wpmem_sc_logout'       );
-		add_shortcode( 'wpmem_form',       'wpmem_sc_forms'        );
-		add_shortcode( 'wpmem_show_count', 'wpmem_sc_user_count'   );
-		add_shortcode( 'wpmem_profile',    'wpmem_sc_user_profile' );
-		add_shortcode( 'wpmem_loginout',   'wpmem_sc_loginout'     );
-		add_shortcode( 'wpmem_tos',        'wpmem_sc_tos'          );
-		add_shortcode( 'wpmem_avatar',     'wpmem_sc_avatar'       );
-		add_shortcode( 'wpmem_login_link', 'wpmem_sc_link'         );
-		add_shortcode( 'wpmem_reg_link',   'wpmem_sc_link'         );
-		
-		/**
-		 * Fires after shortcodes load.
-		 * 
-		 * @since 3.0.0
-		 * @since 3.1.6 Was wpmem_load_shortcodes, now wpmem_shortcodes_loaded.
-		 */
-		do_action( 'wpmem_shortcodes_loaded' );
 	}
 	
 	/**
@@ -330,26 +315,37 @@ class WP_Members {
 		do_action( 'wpmem_load_hooks' );
 
 		// Add actions.
-		add_action( 'template_redirect',     array( $this, 'get_action' ) );
-		add_action( 'widgets_init',          'widget_wpmemwidget_init' );  // initializes the widget
-		add_action( 'admin_init',            array( $this, 'load_admin' ) ); // check user role to load correct dashboard
+		add_action( 'template_redirect',     array( $this, 'get_action'  ) );
+		add_action( 'widgets_init',          array( $this, 'widget_init' ) );  // initializes the widget
+		add_action( 'admin_init',            array( $this, 'load_admin'  ) ); // check user role to load correct dashboard
 		add_action( 'admin_menu',            'wpmem_admin_options' );      // adds admin menu
 		add_action( 'user_register',         'wpmem_wp_reg_finalize' );    // handles wp native registration
 		add_action( 'login_enqueue_scripts', 'wpmem_wplogin_stylesheet' ); // styles the native registration
-		add_action( 'wp_print_styles',       'wpmem_enqueue_style' );      // load the stylesheet if using the new forms
-
+		add_action( 'wp_enqueue_scripts',    array( $this, 'enqueue_style' ) );  // Enqueues the stylesheet.
+		add_action( 'wp_enqueue_scripts',    array( $this, 'loginout_script' ) );
+		add_action( 'init',                  array( $this->membership, 'add_cpt' ), 0 ); // Adds membership plans custom post type.
+		add_action( 'wpmem_pwd_change',      array( $this->user, 'set_password' ), 9, 2 );
+		add_action( 'wpmem_pwd_change',      array( $this->user, 'set_as_logged_in' ), 10 );
+		add_action( 'pre_get_posts',         array( $this, 'do_hide_posts' ) );
+		add_action( 'customize_register',    array( $this, 'customizer_settings' ) );
+		
 		// Add filters.
 		add_filter( 'the_content',               array( $this, 'do_securify' ), 99 );
-		add_filter( 'allow_password_reset',      'wpmem_no_reset' );                 // no password reset for non-activated users
-		add_filter( 'register_form',             'wpmem_wp_register_form' );         // adds fields to the default wp registration
+		add_filter( 'allow_password_reset',      array( $this->user, 'no_reset' ) );           // no password reset for non-activated users
+		add_filter( 'register_form',             'wpmem_wp_register_form' );                   // adds fields to the default wp registration
 		add_action( 'woocommerce_register_form', 'wpmem_woo_register_form' );
-		add_filter( 'registration_errors',       'wpmem_wp_reg_validate', 10, 3 );   // native registration validation
-		add_filter( 'comments_open',             'wpmem_securify_comments', 99 );    // securifies the comments
-		add_filter( 'wpmem_securify',            'wpmem_reg_securify' );             // adds success message on login form if redirected
+		add_filter( 'registration_errors',       'wpmem_wp_reg_validate', 10, 3 );             // native registration validation
+		add_filter( 'comments_open',             array( $this, 'do_securify_comments' ), 99 ); // securifies the comments
+		add_filter( 'wpmem_securify',            array( $this, 'reg_securify' ) );             // adds success message on login form if redirected
+		add_filter( 'query_vars',                array( $this, 'add_query_vars' ), 10, 2 );    // adds custom query vars
+		add_filter( 'get_pages',                 array( $this, 'filter_get_pages' ) );
+		add_filter( 'wp_get_nav_menu_items',     array( $this, 'filter_nav_menu_items' ), null, 3 );
+		add_filter( 'get_previous_post_where',   array( $this, 'filter_get_adjacent_post_where' ) );
+		add_filter( 'get_next_post_where',       array( $this, 'filter_get_adjacent_post_where' ) );
 		
 		// If registration is moderated, check for activation (blocks backend login by non-activated users).
 		if ( $this->mod_reg == 1 ) { 
-			add_filter( 'authenticate', 'wpmem_check_activated', 99, 3 ); 
+			add_filter( 'authenticate', array( $this->user, 'check_activated' ), 99, 3 ); 
 		}
 
 		/**
@@ -414,21 +410,21 @@ class WP_Members {
 	 * @since 3.0.0
 	 */
 	function load_constants() {
-		( ! defined( 'WPMEM_BLOCK_POSTS'  ) ) ? define( 'WPMEM_BLOCK_POSTS',  $this->block['post']  ) : '';
-		( ! defined( 'WPMEM_BLOCK_PAGES'  ) ) ? define( 'WPMEM_BLOCK_PAGES',  $this->block['page']  ) : '';
-		( ! defined( 'WPMEM_SHOW_EXCERPT' ) ) ? define( 'WPMEM_SHOW_EXCERPT', $this->show_excerpt['post'] ) : '';
-		( ! defined( 'WPMEM_NOTIFY_ADMIN' ) ) ? define( 'WPMEM_NOTIFY_ADMIN', $this->notify    ) : '';
-		( ! defined( 'WPMEM_MOD_REG'      ) ) ? define( 'WPMEM_MOD_REG',      $this->mod_reg   ) : '';
-		( ! defined( 'WPMEM_CAPTCHA'      ) ) ? define( 'WPMEM_CAPTCHA',      $this->captcha   ) : '';
-		( ! defined( 'WPMEM_NO_REG'       ) ) ? define( 'WPMEM_NO_REG',       ( -1 * $this->show_reg['post'] ) ) : '';
+		( ! defined( 'WPMEM_BLOCK_POSTS'  ) ) ? define( 'WPMEM_BLOCK_POSTS',  $this->block['post']  ) : '';             // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_BLOCK_PAGES'  ) ) ? define( 'WPMEM_BLOCK_PAGES',  $this->block['page']  ) : '';             // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_SHOW_EXCERPT' ) ) ? define( 'WPMEM_SHOW_EXCERPT', $this->show_excerpt['post'] ) : '';       // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_NOTIFY_ADMIN' ) ) ? define( 'WPMEM_NOTIFY_ADMIN', $this->notify    ) : '';                  // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_MOD_REG'      ) ) ? define( 'WPMEM_MOD_REG',      $this->mod_reg   ) : '';                  // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_CAPTCHA'      ) ) ? define( 'WPMEM_CAPTCHA',      $this->captcha   ) : '';                  // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_NO_REG'       ) ) ? define( 'WPMEM_NO_REG',       ( -1 * $this->show_reg['post'] ) ) : '';  // @todo Can deprecate? Probably 3.3
 		( ! defined( 'WPMEM_USE_EXP'      ) ) ? define( 'WPMEM_USE_EXP',      $this->use_exp   ) : '';
 		( ! defined( 'WPMEM_USE_TRL'      ) ) ? define( 'WPMEM_USE_TRL',      $this->use_trial ) : '';
-		( ! defined( 'WPMEM_IGNORE_WARN'  ) ) ? define( 'WPMEM_IGNORE_WARN',  $this->warnings  ) : '';
+		( ! defined( 'WPMEM_IGNORE_WARN'  ) ) ? define( 'WPMEM_IGNORE_WARN',  $this->warnings  ) : '';                  // @todo Can deprecate? Probably 3.3
 
-		( ! defined( 'WPMEM_MSURL'  ) ) ? define( 'WPMEM_MSURL',  $this->user_pages['profile']  ) : '';
-		( ! defined( 'WPMEM_REGURL' ) ) ? define( 'WPMEM_REGURL', $this->user_pages['register'] ) : '';
-		( ! defined( 'WPMEM_LOGURL' ) ) ? define( 'WPMEM_LOGURL', $this->user_pages['login']    ) : '';
-		
+		( ! defined( 'WPMEM_MSURL'  ) ) ? define( 'WPMEM_MSURL',  $this->user_pages['profile']  ) : '';                 // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_REGURL' ) ) ? define( 'WPMEM_REGURL', $this->user_pages['register'] ) : '';                 // @todo Can deprecate? Probably 3.3
+		( ! defined( 'WPMEM_LOGURL' ) ) ? define( 'WPMEM_LOGURL', $this->user_pages['login']    ) : '';                 // @todo Can deprecate? Probably 3.3
+
 		( ! defined( 'WPMEM_DROPIN_DIR' ) ) ? define( 'WPMEM_DROPIN_DIR', WP_PLUGIN_DIR . '/wp-members-dropins/' ) : '';
 		
 		define( 'WPMEM_CSSURL', $this->cssurl );
@@ -456,20 +452,30 @@ class WP_Members {
 			include( $wpmem_pluggable );
 		}
 		
-		require_once( WPMEM_PATH . 'inc/class-wp-members-user.php' );
 		require_once( WPMEM_PATH . 'inc/class-wp-members-api.php' );
+		require_once( WPMEM_PATH . 'inc/class-wp-members-user.php' );
+		require_once( WPMEM_PATH . 'inc/class-wp-members-email.php' );
 		require_once( WPMEM_PATH . 'inc/class-wp-members-forms.php' );
+		require_once( WPMEM_PATH . 'inc/class-wp-members-menus.php' );
 		require_once( WPMEM_PATH . 'inc/class-wp-members-widget.php' );
-		require_once( WPMEM_PATH . 'inc/core.php' );
+		require_once( WPMEM_PATH . 'inc/class-wp-members-products.php' );
+		require_once( WPMEM_PATH . 'inc/class-wp-members-shortcodes.php' );
 		require_once( WPMEM_PATH . 'inc/api.php' );
-		require_once( WPMEM_PATH . 'inc/utilities.php' );
+		require_once( WPMEM_PATH . 'inc/api-email.php' );
+		require_once( WPMEM_PATH . 'inc/api-forms.php' );
+		require_once( WPMEM_PATH . 'inc/api-users.php' );
+		require_once( WPMEM_PATH . 'inc/api-utilities.php' );
 		require_once( WPMEM_PATH . 'inc/forms.php' );
 		require_once( WPMEM_PATH . 'inc/dialogs.php' );
-		require_once( WPMEM_PATH . 'inc/sidebar.php' );
-		require_once( WPMEM_PATH . 'inc/shortcodes.php' );
-		require_once( WPMEM_PATH . 'inc/email.php' );
-		//require_once( WPMEM_PATH . 'inc/users.php' ); @deprecated 3.1.9
+		require_once( WPMEM_PATH . 'inc/wp-registration.php' );
 		require_once( WPMEM_PATH . 'inc/deprecated.php' );
+		require_once( WPMEM_PATH . 'inc/core.php' ); // @todo Should be deprecated, functions are obsolete. Schedule for 3.3
+		//require_once( WPMEM_PATH . 'inc/utilities.php' ); // @deprecated 3.2.3
+		//require_once( WPMEM_PATH . 'inc/sidebar.php' ); // @deprecated 3.2.0
+		//require_once( WPMEM_PATH . 'inc/shortcodes.php' ); // @deprecated 3.2.0
+		//require_once( WPMEM_PATH . 'inc/email.php' ); // @deprecated 3.2.0
+		//require_once( WPMEM_PATH . 'inc/users.php' ); // @deprecated 3.1.9
+
 	}
 
 	/**
@@ -559,8 +565,8 @@ class WP_Members {
 			
 			case 'pwdchange':
 				$regchk = $this->user->password_update( 'change' );
- 				break;
-			
+				break;
+
 			case 'pwdreset':
 				$regchk = $this->user->password_update( 'reset' );
 				break;
@@ -694,14 +700,15 @@ class WP_Members {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @global string $wpmem_themsg Contains messages to be output.
 	 * @global object $post         The WordPress Post object.
+	 * @global object $wpmem        The WP_Members object.
+	 * @global string $wpmem_themsg Contains messages to be output.
 	 * @param  string $content
 	 * @return string $content
 	 */
 	function do_securify( $content = null ) {
 
-		global $wpmem_themsg, $post;
+		global $post, $wpmem, $wpmem_themsg;
 
 		$content = ( is_single() || is_page() ) ? $content : wpmem_do_excerpt( $content );
 
@@ -709,7 +716,7 @@ class WP_Members {
 
 			if ( $this->regchk == "captcha" ) {
 				global $wpmem_captcha_err;
-				$wpmem_themsg = __( 'There was an error with the CAPTCHA form.' ) . '<br /><br />' . $wpmem_captcha_err;
+				$wpmem_themsg = $wpmem->get_text( 'reg_captcha_err' )  . '<br /><br />' . $wpmem_captcha_err;
 			}
 
 			// Block/unblock Posts.
@@ -771,8 +778,17 @@ class WP_Members {
 			// Protects comments if expiration module is used and user is expired.
 			} elseif ( is_user_logged_in() && $this->is_blocked() == true ){
 
-				$content = ( $this->use_exp == 1 && function_exists( 'wpmem_do_expmessage' ) ) ? wpmem_do_expmessage( $content ) : $content;
-
+				if ( $this->use_exp == 1 && function_exists( 'wpmem_do_expmessage' ) ) {
+					/**
+					 * Filters the user expired message used by the PayPal extension.
+					 *
+					 * @since 3.2.0
+					 *
+					 * @param string $message
+					 * @param string $content
+					 */
+					$content = apply_filters( 'wpmem_do_expmessage', wpmem_do_expmessage( $content ), $content );
+				}
 			}
 		}
 
@@ -790,11 +806,231 @@ class WP_Members {
 			// Fix the wptexturize.
 			remove_filter( 'the_content', 'wpautop' );
 			remove_filter( 'the_content', 'wptexturize' );
-			add_filter( 'the_content', 'wpmem_texturize', 999 );
+			add_filter( 'the_content', array( $this, 'texturize' ), 999 );
 		}
 
 		return $content;
 		
+	}
+	
+	/**
+	 * Securifies the comments.
+	 *
+	 * If the user is not logged in and the content is blocked
+	 * (i.e. wpmem->is_blocked() returns true), function loads a
+	 * dummy/empty comments template.
+	 *
+	 * @since 2.9.9
+	 * @since 3.2.0 Moved wpmem_securify_comments() to main class, renamed.
+	 *
+	 * @return bool $open true if current post is open for comments, otherwise false.
+	 */
+	function do_securify_comments( $open ) {
+
+		$open = ( ! is_user_logged_in() && wpmem_is_blocked() ) ? false : $open;
+
+		/**
+		 * Filters whether comments are open or not.
+		 *
+		 * @since 3.0.0
+		 * @since 3.2.0 Moved to main class.
+		 *
+		 * @param bool $open true if current post is open for comments, otherwise false.
+		 */
+		$open = apply_filters( 'wpmem_securify_comments', $open );
+
+		if ( ! $open ) {
+			/** This filter is documented in wp-includes/comment-template.php */
+			add_filter( 'comments_array', array( $this, 'do_securify_comments_array' ), 10, 2 );
+		}
+
+		return $open;
+	}
+	
+	/**
+	 * Empties the comments array if content is blocked.
+	 *
+	 * @since 3.0.1
+	 * @since 3.2.0 Moved wpmem_securify_comments_array() to main class, renamed.
+	 *
+	 * @global object $wpmem The WP-Members object class.
+	 *
+	 * @return array $comments The comments array.
+	 */
+	function do_securify_comments_array( $comments , $post_id ) {
+		$comments = ( ! is_user_logged_in() && wpmem_is_blocked() ) ? array() : $comments;
+		return $comments;
+	}
+
+	/**
+	 * Adds the successful registration message on the login page if reg_nonce validates.
+	 *
+	 * @since 3.1.7
+	 * @since 3.2.0 Moved to wpmem object, renamed reg_securify()
+	 *
+	 * @param  string $content
+	 * @return string $content
+	 */
+	function reg_securify( $content ) {
+		global $wpmem, $wpmem_themsg;
+		$nonce = wpmem_get( 'reg_nonce', false, 'get' );
+		if ( $nonce && wp_verify_nonce( $nonce, 'register_redirect' ) ) {
+			$content = wpmem_inc_regmessage( 'success', $wpmem_themsg );
+			$content = $content . wpmem_inc_login();
+		}
+		return $content;
+	}
+
+	/**
+	 * Gets an array of hidden post IDs.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpdb
+	 * @return array  $hidden
+	 */
+	function hidden_posts() {
+		global $wpdb;
+		$hidden = get_transient( '_wpmem_hidden_posts' );
+		if ( false === $hidden ) {
+			$hidden = $this->update_hidden_posts();
+		}
+		return $hidden;
+	}
+	
+	/**
+	 * Updates the hidden post array transient.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpdb
+	 * @return array  $hidden
+	 */
+	function update_hidden_posts() {
+		global $wpdb;
+		$hidden  = array();
+		$results = $wpdb->get_results( "SELECT post_id FROM " . $wpdb->prefix . "postmeta WHERE meta_key = '_wpmem_block' AND meta_value = 2" );
+		foreach( $results as $result ) {
+			$hidden[] = $result->post_id;
+		}
+		set_transient( '_wpmem_hidden_posts', $hidden, 60*5 );
+		return $hidden;
+	}
+	
+	/**
+	 * Gets an array of hidden post IDs.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpmem
+	 * @return array  $hidden
+	 */
+	function get_hidden_posts() {
+		global $wpmem;
+		$hidden = array();
+		// @todo This should really be either a transient, or an array of
+		// post IDs should be updated anytime a post is saved/updated.
+		if ( ! is_admin() && ( ! is_user_logged_in() ) ) {
+			$hidden = $this->hidden_posts();
+		}
+
+		// @todo Separate query here to check. If the user IS logged in, check what posts they DON'T have access to.
+		if ( ! is_admin() && is_user_logged_in() && 1 == $wpmem->enable_products ) {
+			// Get user product access.
+			// @todo This should certainly be a transient stored in the user object.
+			foreach ( $wpmem->membership->products as $key => $value ) {
+				if ( ! isset( $wpmem->user->access[ $key ] ) || ! $wpmem->user->is_current( $wpmem->user->access[ $key ] ) ) {
+					$hidden_posts = $this->hidden_posts();
+					$hidden_posts = ( is_array( $hidden_posts ) ) ? $hidden_posts : array();
+					foreach ( $hidden_posts as $post_id ) {
+						if ( 1 == get_post_meta( $post_id, $wpmem->membership->post_stem . $key, true ) ) {
+							$hidden[] = $post_id;
+						}
+					}
+				}
+			}
+		}
+		return $hidden;
+	}
+	
+	/**
+	 * Hides posts based on settings and meta.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param  array  $query
+	 * @return array  $query
+	 */
+	function do_hide_posts( $query ) {
+		$hidden_posts = $this->get_hidden_posts();
+		if ( ! empty( $hidden_posts ) ) {
+			$query->set( 'post__not_in', $hidden_posts );
+		}
+		return $query;
+	}
+
+	/**
+	 * Filter to hide pages for get_pages().
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpdb
+	 * @param  array  $pages
+	 * @return array  $pages
+	 */
+	function filter_get_pages( $pages ) {
+		$hidden_posts = $this->get_hidden_posts();
+		if ( ! empty ( $hidden_posts ) ) {
+			$new_pages = array();
+			foreach ( $pages as $key => $page ) {
+				if ( ! in_array( $page->ID, $hidden_posts ) ) {
+					$new_pages[ $key ] = $page;
+				}
+			}
+			$pages = $new_pages;
+		}
+		return $pages;
+	}
+
+	/**
+	 * Filter to hide menu items.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param  array  $items
+	 * @param         $menu
+	 * @param  array  $args
+	 * @return array  $items
+	 */
+	function filter_nav_menu_items( $items, $menu, $args ) {
+		$hidden_posts = $this->get_hidden_posts();
+		if ( ! empty( $hidden_posts ) ) {
+			foreach ( $items as $key => $item ) {
+				if ( in_array( $item->object_id, $hidden_posts ) ) {
+					unset( $items[ $key ] );
+				}
+			}
+		}
+		return $items;
+	}
+
+	/**
+	 * Filter to remove hidden posts from prev/next links.
+	 *
+	 * @since 3.2.4
+	 *
+	 * @global object $wpmem
+	 * @param  string $where
+	 * @return string $where
+	 */
+	function filter_get_adjacent_post_where( $where ) {
+		global $wpmem;
+		$hidden_posts = $this->get_hidden_posts();
+		if ( ! empty( $hidden_posts ) ) {
+			$hidden = implode( ",", $hidden_posts );	
+			$where  = $where . " AND p.ID NOT IN ( $hidden )";
+		}
+		return $where;
 	}
 
 	/**
@@ -812,12 +1048,8 @@ class WP_Members {
 		
 		// Validate fields settings.
 		if ( ! isset( $fields ) || empty( $fields ) ) {
-			/**
-			 * Load installation routine.
-			 */
-			require_once( WPMEM_PATH . 'wp-members-install.php' );
 			// Update settings.
-			$fields = wpmem_install_fields();
+			$fields = array( array( 10, 'Email', 'user_email', 'email', 'y', 'y', 'y' ) );
 		}
 		
 		// Add new field array keys
@@ -892,6 +1124,14 @@ class WP_Members {
 
 		// Default excluded fields.
 		$excluded_fields = array( 'password', 'confirm_password', 'confirm_email', 'password_confirm', 'email_confirm' );
+		
+		if ( 'update' == $tag || 'admin-profile' == $tag || 'user-profile' == $tag || 'wp-register' == $tag ) {
+			$excluded_fields[] = 'username';
+		}
+
+		if ( 'admin-profile' == $tag || 'user-profile' == $tag ) {
+			array_push( $excluded_fields, 'first_name', 'last_name', 'nickname', 'display_name', 'user_email', 'description', 'user_url' );
+		}
 
 		/**
 		 * Filter the fields to be excluded when user is created/updated.
@@ -924,7 +1164,6 @@ class WP_Members {
 		}
 	}
 	
-
 	/**
 	 * Returns a requested text string.
 	 *
@@ -957,15 +1196,25 @@ class WP_Members {
 			'confirm_password' => __( 'Confirm Password', 'wp-members' ),
 			'tos'              => __( 'TOS', 'wp-members' ),
 		);
+		
+		/*
+		 * Strings to be added in a future version, included so they will
+		 * be in the translation template ahead of time.
+		 * @todo Remove this once these strings have been officially included.
+		 */
+		$benign_strings = array(
+			__( 'No fields selected for deletion', 'wp-members' ),
+			__( 'Username or Email', 'wp-members' ),
+		);
 	
 		$defaults = array(
 			
 			// Login form.
 			'login_heading'        => __( 'Existing Users Log In', 'wp-members' ),
-			'login_username'       => __( 'Username' ),
-			'login_password'       => __( 'Password' ),
-			'login_button'         => __( 'Log In' ),
-			'remember_me'          => __( 'Remember Me' ),
+			'login_username'       => __( 'Username', 'wp-members' ),
+			'login_password'       => __( 'Password', 'wp-members' ),
+			'login_button'         => __( 'Log In', 'wp-members' ),
+			'remember_me'          => __( 'Remember Me', 'wp-members' ),
 			'forgot_link_before'   => __( 'Forgot password?', 'wp-members' ) . '&nbsp;',
 			'forgot_link'          => __( 'Click here to reset', 'wp-members' ),
 			'register_link_before' => __( 'New User?', 'wp-members' ) . '&nbsp;',
@@ -973,14 +1222,14 @@ class WP_Members {
 			
 			// Password change form.
 			'pwdchg_heading'       => __( 'Change Password', 'wp-members' ),
-			'pwdchg_password1'     => __( 'New password' ),
-			'pwdchg_password2'     => __( 'Confirm new password' ),
+			'pwdchg_password1'     => __( 'New password', 'wp-members' ),
+			'pwdchg_password2'     => __( 'Confirm new password', 'wp-members' ),
 			'pwdchg_button'        => __( 'Update Password', 'wp-members' ),
 			
 			// Password reset form.
 			'pwdreset_heading'     => __( 'Reset Forgotten Password', 'wp-members' ),
-			'pwdreset_username'    => __( 'Username' ),
-			'pwdreset_email'       => __( 'Email' ),
+			'pwdreset_username'    => __( 'Username', 'wp-members' ),
+			'pwdreset_email'       => __( 'Email', 'wp-members' ),
 			'pwdreset_button'      => __( 'Reset Password' ),
 			'username_link_before' => __( 'Forgot username?', 'wp-members' ) . '&nbsp;',
 			'username_link'        => __( 'Click here', 'wp-members' ),
@@ -994,15 +1243,15 @@ class WP_Members {
 			'register_heading'     => __( 'New User Registration', 'wp-members' ),
 			'register_username'    => __( 'Choose a Username', 'wp-members' ),
 			'register_rscaptcha'   => __( 'Input the code:', 'wp-members' ),
-			'register_tos'         => __( 'Please indicate that you agree to the %s TOS %s', 'wp-members' ),
+			'register_tos'         => __( 'Please indicate that you agree to the %s Terms of Service %s', 'wp-members' ), // @note: if default changes, default check after wpmem_tos_link_txt must change.
 			'register_clear'       => __( 'Reset Form', 'wp-members' ),
-			'register_submit'      => __( 'Register' ),
+			'register_submit'      => __( 'Register', 'wp-members' ),
 			'register_req_mark'    => '<span class="req">*</span>',
 			'register_required'    => '<span class="req">*</span>' . __( 'Required field', 'wp-members' ),
 			
 			// User profile update form.
 			'profile_heading'      => __( 'Edit Your Information', 'wp-members' ),
-			'profile_username'     => __( 'Username' ),
+			'profile_username'     => __( 'Username', 'wp-members' ),
 			'profile_submit'       => __( 'Update Profile', 'wp-members' ),
 			'profile_upload'       => __( 'Update this file', 'wp-members' ),
 			
@@ -1022,6 +1271,7 @@ class WP_Members {
 			'reg_empty_captcha'    => __( 'You must complete the CAPTCHA form.', 'wp-members' ),
 			'reg_invalid_captcha'  => __( 'CAPTCHA was not valid.', 'wp-members' ),
 			'reg_generic'          => __( 'There was an error processing the form.', 'wp-members' ),
+			'reg_captcha_err'      => __( 'There was an error with the CAPTCHA form.', 'wp-members' ),
 			
 			// Links.
 			'profile_edit'         => __( 'Edit My Information', 'wp-members' ),
@@ -1033,17 +1283,18 @@ class WP_Members {
 			'login_logout'         => __( 'Click to log out', 'wp-members' ),
 			'status_welcome'       => __( 'You are logged in as %s', 'wp-members' ),
 			'status_logout'        => __( 'click to log out', 'wp-members' ),
+			'menu_logout'          => __( 'Log Out', 'wp-members' ),
 			
 			// Widget.
 			'sb_status'            => __( 'You are logged in as %s', 'wp-members' ),
 			'sb_logout'            => __( 'click here to log out', 'wp-members' ),
 			'sb_login_failed'      => __( 'Login Failed!<br />You entered an invalid username or password.', 'wp-members' ),
 			'sb_not_logged_in'     => __( 'You are not logged in.', 'wp-members' ),
-			'sb_login_username'    => __( 'Username' ),
-			'sb_login_password'    => __( 'Password' ),
+			'sb_login_username'    => __( 'Username', 'wp-members' ),
+			'sb_login_password'    => __( 'Password', 'wp-members' ),
 			'sb_login_button'      => __( 'log in', 'wp-members' ),
 			'sb_login_forgot'      => __( 'Forgot?', 'wp-members' ),
-			'sb_login_register'    => __( 'Register' ),
+			'sb_login_register'    => __( 'Register', 'wp-members' ),
 			
 			// Default Dialogs.
 			'restricted_msg'       => __( "This content is restricted to site members.  If you are an existing user, please log in.  New users may register below.", 'wp-members' ),
@@ -1055,6 +1306,7 @@ class WP_Members {
 			'pwdchangesuccess'     => __( "Password successfully changed!", 'wp-members' ),
 			'pwdreseterr'          => __( "Either the username or email address do not exist in our records.", 'wp-members' ),
 			'pwdresetsuccess'      => __( "Password successfully reset!<br /><br />An email containing a new password has been sent to the email address on file for your account.", 'wp-members' ),
+			'product_restricted'   => __( "Sorry, you do not have access to this content.", 'wp-members' ),
 		
 		); // End of $defaults array.
 		
@@ -1073,7 +1325,6 @@ class WP_Members {
 	
 	} // End of get_text().
 	
-	
 	/**
 	 * Load the admin api.
 	 *
@@ -1089,6 +1340,287 @@ class WP_Members {
 			include_once( WPMEM_PATH . 'admin/includes/class-wp-members-admin-api.php' );
 			$this->admin = new WP_Members_Admin_API;
 		}
+	}
+	
+	/**
+	 * Initializes the WP-Members widget.
+	 *
+	 * @since 3.2.0 Replaces widget_wpmemwidget_init
+	 */
+	public function widget_init() {
+		// Register the WP-Members widget.
+		register_widget( 'widget_wpmemwidget' );
+	}
+	
+	/**
+	 * Adds WP-Members query vars to WP's public query vars.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @see https://codex.wordpress.org/Plugin_API/Filter_Reference/query_vars
+	 *
+	 * @param	array	$qvars
+	 */
+	public function add_query_vars ( $qvars ) {
+		$qvars[] = 'a'; // The WP-Members action variable.
+		return $qvars;
+	}
+	
+	/**
+	 * Enqueues login/out script for the footer.
+	 *
+	 * @since 3.2.0
+	 */
+	public function loginout_script() {
+		if ( is_user_logged_in() ) {
+			wp_enqueue_script(  'jquery' );
+			add_action( 'wp_footer', array( $this, 'do_loginout_script' ) );
+		}
+	}
+	
+	/**
+	 * Outputs login/out script for the footer.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpmem
+	 */
+	public function do_loginout_script() {
+		global $wpmem;
+		$logout = apply_filters( 'wpmem_logout_link', add_query_arg( 'a', 'logout' ) );
+		?><script type="text/javascript">
+			jQuery('.wpmem_loginout').html('<a class="login_button" href="<?php echo $logout; ?>"><?php echo $this->get_text( 'menu_logout' ); ?></a>');
+		</script><?php
+	}
+		
+	/**
+	 * Adds WP-Members controls to the Customizer
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param object $wp_customize The Customizer object.
+	 */
+	function customizer_settings( $wp_customize ) {
+		$wp_customize->add_section( 'wp_members' , array(
+			'title'      => 'WP-Members',
+			'priority'   => 190,
+		) );
+
+		// Add settings for output description
+		$wp_customize->add_setting( 'show_logged_out_state', array(
+			'default'    => '1',
+			'type'       => 'theme_mod', //'option'
+			'capability' => 'edit_theme_options',
+			'transport'  => 'refresh',
+		) );
+
+		// Add control and output for select field
+		$wp_customize->add_control( 'show_form_logged_out', array(
+			'label'      => __( 'Show forms as logged out', 'wp-members' ),
+			'section'    => 'wp_members',
+			'settings'   => 'show_logged_out_state',
+			'type'       => 'checkbox',
+			'std'        => '1'
+		) );
+	}
+
+	/**
+	 * Overrides the wptexturize filter.
+	 *
+	 * Currently only used for the login form to remove the <br> tag that WP puts in after the "Remember Me".
+	 *
+	 * @since 2.6.4
+	 * @since 3.2.3 Moved to WP_Members class.
+	 *
+	 * @todo Possibly deprecate or severely alter this process as its need may be obsolete.
+	 *
+	 * @param  string $content
+	 * @return string $new_content
+	 */
+	function texturize( $content ) {
+
+		$new_content = '';
+		$pattern_full = '{(\[wpmem_txt\].*?\[/wpmem_txt\])}is';
+		$pattern_contents = '{\[wpmem_txt\](.*?)\[/wpmem_txt\]}is';
+		$pieces = preg_split( $pattern_full, $content, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+		foreach ( $pieces as $piece ) {
+			if ( preg_match( $pattern_contents, $piece, $matches ) ) {
+				$new_content .= $matches[1];
+			} else {
+				$new_content .= wptexturize( wpautop( $piece ) );
+			}
+		}
+
+		return $new_content;
+	}
+	
+	/**
+	 * Loads the stylesheet for tableless forms.
+	 *
+	 * @since 2.6
+	 * @since 3.2.3 Moved to WP_Members class.
+	 *
+	 * @global object $wpmem The WP_Members object. 
+	 */
+	function enqueue_style() {
+		global $wpmem;
+		wp_enqueue_style ( 'wp-members', wpmem_force_ssl( $wpmem->cssurl ), '', WPMEM_VERSION );
+	}
+
+	/**
+	 * Creates an excerpt on the fly if there is no 'more' tag.
+	 *
+	 * @since 2.6
+	 * @since 3.2.3 Moved to WP_Members class.
+	 *
+	 * @global object $post  The post object.
+	 * @global object $wpmem The WP_Members object.
+	 *
+	 * @param  string $content
+	 * @return string $content
+	 */
+	function do_excerpt( $content ) {
+
+		global $post, $more, $wpmem;
+
+		$autoex = ( isset( $wpmem->autoex[ $post->post_type ] ) && 1 == $wpmem->autoex[ $post->post_type ]['enabled'] ) ? $wpmem->autoex[ $post->post_type ] : false;
+
+		// Is there already a 'more' link in the content?
+		$has_more_link = ( stristr( $content, 'class="more-link"' ) ) ? true : false;
+
+		// If auto_ex is on.
+		if ( $autoex ) {
+
+			// Build an excerpt if one does not exist.
+			if ( ! $has_more_link ) {
+
+				$is_singular = ( is_singular( $post->post_type ) ) ? true : false;
+
+				if ( $is_singular ) {
+					// If it's a single post, we don't need the 'more' link.
+					$more_link_text = '';
+					$more_link      = '';
+				} else {
+					// The default $more_link_text.
+					if ( isset( $wpmem->autoex[ $post->post_type ]['text'] ) && '' != $wpmem->autoex[ $post->post_type ]['text'] ) {
+						$more_link_text = __( $wpmem->autoex[ $post->post_type ]['text'], 'wp-members' );
+					} else {
+						$more_link_text = __( '(more&hellip;)' );
+					}
+					// The default $more_link.
+					$more_link = ' <a href="'. get_permalink( $post->ID ) . '" class="more-link">' . $more_link_text . '</a>';
+				}
+
+				// Apply the_content_more_link filter if one exists (will match up all 'more' link text).
+				/** This filter is documented in /wp-includes/post-template.php */
+				$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
+
+				$defaults = array(
+					'length'           => $autoex['length'],
+					'more_link'        => $more_link,
+					'blocked_only'     => false,
+				);
+				/**
+				 * Filter auto excerpt defaults.
+				 *
+				 * @since 3.0.9
+				 * @since 3.1.5 Deprecated add_ellipsis, strip_tags, close_tags, parse_shortcodes, strip_shortcodes.
+				 *
+				 * @param array {
+				 *     An array of settings to override the function defaults.
+				 *
+				 *     @type int         $length           The default length of the excerpt.
+				 *     @type string      $more_link        The more link HTML.
+				 *     @type boolean     $blocked_only     Run autoexcerpt only on blocked content. default: false.
+				 * }
+				 * @param string $post->ID        The post ID.
+				 * @param string $post->post_type The content's post type.					 
+				 */
+				$args = apply_filters( 'wpmem_auto_excerpt_args', '', $post->ID, $post->post_type );
+
+				// Merge settings.
+				$args = wp_parse_args( $args, $defaults );
+
+				// Are we only excerpting blocked content?
+				if ( $args['blocked_only'] ) {
+					$post_meta = get_post_meta( $post->ID, '_wpmem_block', true );
+					if ( 1 == $wpmem->block[ $post->post_type ] ) {
+						// Post type is blocked, if post meta unblocks it, don't do excerpt.
+						$do_excerpt = ( "0" == $post_meta ) ? false : true;
+					} else {
+						// Post type is unblocked, if post meta blocks it, do excerpt.
+						$do_excerpt = ( "1" == $post_meta ) ? true : false;
+					} 
+				} else {
+					$do_excerpt = true;
+				}
+
+				if ( $do_excerpt ) {
+					$content = wp_trim_words( $content, $args['length'], $args['more_link'] );
+					// Check if the more link was added (note: singular has no more_link):
+					if ( ! $is_singular && ! strpos( $content, $args['more_link'] ) ) {
+						$content = $content . $args['more_link'];
+					}
+				}
+
+			}
+		}
+
+		/**
+		 * Filter the auto excerpt.
+		 *
+		 * @since 2.8.1
+		 * @since 3.0.9 Added post ID and post type parameters.
+		 * 
+		 * @param string $content         The content excerpt.
+		 * @param string $post->ID        The post ID.
+		 * @param string $post->post_type The content's post type.
+		 */
+		$content = apply_filters( 'wpmem_auto_excerpt', $content, $post->ID, $post->post_type );
+
+		// Return the excerpt.
+		return $content;
+	}
+
+	/**
+	 * Convert form tag.
+	 *
+	 * @todo This is temporary to handle form tag conversion.
+	 *
+	 * @since 3.1.7
+	 * @since 3.2.3 Moved to WP_Members class.
+	 *
+	 * @param  string $tag
+	 * @return string $tag
+	 */
+	function convert_tag( $tag ) {
+		switch ( $tag ) {
+			case 'new':
+				return 'register';
+				break;
+			case 'edit':
+			case 'update':
+				return 'profile';
+				break;
+			case 'wp':
+			case 'wp_validate':
+			case 'wp_finalize':
+				return 'register_wp';
+				break;
+			case 'dashboard_profile':
+			case 'dashboard_profile_update':
+				return 'profile_dashboard';
+				break;
+			case 'admin_profile':
+			case 'admin_profile_update':
+				return 'profile_admin';
+				break;
+			default:
+				return $tag;
+				break;
+		}
+		return $tag;
 	}
 
 } // End of WP_Members class.

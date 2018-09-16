@@ -61,7 +61,19 @@
 		text-align: center;
 
 		> .menu {
-			display: inline-block;
+			@include flex-horizontal-align();
+
+			> li {
+
+				&:before,
+				&:after {
+					content: none !important;
+				}
+
+				> a {
+					text-align: center;
+				}
+			}
 		}
 	}
 

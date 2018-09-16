@@ -27,13 +27,29 @@ class WP_Members_User {
 	public $post_data = array();
 	
 	/**
+	 * Container for user access information.
+	 *
+	 * @since  3.2.0
+	 * @access public
+	 * @var    array
+	 */
+	public $access = array();
+	
+	/**
 	 * Initilize the User object.
 	 *
 	 * @since 3.1.7
+	 *
+	 * @param object $settings The WP_Members Object
 	 */
-	function __construct() {
+	function __construct( $settings ) {
 		//add_action( 'user_register', array( $this, 'register' ), 9 ); // @todo This need rigorous testing, especially front end processing such as WC.
 		add_action( 'wpmem_register_redirect', array( $this, 'register_redirect' ) );
+	
+		// Load anything the user as access to.
+		if ( 1 == $settings->enable_products ) {
+			$this->access = $this->get_user_products();
+		}
 	}
 	
 	/**
@@ -44,25 +60,24 @@ class WP_Members_User {
 	 * wrapper and is the direct function called for login.
 	 *
 	 * @since 3.1.7
+	 * @since 3.2.3 Removed wpmem_login_fields filter.
+	 * @since 3.2.3 Replaced form collection with WP script to facilitate login with username OR email.
+	 * @since 3.2.3 Changed to wp_safe_redirect().
 	 *
 	 * @return string Returns "loginfailed" if failed login.
 	 */
 	function login() {
 		
-		$creds = array( 'user_login' => 'log', 'user_password' => 'pwd', 'remember' => 'rememberme', 'redirect_to' => 'redirect_to' );
-		/**
-		 * Filter the $fields the function handles.
-		 *
-		 * @since 3.1.7
-		 *
-		 * @param array $creds
-		 */
-		$creds = apply_filters( 'wpmem_login_fields', $creds );
-		foreach ( $creds as $key => $val ) {
-			$creds[ $key ] = ( 'user_login' == $key ) ? sanitize_user( wpmem_get( $val ) ) : wpmem_get( $val );
+		if ( ! empty( $_POST['log'] ) && ! force_ssl_admin() ) {
+			$user_name = sanitize_user( $_POST['log'] );
+			$user = get_user_by( 'login', $user_name );
+
+			if ( ! $user && strpos( $user_name, '@' ) ) {
+				$user = get_user_by( 'email', $user_name );
+			}
 		}
 
-		$user = wp_signon( $creds, is_ssl() );
+		$user = wp_signon( array(), is_ssl() );
 
 		if ( is_wp_error( $user ) ) {
 			return "loginfailed";
@@ -74,13 +89,20 @@ class WP_Members_User {
 			/**
 			 * Filter the redirect url.
 			 *
+			 * This is the plugin's original redirect filter. In 3.1.7, 
+			 * WP's login_redirect filter hook was added to provide better
+			 * integration support for other plugins and also for users
+			 * who may already be using WP's filter(s). login_redirect
+			 * comes first, then wpmem_login_redirect. So wpmem_login_redirect
+			 * can be used to override a default in login_redirect.
+			 *
 			 * @since 2.7.7
 			 *
 			 * @param string $redirect_to The url to direct to.
 			 * @param int    $user->ID    The user's primary key ID.
 			 */
 			$redirect_to = apply_filters( 'wpmem_login_redirect', $redirect_to, $user->ID );
-			wp_redirect( $redirect_to );
+			wp_safe_redirect( $redirect_to );
 			exit();
 		}
 	}
@@ -93,6 +115,7 @@ class WP_Members_User {
 	 * wrapper and is the direct function called for logout.
 	 *
 	 * @since 3.1.7
+	 * @since 3.2.0 Added logout_redirect filter
 	 *
 	 * @param string $redirect_to URL to redirect the user to (default: false).
 	 */
@@ -100,6 +123,8 @@ class WP_Members_User {
 		// Default redirect URL.
 		$redirect_to = ( $redirect_to ) ? $redirect_to : home_url();
 
+		/** This filter is documented in /wp-login.php */
+		$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $redirect_to, wp_get_current_user() );
 		/**
 		 * Filter where the user goes when logged out.
 		 *
@@ -174,11 +199,11 @@ class WP_Members_User {
 		do_action( 'wpmem_post_register_data', $this->post_data );
 
 		// Send a notification email to the user.
-		wpmem_inc_regemail( $user_id, $this->post_data['password'], $wpmem->mod_reg, $wpmem->fields, $this->post_data );
+		$wpmem->email->to_user( $user_id, $this->post_data['password'], $wpmem->mod_reg, $wpmem->fields, $this->post_data );
 
 		// Notify admin of new reg, if needed.
 		if ( $wpmem->notify == 1 ) { 
-			wpmem_notify_admin( $user_id, $wpmem->fields, $this->post_data );
+			$wpmem->email->notify_admin( $user_id, $wpmem->fields, $this->post_data );
 		}
 		
 		/**
@@ -254,12 +279,6 @@ class WP_Members_User {
 		if ( $is_error ) {
 			return $is_error;
 		}
-		// Update user password.
-		wp_set_password( $args['pass1'], $user_ID );
-		// Maintain login state.
-		$user = get_user_by( 'id', $user_ID );
-		wp_set_current_user( $user_ID, $user->user_login );
-		wp_set_auth_cookie( $user_ID );
 		/**
 		 * Fires after password change.
 		 *
@@ -308,7 +327,7 @@ class WP_Members_User {
 					// Update the users password.
 					wp_set_password( $new_pass, $user->ID );
 					// Send it in an email.
-					wpmem_inc_regemail( $user->ID, $new_pass, 3 );
+					$wpmem->email->to_user( $user->ID, $new_pass, 3 );
 					/**
 					 * Fires after password reset.
 					 *
@@ -337,15 +356,17 @@ class WP_Members_User {
 	 * @since 3.1.6 Dependencies now loaded by object.
 	 * @since 3.1.8 Moved to user object.
 	 *
+	 * @global object $wpmem
 	 * @return string $regchk The regchk value.
 	 */
 	function retrieve_username() {
+		global $wpmem;
 		if ( isset( $_POST['formsubmit'] ) ) {
 			$email = sanitize_email( $_POST['user_email'] );
 			$user  = ( isset( $_POST['user_email'] ) ) ? get_user_by( 'email', $email ) : false;
 			if ( $user ) {
 				// Send it in an email.
-				wpmem_inc_regemail( $user->ID, '', 4 );
+				$wpmem->email->to_user( $user->ID, '', 4 );
 				/**
 				 * Fires after retrieving username.
 				 *
@@ -373,7 +394,7 @@ class WP_Members_User {
 	function upload_user_files( $user_id, $fields ) {
 		global $wpmem;
 		foreach ( $fields as $meta_key => $field ) {
-			if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) && is_array( $_FILES[ $meta_key ] ) ) {
+			if ( ( 'file' == $field['type'] || 'image' == $field['type'] ) && isset( $_FILES[ $meta_key ] ) && is_array( $_FILES[ $meta_key ] ) ) {
 				if ( ! empty( $_FILES[ $meta_key ]['name'] ) ) {
 					// Upload the file and save it as an attachment.
 					$file_post_id = $wpmem->forms->do_file_upload( $_FILES[ $meta_key ], $user_id );
@@ -384,4 +405,287 @@ class WP_Members_User {
 		}
 	}
 	
+	/**
+	 * Get user data for all fields in WP-Members.
+	 *
+	 * Retrieves user data for all WP-Members fields (and WP default fiels)
+	 * in an array keyed by WP-Members field meta keys.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param  mixed $user_id
+	 * @return array $user_fields 
+	 */
+	function user_data( $user_id = false ) {
+		$fields = wpmem_fields();
+		$user_id = ( $user_id ) ? $user_id : get_current_user_id();
+		$user_data = get_userdata( $user_id );
+		$excludes = array( 'first_name', 'last_name', 'description', 'nickname' );
+		foreach ( $fields as $meta => $field ) {
+			if ( $field['native'] == 1 && ! in_array( $meta, $excludes ) ) {
+				$user_fields[ $meta ] = $user_data->data->$meta;
+			} else {
+				$user_fields[ $meta ] = get_user_meta( $user_id, $meta, true );
+			}
+		}
+		return $user_fields;
+	}
+	
+	/**
+	 * Sets the role for the specified user.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param integer $user_id
+	 * @param string  $role
+	 * @param string  $action (set|add|remove)
+	 */
+	public function update_user_role( $user_id, $role, $action = 'set' ) {
+		$user = new WP_User( $user_id );
+		switch ( $action ) {
+			case 'add':
+				$user->add_role( $role );
+				break;
+			case 'remove':
+				$user->remove_role( $role );
+				break;
+			default:
+				$user->set_role( $role );
+				break;
+		}
+	}
+	
+	/**
+	 * Sets a user's password.
+	 *
+	 * @since 3.2.3
+	 *
+	 * @param	int		$user_id
+	 * @param	string	$password
+	 */
+	function set_password( $user_id, $password ) {
+		wp_set_password( $password, $user_id );
+	}
+	
+	/**
+	 * Sets user as logged on password change.
+	 *
+	 * (Hooked to wpmem_pwd_change)
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param	int		$user_id
+	 * @param	string	$password
+	 */
+	function set_as_logged_in( $user_id ) {
+		$user = get_user_by( 'id', $user_id );
+		wp_set_current_user( $user_id, $user->user_login );
+		wp_set_auth_cookie( $user_id );
+	}
+	
+	/**
+	 * Validates user access to content.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @global object $wpmem
+	 * @param  mixed  $product
+	 * @param  int    $user_id (optional)
+	 * @return bool   $access
+	 */
+	function has_access( $product, $user_id = false ) {
+		global $wpmem;
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id; //echo '<pre>'; global $wpmem; print_r( $wpmem ); 
+		$access  = false;
+		foreach ( $product as $prod ) {
+			if ( isset( $this->access[ $prod ] ) ) {
+				// Is this an expiration product?
+				if ( isset( $wpmem->membership->product_detail[ $prod ]['expires'][0] ) && ! is_bool( $this->access[ $prod ] ) ) {
+					if ( $this->is_current( $this->access[ $prod ] ) ) {
+						$access = true;
+						break;
+					}
+				} elseif ( '' != $wpmem->membership->product_detail[ $prod ]['role'] ) {
+					if ( $this->access[ $prod ] && wpmem_user_has_role( $wpmem->membership->product_detail[ $prod ]['role'] ) ) {
+						$access = true;
+						break;
+					}
+				} else {
+					if ( $this->access[ $prod ] ) {
+						$access = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Filter the access result.
+		 *
+		 * @since 3.2.0
+		 * @since 3.2.3 Added $product argument.
+		 *
+		 * @param  boolean $access
+		 * @param  mixed   $product
+		 * @param  integer $user_id
+		 * @param  array   $args
+		 */
+		return apply_filters( 'wpmem_user_has_access', $access, $product, $user_id );
+
+	}
+	
+	/**
+	 * Loads anything the user has access to.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param int $user_id
+	 */
+	function get_user_products( $user_id = false ) {
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+		return get_user_meta( $user_id, '_wpmem_products', true );
+	}
+	
+	/**
+	 * Sets a product as active for a user.
+	 *
+	 * If the product expires, it sets an expiration date
+	 * based on the time period. Otherwise the value is
+	 * set to "true" (which does not expire).
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $product
+	 * @param int    $user_id
+	 */
+	function set_user_product( $product, $user_id = false ) {
+
+		global $wpmem;
+		
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+		$user_products = $this->get_user_products( $user_id );
+		
+		if ( ! $user_products ) {
+			$user_products = array();
+		}
+
+		// Convert date to add.
+		$expires = ( isset( $wpmem->membership->product_detail[ $product ]['expires'] ) ) ? $wpmem->membership->product_detail[ $product ]['expires'] : false;
+		
+		if ( is_array( $expires ) ) {
+			$add_date = explode( "|", $wpmem->membership->product_detail[ $product ]['expires'][0] );
+			$add = ( 1 < $add_date[0] ) ? $add_date[0] . " " . $add_date[1] . "s" : $add_date[0] . " " . $add_date[1];
+			$user_products[ $product ] = ( isset( $user_products[ $product ] ) ) ? date( 'Y-m-d H:i:s', strtotime( $add, strtotime( $user_products[ $product ] ) ) ) : date( 'Y-m-d H:i:s', strtotime( $add ) );
+		} else {
+			$user_products[ $product ] = true;
+		}
+		//echo '<pre>'; print_r( $user_products ); echo "</pre>";
+		
+		// Update product setting.
+		return update_user_meta( $user_id, '_wpmem_products', $user_products );
+	}
+	
+	/**
+	 * Removes a product from a user.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $product
+	 * @param int    $user_id
+	 */
+	function remove_user_product( $product, $user_id = false ) {
+		global $wpmem;
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+		$user_products = $this->get_user_products( $user_id );
+		if ( $user_products ) {
+			unset( $user_products[ $product ] );
+			update_user_meta( $user_id, '_wpmem_products', $user_products );
+		}
+		return;
+	}
+	
+	/**
+	 * Utility for expiration validation.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param date $date
+	 */
+	function is_current( $date ) {
+		return ( time() < strtotime( $date ) ) ? true : false;
+	}
+	
+	/**
+	 * Check if a user is activated.
+	 *
+	 * @since 3.2.2
+	 *
+	 * @param  int   $user_id
+	 * @return bool  $active
+	 */
+	function is_user_activated( $user_id = false ) {
+		$user_id = ( ! $user_id ) ? get_current_user_id() : $user_id;
+		$active  = get_user_meta( $user_id, 'active', true );
+		return ( $active != 1 ) ? false : true;
+	}
+
+	/**
+	 * Checks if a user is activated during user authentication.
+	 *
+	 * @since 2.7.1
+	 * @since 3.2.0 Moved from core to user object.
+	 *
+	 * @param  object $user     The WordPress User object.
+	 * @param  string $username The user's username (user_login).
+	 * @param  string $password The user's password.
+	 * @return object $user     The WordPress User object.
+	 */ 
+	function check_activated( $user, $username, $password ) {
+		// Password must be validated.
+		$pass = ( ( ! is_wp_error( $user ) ) && $password ) ? wp_check_password( $password, $user->user_pass, $user->ID ) : false;
+
+		if ( ! $pass ) { 
+			return $user;
+		}
+
+		// Activation flag must be validated.
+		if ( ! $this->is_user_activated( $user->ID ) ) {
+			return new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: User has not been activated.', 'wp-members' ) );
+		}
+
+		// If the user is validated, return the $user object.
+		return $user;
+	}
+	
+	/**
+	 * Prevents users not activated from resetting their password.
+	 *
+	 * @since 2.5.1
+	 * @since 3.2.0 Moved to user object, renamed no_reset().
+	 *
+	 * @return bool Returns false if the user is not activated, otherwise true.
+	 */
+	function no_reset() {
+		global $wpmem;
+		$raw_val = wpmem_get( 'user_login', false );
+		if ( $raw_val ) {
+			if ( strpos( $raw_val, '@' ) ) {
+				$user = get_user_by( 'email', sanitize_email( $raw_val ) );
+			} else {
+				$username = sanitize_user( $raw_val );
+				$user     = get_user_by( 'login', $username );
+			}
+			if ( $wpmem->mod_reg == 1 ) { 
+				if ( get_user_meta( $user->ID, 'active', true ) != 1 ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 }
