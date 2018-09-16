@@ -1052,7 +1052,7 @@ body {
   body .nav-title {
     font-size: 14px; }
   body .site-content {
-    padding-top: 60px; }
+    padding-top: 0; }
 
 .container-small {
   margin-right: auto;
@@ -1110,7 +1110,9 @@ body {
     text-transform: inherit;
     font-family: "ArialRoundedMTBold";
     text-align: right;
-    letter-spacing: 0; }
+    letter-spacing: 0;
+    opacity: 0.5;
+    filter: alpha(opacity=50); }
   #tinymce h2 {
     font-size: 20px;
     line-height: 25px;
@@ -1167,7 +1169,9 @@ body:not(.home) #content h1 {
   text-transform: inherit;
   font-family: "ArialRoundedMTBold";
   text-align: right;
-  letter-spacing: 0; }
+  letter-spacing: 0;
+  opacity: 0.5;
+  filter: alpha(opacity=50); }
 body:not(.home) #content h2 {
   font-size: 20px;
   line-height: 25px;
