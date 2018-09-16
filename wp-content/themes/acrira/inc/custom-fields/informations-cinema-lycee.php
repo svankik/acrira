@@ -134,6 +134,16 @@ register_field_group ( array (
 			'toolbar'       => 'full',
 			'media_upload'  => 'yes',
 		),
+    array (
+      'key'           => 'field_5b9e3998bdea2',
+      'label'         => 'Coordinations locales / Passeurs d\'images',
+      'name'          => 'coordinations_locales',
+      'type'          => 'wysiwyg',
+      'instructions'  => 'Ce champ ne sert que pour Passeurs d\'images / Villes partenaires',
+      'default_value' => '',
+      'toolbar'       => 'full',
+      'media_upload'  => 'yes',
+    ),
 		array (
 			'key' => 'field_5ae85d55ec12d',
 			'label' => 'Localisation',
