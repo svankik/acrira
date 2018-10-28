@@ -51,7 +51,7 @@ get_header(); ?>
 
               while ( $films->have_posts() ) : $films->the_post();
 
-                get_template_part( 'template-parts/post/content', 'film' );
+                get_template_part( 'template-parts/page/content', 'film' );
 
               endwhile; // End of the loop.
 
