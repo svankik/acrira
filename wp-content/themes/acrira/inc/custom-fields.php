@@ -22,6 +22,9 @@ if( function_exists( 'register_field_group') ) {
 	
 	// Secteur
 	include get_stylesheet_directory() . '/inc/custom-fields/sector.php';
+
+	// Espace adhérents
+	include get_stylesheet_directory() . '/inc/custom-fields/espace-adherents.php';
 	
 	// // Team
 	// include get_stylesheet_directory() . '/inc/custom-fields/team.php';
