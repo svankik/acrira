@@ -18,6 +18,10 @@ $color          = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' 
 		color: <?php echo $color; ?> !important;
 	}
 
+	article .welcome {
+		color: <?php echo $color; ?> !important;
+	}
+
 	.navigation-top,
 	.navigation-top .sub-menu {
 		background-color: <?php echo $color; ?>;

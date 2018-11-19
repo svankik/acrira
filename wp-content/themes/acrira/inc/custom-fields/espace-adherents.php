@@ -47,9 +47,9 @@ register_field_group(array (
 	'location' => array (
 		array (
 			array (
-				'param' => 'page',
+				'param'    => 'page_template',
 				'operator' => '==',
-				'value' => '735',
+				'value'    => 'tpl-espace-adherents.php',
 				'order_no' => 0,
 				'group_no' => 0,
 			),
@@ -58,8 +58,7 @@ register_field_group(array (
 	'options' => array (
 		'position' => 'acf_after_title',
 		'layout' => 'no_box',
-		'hide_on_screen' => array (
-		),
+		'hide_on_screen' => array (),
 	),
 	'menu_order' => 0,
 ));
