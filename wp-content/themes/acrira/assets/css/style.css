@@ -2260,4 +2260,10 @@ ul.bxslider {
       margin-top: -35px;
       font-weight: 800; }
 
+#wpmem_reg .button_div,
+#wpmem_reg .div_text,
+#wpmem_login .button_div,
+#wpmem_login .div_text {
+  width: 100% !important; }
+
 /*# sourceMappingURL=style.css.map */

@@ -31,6 +31,15 @@ register_field_group ( array (
 				'group_no' => 0,
 			),
 		),
+		array (
+			array (
+				'param'    => 'post_type',
+				'operator' => '==',
+				'value'    => 'film',
+				'order_no' => 1,
+				'group_no' => 0,
+			),
+		),
 	),
 	'options' => array (
 		'position'       => 'side',
