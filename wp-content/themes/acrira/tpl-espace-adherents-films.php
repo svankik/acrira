@@ -15,52 +15,62 @@
  * @version 1.0
  */
 
+$user = wp_get_current_user();
+
 get_header(); ?>
 
-    <div class="container">
+	<div class="container">
 
-        <div class="content-area row">
+		<div class="content-area row">
 
-            <main id="main" class="site-main col-md-12" role="main">
+			<main id="main" class="site-main col-md-12" role="main">
 
-              <?php
-              while ( have_posts() ) : the_post();
+				<?php
+				while ( have_posts() ) : the_post();
 
-                get_template_part( 'template-parts/page/content', 'page' );
+					get_template_part( 'template-parts/page/content', 'page' );
 
-              endwhile; // End of the loop.
-              ?>
+				endwhile; // End of the loop.
+				?>
 
-            </main><!-- #main -->
+			</main><!-- #main -->
 
-          <?php
+			<?php
 
-          $films = new WP_Query(
-            array(
-              'post_type'      => 'film',
-              'order'          => 'ASC',
-              'posts_per_page' => -1,
-            )
-          );
+				if ( $user->ID ) :
 
-          ?>
+					$films = new WP_Query(
+						array(
+							'post_type'      => 'film',
+							'order'          => 'ASC',
+							'posts_per_page' => -1,
+						)
+					);
 
-            <div class="accordion col-md-12">
+					?>
 
-              <?php
+						<div class="accordion col-md-12">
 
-              while ( $films->have_posts() ) : $films->the_post();
+							<?php
 
-                get_template_part( 'template-parts/page/content', 'film' );
+							while ( $films->have_posts() ) : $films->the_post();
 
-              endwhile; // End of the loop.
+								get_template_part( 'template-parts/page/content', 'film' );
 
-              ?>
+							endwhile; // End of the loop.
 
-            </div>
+							?>
 
-        </div><!-- #primary -->
+						</div>
 
-    </div><!-- .wrap -->
+					<?php 
+
+				endif;
+
+			?>
+
+		</div><!-- #primary -->
+
+	</div><!-- .wrap -->
 
 <?php get_footer();
