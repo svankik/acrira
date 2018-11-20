@@ -10,10 +10,11 @@
 
 $sector         = get_field( 'secteur' );
 $menu_parent_id = ! empty( $sector ) ? get_theme_mod( 'acrira_menu_entry_' . $sector ) : acrira_get_menu_parent_ID( 'top' );
-$color          = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#fff' );
+$color          = get_theme_mod( 'acrira_menu_color_' . $menu_parent_id, '#2d2d2d' );
 
 ?>
 <style type="text/css">
+	article .welcome,
 	article h1 {
 		color: <?php echo $color; ?> !important;
 	}

@@ -425,7 +425,6 @@ function acrira_get_menu_parent_ID( $menu_name ) {
 			return get_theme_mod( sprintf( 'acrira_menu_entry_%d', $secteur ) );
 		}
 
-
 		return $post_id;
 	}
 }
