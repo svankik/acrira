@@ -12,7 +12,7 @@
 
 get_header(); ?>
 
-<div class="container-small">
+<div class="container">
 	<div class="content-area row">
 		<main id="main" class="site-main col-md-12" role="main">
 
@@ -37,7 +37,6 @@ get_header(); ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
-	<?php get_sidebar(); ?>
 </div><!-- .wrap -->
 
 <?php get_footer();

@@ -17,13 +17,22 @@ get_header(); ?>
 	<?php if ( have_posts() ) : ?>
 		<header class="page-header">
 			<?php
-				switch($_GET['secteur']) {
-					case 'lyceens-et-apprentis-au-cinema':
-						$title = 'Les films';
-						$introduction = __( '%% lycéens et apprentis au cinema / films introduction', 'acrira' );
-						break;
+				$title        = '';
+				$introduction = '';
+
+				if ( isset( $_GET['secteur'] ) ) {
+					switch($_GET['secteur']) {
+						case 'lyceens-et-apprentis-au-cinema':
+							$title = 'Les films';
+							$introduction = __( '%% lycéens et apprentis au cinema / films introduction', 'acrira' );
+							break;
+					}				
 				}
-				echo '<h1 class="page-title">'.$title.'</h1>' ;
+
+				if ( ! empty ( $title ) ) {
+					echo '<h1 class="page-title">'.$title.'</h1>';
+				}
+
 				echo $introduction;
 			?>
 		</header><!-- .page-header -->
