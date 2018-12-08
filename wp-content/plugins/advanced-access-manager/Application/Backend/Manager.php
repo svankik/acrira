@@ -43,6 +43,7 @@ class AAM_Backend_Manager {
         
         //print required JS & CSS
         add_action('admin_print_scripts', array($this, 'printJavascript'));
+        add_action('admin_print_footer_scripts', array($this, 'printFooterJavascript'));
         add_action('admin_print_styles', array($this, 'printStylesheet'));
         
         //map AAM UI specific capabilities
@@ -56,6 +57,9 @@ class AAM_Backend_Manager {
         
         //permalink manager
         add_filter('get_sample_permalink_html', array($this, 'getPermalinkHtml'), 10, 5);
+        
+        //access policy save
+        add_filter('wp_insert_post_data', array($this, 'filterPostData'), 10, 2);
         
         //screen options & contextual help hooks
         add_filter('screen_options_show_screen', array($this, 'screenOptions'));
@@ -78,6 +82,9 @@ class AAM_Backend_Manager {
             //register custom access control metabox
             add_action('add_meta_boxes', array($this, 'metabox'));
         }
+        
+        //register custom access control metabox
+        add_action('add_meta_boxes', array($this, 'registerPolicyDocMetabox'));
         
         //manager AAM Ajax Requests
         add_action('wp_ajax_aam', array($this, 'ajax'));
@@ -107,6 +114,11 @@ class AAM_Backend_Manager {
         //control admin area
         add_action('admin_init', array($this, 'adminInit'));
         
+        //admin toolbar
+        if (AAM::isAAM()) {
+            add_action('wp_after_admin_bar_render', array($this, 'cacheAdminBar'));
+        }
+        
         //register login widget
         if (AAM_Core_Config::get('core.settings.secureLogin', true)) {
             add_action('widgets_init', array($this, 'registerLoginWidget'));
@@ -120,11 +132,112 @@ class AAM_Backend_Manager {
         
         AAM_Extension_Repository::getInstance()->hasUpdates();
         
-        if (version_compare(PHP_VERSION, '5.3.0') == -1) {
+        if (version_compare(PHP_VERSION, '5.3.0') === -1) {
             AAM_Core_Console::add(
                 'AAM requires PHP version 5.3.0 or higher to function properly'
             );
         }
+    }
+    
+    /**
+     * 
+     * @param type $data
+     * @return type
+     */
+    public function filterPostData($data) {
+        if (isset($data['post_type']) && ($data['post_type'] === 'aam_policy')) {
+            $data['post_content'] = trim(filter_input(INPUT_POST, 'aam-policy'));
+            
+            if (empty($data['post_content'])) {
+                $data['post_content'] = <<<EOT
+{
+    "Version": "1.0.0",
+    "Statement": [
+        {
+            "Effect": "deny",
+            "Resource": [],
+            "Action": []
+        }
+    ]
+}
+EOT;
+            }
+            
+            AAM_Core_API::clearCache();
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * 
+     */
+    public function renderExportFields() {
+        ob_start();
+        require_once dirname(__FILE__) . '/phtml/system/export.phtml';
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        echo $content;
+    }
+    
+    /**
+     * 
+     * @param type $args
+     * @return type
+     */
+    public function prepareExportArgs($args) {
+        if ($args['content'] === 'aam') {
+            $export = array();
+            
+            foreach(AAM_Core_Request::get('export', array()) as $group => $settings) {
+                $export[$group] = implode(',', $settings);
+            }
+            
+            if (empty($export)) {
+                $export = array('system' => 'roles,utilities,configpress');
+            }
+            
+            $args['export'] = $export;
+        }
+        
+        return $args;
+    }
+    
+    /**
+     * 
+     * @param type $args
+     */
+    public function exportSettings($args) {
+        if ($args['content'] === 'aam') {
+            $filename = 'aam.export.' . date('Y-m-d') . '.json';
+            header('Content-Description: File Transfer');
+            header('Content-Disposition: attachment; filename=' . $filename);
+            header('Content-Type: application/json; charset=' . get_option('blog_charset'), true);
+            $exporter = new AAM_Core_Exporter($args['export']);
+            echo wp_json_encode($exporter->run());
+            die();
+        }
+    }
+    
+    /**
+     * 
+     */
+    protected function registerAAMImporter() {
+        register_importer(
+            'aam', 
+            'AAM Access Settings', 
+            'Advanced Access Manager access settings and configurations', 
+            array($this, 'renderImporer')
+        );
+    }
+    
+    /**
+     * 
+     */
+    public function renderImporer() {
+        $importer = new AAM_Core_Importer();
+        $importer->dispatch();
     }
     
     /**
@@ -134,7 +247,7 @@ class AAM_Backend_Manager {
      * @return type
      */
     public function mapMetaCap($caps, $cap) {
-        if (in_array($cap, AAM_Backend_Feature_Main_Capability::$groups['aam'])) {
+        if (in_array($cap, AAM_Backend_Feature_Main_Capability::$groups['aam'], true)) {
             if (!AAM_Core_API::capabilityExists($cap)) {
                 $caps = array(AAM_Core_Config::get('page.capability', 'administrator'));
             }
@@ -173,7 +286,7 @@ class AAM_Backend_Manager {
         $user = get_user_by('ID', $id);
         
         //role changed?
-        if (implode('', $user->roles) != implode('', $old->roles)) {
+        if (implode('', $user->roles) !== implode('', $old->roles)) {
             AAM_Core_API::clearCache(new AAM_Core_Subject_User($id));
             
             //check if role has expiration data set
@@ -251,7 +364,7 @@ class AAM_Backend_Manager {
     public function handleLogin() {
         $login = AAM_Core_Login::getInstance();
 
-        echo json_encode($login->execute());
+        echo wp_json_encode($login->execute());
         exit;
     }
     
@@ -266,6 +379,12 @@ class AAM_Backend_Manager {
             echo AAM_Backend_View::getInstance()->renderAccessFrame();
             exit;
         }
+        
+        // Import/Export feature
+        add_action('export_filters', array($this, 'renderExportFields'));
+        add_filter('export_args', array($this, 'prepareExportArgs'));
+        add_action('export_wp', array($this, 'exportSettings'));
+        $this->registerAAMImporter();
     }
     
     /**
@@ -321,7 +440,7 @@ class AAM_Backend_Manager {
      * 
      */
     protected function checkUserSwitch() {
-        if (AAM_Core_Request::get('action') == 'aam-switch-back') {
+        if (AAM_Core_Request::get('action') === 'aam-switch-back') {
             $current  = get_current_user_id();
             $uid      = AAM_Core_API::getOption('aam-user-switch-' . $current);
             $redirect = admin_url('admin.php?page=aam&user=' . $current);
@@ -355,11 +474,9 @@ class AAM_Backend_Manager {
                     'index.php?action=aam-switch-back', 'aam-switch-' . $uid
             );
             
-            $style = 'padding: 10px; font-weight: 700; letter-spacing:0.5px;';
-            
             echo '<div class="updated notice">';
-            echo '<p style="' . $style . '">';
-            echo sprintf('Switch back to <a href="%s">%s</a>.', $url, $name);
+            echo '<p style="padding: 10px; font-weight: 700; letter-spacing:0.5px;">';
+            echo sprintf('Switch back to <a href="%s">%s</a>.', $url, esc_js($name));
             echo '</p></div>';
         }
     }
@@ -368,11 +485,17 @@ class AAM_Backend_Manager {
      * 
      */
     public function metabox() {
+        global $post;
+        
         $frontend = AAM_Core_Config::get('core.settings.frontendAccessControl', true);
         $backend  = AAM_Core_Config::get('core.settings.backendAccessControl', true);
         $api      = AAM_Core_Config::get('core.settings.apiAccessControl', true);
         
-        if (($frontend || $backend || $api) && AAM::getUser()->hasCapability('aam_manage_posts')) {
+        $needAC  = ($frontend || $backend || $api);
+        $allowed = AAM::getUser()->hasCapability('aam_manage_posts');
+        $notASP  = (!is_a($post, 'WP_Post') || ($post->post_type !== 'aam_policy'));
+        
+        if ($needAC && $allowed && $notASP) {
             add_meta_box(
                 'aam-acceess-manager', 
                 __('Access Manager', AAM_KEY) . ' <small style="color:#999999;">by AAM plugin</small>', 
@@ -382,6 +505,88 @@ class AAM_Backend_Manager {
                 'high'
             );
         }
+    }
+    
+    /**
+     * 
+     * @global WP_Post $post
+     */
+    public function registerPolicyDocMetabox() {
+         global $post;
+         
+        if (is_a($post, 'WP_Post') && ($post->post_type === 'aam_policy')) {
+            add_meta_box(
+                'aam-policy', 
+                __('Policy Document', AAM_KEY), 
+                array($this, 'renderPolicyMetabox'),
+                null,
+                'normal',
+                'high'
+            );
+            add_meta_box(
+                'aam-policy-attached', 
+                __('Policy Principals', AAM_KEY), 
+                array($this, 'renderPolicyPrincipalMetabox'),
+                null,
+                'side'
+            );
+        }
+    }
+    
+    /**
+     * 
+     * @global WP_Post $post
+     */
+    public function renderPolicyMetabox() {
+        global $post;
+        
+        if (is_a($post, 'WP_Post')) {
+            echo AAM_Backend_View::getInstance()->renderPolicyMetabox($post);
+        }
+    }
+    
+    /**
+     * 
+     * @global WP_Post $post
+     */
+    public function renderPolicyPrincipalMetabox() {
+        global $post;
+        
+        if (is_a($post, 'WP_Post')) {
+            echo AAM_Backend_View::getInstance()->renderPolicyPrincipalMetabox($post);
+        }
+    }
+    
+    /**
+     * 
+     * @global type $wp_admin_bar
+     */
+    public function cacheAdminBar() {
+        global $wp_admin_bar;
+        static $cache = null;
+        
+        $reflection = new ReflectionClass(get_class($wp_admin_bar));
+        
+        $prop = $reflection->getProperty('nodes');
+        $prop->setAccessible(true);
+        
+        $nodes = $prop->getValue($wp_admin_bar);
+        
+        if (isset($nodes['root']) && is_null($cache)) {
+            $cache = array();
+            foreach($nodes['root']->children as $node) {
+                $cache = array_merge($cache, $node->children);
+            }
+            
+            // do some cleanup
+            foreach($cache as $i => $node) {
+                if ($node->id === 'menu-toggle') {
+                    unset($cache[$i]);
+                }
+            }
+        }
+        
+        return $cache;
     }
     
     /**
@@ -422,14 +627,13 @@ class AAM_Backend_Manager {
     public function initMetaboxes() {
         global $post;
 
-        if (AAM_Core_Request::get('init') == 'metabox') {
+        if (AAM_Core_Request::get('init') === 'metabox') {
             //make sure that nobody is playing with screen options
             if (is_a($post, 'WP_Post')) {
                 $screen = $post->post_type;
-            } elseif ($screen_object = get_current_screen()) {
-                $screen = $screen_object->id;
             } else {
-                $screen = '';
+                $screen_object = get_current_screen();
+                $screen        = ($screen_object ? $screen_object->id : '');
             }
         
             $model = new AAM_Backend_Feature_Main_Metabox;
@@ -500,7 +704,8 @@ class AAM_Backend_Manager {
      * @access public
      */
     public function userActions($actions, $user) {
-        if ($this->renderExternalUIFeature('list_users')) {
+        if ($this->renderExternalUIFeature('aam_manage_users') 
+                    || $this->renderExternalUIFeature('list_users')) {
             $url = admin_url('admin.php?page=aam&user=' . $user->ID);
 
             $actions['aam']  = '<a href="' . $url . '" target="_blank">';
@@ -535,10 +740,31 @@ class AAM_Backend_Manager {
     public function printJavascript() {
         if (AAM::isAAM()) {
             wp_enqueue_script('aam-vendor', AAM_MEDIA . '/js/vendor.js');
-            wp_enqueue_script('aam-main', AAM_MEDIA . '/js/aam.js');
+            wp_enqueue_script('aam-main', AAM_MEDIA . '/js/aam-5.7.js');
             
             //add plugin localization
             $this->printLocalization('aam-main');
+        }
+    }
+    
+    /**
+     * 
+     * @global type $menu
+     * @global type $submenu
+     */
+    public function printFooterJavascript() {
+        global $menu, $submenu;
+        
+        if (AAM::isAAM()) {
+            $script  = '<script type="text/javascript">';
+            $script .= 'var aamEnvData = ' . wp_json_encode(array(
+                'menu'    => base64_encode(json_encode($menu)),
+                'submenu' => base64_encode(json_encode($submenu)),
+                'toolbar' => base64_encode(json_encode($this->cacheAdminBar()))
+            )) ;
+            $script .= '</script>';
+
+            echo $script;
         }
     }
     
@@ -555,8 +781,9 @@ class AAM_Backend_Manager {
         $subject = AAM_Backend_Subject::getInstance();
         
         $locals = array(
-            'nonce'   => wp_create_nonce('aam_ajax'),
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce('aam_ajax'),
+            'ajaxurl'  => admin_url('admin-ajax.php'),
+            'ui'       => AAM_Core_Request::get('aamframe', 'main'),
             'url' => array(
                 'site'     => admin_url('index.php'),
                 'editUser' => admin_url('user-edit.php'),
@@ -576,10 +803,6 @@ class AAM_Backend_Manager {
                 'create_users' => current_user_can('create_users')
             )
         );
-        
-        if (AAM_Core_Request::get('aamframe')) {
-            $locals['ui'] = 'post';
-        }
         
         wp_localize_script($localKey, 'aamLocal', $locals);
     }
@@ -607,7 +830,7 @@ class AAM_Backend_Manager {
      * @access public
      */
     public function adminMenu() {
-        if (AAM_Core_Console::count()) {
+        if (AAM_Core_Console::count() && current_user_can('aam_show_notifications')) {
             $counter = '&nbsp;<span class="update-plugins">'
                      . '<span class="plugin-count">' . AAM_Core_Console::count()
                      . '</span></span>';
@@ -623,6 +846,15 @@ class AAM_Backend_Manager {
             'aam', 
             array($this, 'renderPage'), 
             AAM_MEDIA . '/active-menu.svg'
+        );
+        
+        // Access policy page
+        add_submenu_page(
+            'aam', 
+            'Access Policies', 
+            'Access Policies', 
+            AAM_Core_Config::get('policy.capability', 'aam_manage_policy'), 
+            'edit.php?post_type=aam_policy'
         );
     }
     
@@ -650,10 +882,33 @@ class AAM_Backend_Manager {
     public function renderContent() {
         check_ajax_referer('aam_ajax');
         
+        // flush any output buffer
+        ob_clean();
+        
         if (AAM::getUser()->hasCapability('aam_manager')) {
-            echo AAM_Backend_View::getInstance()->renderContent(
+            $response = AAM_Backend_View::getInstance()->renderContent(
                     AAM_Core_Request::post('uiType', 'main')
             );
+            
+            $accept = AAM_Core_Request::server('HTTP_ACCEPT_ENCODING');
+            header('Content-Type: text/html; charset=UTF-8');
+            
+            $zlib       = strtolower(ini_get('zlib.output_compression'));
+            $compressed = count(array_intersect(
+                array('zlib output compression', 'ob_gzhandler'),
+                ob_list_handlers()
+            )) > 0;
+            
+            if (in_array($zlib, array('1', 'on'), true) && !empty($accept)) {
+                header('Vary: Accept-Encoding'); // Handle proxies
+                
+                if ( false !== stripos($accept, 'gzip') && function_exists('gzencode') ) {
+                    header('Content-Encoding: gzip');
+                    $response = ($compressed ? $response : gzencode($response, 3));
+                }
+            }
+            
+            echo $response;
         } else {
             echo __('Access Denied', AAM_KEY);
         }
@@ -683,7 +938,7 @@ class AAM_Backend_Manager {
         
         exit();
     }
-
+    
     /**
      * Bootstrap the manager
      * 

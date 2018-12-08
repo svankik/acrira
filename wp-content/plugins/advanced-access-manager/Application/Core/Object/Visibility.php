@@ -40,7 +40,8 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
         $subject = $this->getSubject();
         
         // Read cache first
-        $option = $subject->getObject('cache')->get('visibility');
+        $option = $subject->getObject('cache')->get('visibility', 0);
+        
         if ($option === false) { //if false, then the cache is empty but exists
             $option = array();
         } elseif (empty($option)) {
@@ -55,14 +56,6 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
                 }
             }
             
-            // Override the frontend.list for current post
-            $post = AAM_Core_API::getCurrentPost(); // current post
-            if ($post) {
-                $option = $this->getOption();
-                $option['post'][$post->ID . '|' . $post->post_type]['frontend.list'] = 0;
-                $this->setOption($option);
-            }
-            
             do_action('aam-visibility-initialize-action', $this);
             
             // inherit settings from parent
@@ -73,10 +66,10 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
                 $option = $this->getOption();
             }
             
-            if (in_array($subject::UID, array('user', 'visitor'))) {
-               // $subject->getObject('cache')->add(
-               //     'visibility', 0, empty($option) ? false : $option
-               // );
+            if (in_array($subject::UID, array('user', 'visitor'), true)) {
+                $subject->getObject('cache')->add(
+                    'visibility', 0, empty($option) ? false : $option
+                );
             }
         }
         
@@ -98,7 +91,7 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
         );
         
         foreach($options as $key => $value) {
-            if (in_array($key, $listOptions)) {
+            if (in_array($key, $listOptions, true)) {
                 $filtered[$key] = $value;
             }
         }

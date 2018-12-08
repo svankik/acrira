@@ -85,7 +85,7 @@ class AAM_Frontend_Manager {
     public function checkAdminBar() {
         if (AAM_Core_API::capabilityExists('show_admin_bar')) {
             if (!AAM::getUser()->hasCapability('show_admin_bar')) {
-                show_admin_bar(false);
+                add_filter('show_admin_bar', '__return_false', PHP_INT_MAX );
             }
         }
     }
@@ -110,7 +110,11 @@ class AAM_Frontend_Manager {
      */
     public function printJavascript() {
         if (AAM_Core_Config::get('core.settings.secureLogin', true)) {
-            wp_enqueue_script('aam-login', AAM_MEDIA . '/js/aam-login.js');
+            wp_enqueue_script(
+                'aam-login', 
+                AAM_MEDIA . '/js/aam-login.js', 
+                array('jquery')
+            );
 
             //add plugin localization
             $locals = array(
@@ -163,7 +167,7 @@ class AAM_Frontend_Manager {
     public function checkPassExpiration($expire) {
         $overwrite = AAM_Core_Config::get('feature.post.password.expires', null);
         
-        if ($overwrite !== null) {
+        if (!is_null($overwrite)) {
             $expire = ($overwrite ? time() + strtotime($overwrite) : 0);
         }
         

@@ -44,9 +44,6 @@ class AAM_Backend_Filter {
         add_action('network_admin_notices', array($this, 'adminNotices'), -1);
         add_action('user_admin_notices', array($this, 'adminNotices'), -1);
         
-        //admin bar
-        add_action('wp_before_admin_bar_render', array($this, 'filterAdminBar'), 999);
-        
         //post restrictions
         add_filter('page_row_actions', array($this, 'postRowActions'), 10, 2);
         add_filter('post_row_actions', array($this, 'postRowActions'), 10, 2);
@@ -63,15 +60,6 @@ class AAM_Backend_Filter {
             add_action('pre_get_users', array($this, 'filterUserQuery'), 999);
             add_filter('views_users', array($this, 'filterViews'));
         }
-        
-        // Check if user has ability to perform certain task based on provided
-        // capability and meta data
-        add_filter(
-            'user_has_cap', 
-            array(AAM_Shared_Manager::getInstance(), 'userHasCap'), 
-            999, 
-            3
-        );
         
         AAM_Backend_Authorization::bootstrap(); //bootstrap backend authorization
     }
@@ -105,14 +93,13 @@ class AAM_Backend_Filter {
         //make sure that nobody is playing with screen options
         if (is_a($post, 'WP_Post')) {
             $screen = $post->post_type;
-        } elseif ($screen_object = get_current_screen()) {
-            $screen = $screen_object->id;
         } else {
-            $screen = '';
+            $screen_object = get_current_screen();
+            $screen        = ($screen_object ? $screen_object->id : '');
         }
         
-        if (AAM_Core_Request::get('init') != 'metabox') {
-            if ($screen != 'widgets') {
+        if (AAM_Core_Request::get('init') !== 'metabox') {
+            if ($screen !== 'widgets') {
                 AAM::getUser()->getObject('metabox')->filterBackend($screen);
             } else {
                 AAM::getUser()->getObject('metabox')->filterAppearanceWidgets();
@@ -138,60 +125,6 @@ class AAM_Backend_Filter {
     }
     
     /**
-     * Filter top admin bar
-     * 
-     * The filter will be performed based on the Backend Menu access settings
-     * 
-     * @return void
-     * 
-     * @access public
-     * @global WP_Admin_Bar $wp_admin_bar
-     */
-    public function filterAdminBar() {
-        global $wp_admin_bar;
-        
-        $menu = AAM::getUser()->getObject('menu');
-        foreach($wp_admin_bar->get_nodes() as $id => $node) {
-            if (!empty($node->href)) {
-                $suffix = str_replace(admin_url(), '', $node->href);
-                if ($menu->has($suffix, true)) {
-                    if (empty($node->parent) && $this->hasChildren($id)) { //root level
-                        $node->href = '#';
-                        $wp_admin_bar->add_node($node);
-                    } else {
-                        $wp_admin_bar->remove_menu($id);
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Check if specified top bar item has children
-     * 
-     * @param string $id
-     * 
-     * @return boolean
-     * 
-     * @access protected
-     * @global WP_Admin_Bar $wp_admin_bar
-     */
-    protected function hasChildren($id) {
-        global $wp_admin_bar;
-        
-        $has = false;
-        
-        foreach($wp_admin_bar->get_nodes() as $node) {
-            if ($node->parent == $id) {
-                $has = true;
-                break;
-            }
-        }
-        
-        return $has;
-    }
-    
-    /**
      * Post Quick Menu Actions Filtering
      *
      * @param array   $actions
@@ -205,7 +138,7 @@ class AAM_Backend_Filter {
         $object = AAM::getUser()->getObject('post', $post->ID, $post);
         
         //filter edit menu
-        if (!$this->isAllowed('backend.edit', $object)) {
+        if (!$object->allowed('backend.edit')) {
             if (isset($actions['edit'])) { 
                 unset($actions['edit']); 
             }
@@ -215,39 +148,19 @@ class AAM_Backend_Filter {
         }
         
         //filter delete menu
-        if (!$this->isAllowed('backend.delete', $object)) {
+        if (!$object->allowed('backend.delete')) {
             if (isset($actions['trash'])) { unset($actions['trash']); }
             if (isset($actions['delete'])) { unset($actions['delete']); }
         }
         
         //filter edit menu
-        if (!$this->isAllowed('backend.publish', $object)) {
+        if (!$object->allowed('backend.publish')) {
             if (isset($actions['inline hide-if-no-js'])) {
                 unset($actions['inline hide-if-no-js']);
             }
         }
 
         return $actions;
-    }
-    
-    /**
-     * Check if action is allowed
-     * 
-     * This method will take in consideration also *_others action
-     * 
-     * @param string               $action
-     * @param AAM_Core_Object_Post $object
-     * 
-     * @return boolean
-     * 
-     * @access protected
-     */
-    protected function isAllowed($action, $object) {
-        $edit   = $object->has($action);
-        $others = $object->has("{$action}_others");
-        $author = ($object->post_author == get_current_user_id());
-        
-        return ($edit || ($others && !$author)) ? false : true;
     }
     
     /**
@@ -261,19 +174,15 @@ class AAM_Backend_Filter {
      * @staticvar type $default
      */
     public function filterDefaultCategory($category) {
-        static $default = null;
+        //check if user category is defined
+        $id      = get_current_user_id();
+        $default = AAM_Core_Config::get('feature.post.defaultTerm.user.' . $id , null);
+        $roles   = AAM::getUser()->roles;
         
-        if (is_null($default)) {
-            //check if user category is defined
-            $id      = get_current_user_id();
-            $default = AAM_Core_Config::get('feature.post.defaultTerm.user.' . $id , null);
-            $roles   = AAM::getUser()->roles;
-            
-            if (is_null($default) && count($roles)) {
-                $default = AAM_Core_Config::get(
-                    'feature.post.defaultTerm.role.' . array_shift($roles), false
-                );
-            }
+        if (is_null($default) && count($roles)) {
+            $default = AAM_Core_Config::get(
+                'feature.post.defaultTerm.role.' . array_shift($roles), false
+            );
         }
         
         return ($default ? $default : $category);
@@ -294,7 +203,7 @@ class AAM_Backend_Filter {
     public function prePostUpdate($id, $data) {
         $post = get_post($id);
         
-        if ($post->post_author != $data['post_author']) {
+        if (intval($post->post_author) !== intval($data['post_author'])) {
             AAM_Core_API::clearCache();
         }
     }
@@ -315,7 +224,7 @@ class AAM_Backend_Filter {
                 $roleLevel = AAM_Core_API::maxLevel($role['capabilities']);
                 if ($userLevel < $roleLevel) {
                     unset($roles[$id]);
-                } elseif ($userLevel == $roleLevel && $this->filterSameLevel()) {
+                } elseif ($userLevel === $roleLevel && $this->filterSameLevel()) {
                     unset($roles[$id]);
                 }
             }
@@ -359,7 +268,7 @@ class AAM_Backend_Filter {
             $roleMax = AAM_Core_API::maxLevel($role->capabilities);
             if ($roleMax > $max ) {
                 $exclude[] = $id;
-            } elseif ($roleMax == $max && $this->filterSameLevel()) {
+            } elseif ($roleMax === $max && $this->filterSameLevel()) {
                 $exclude[] = $id;
             }
         }
@@ -385,7 +294,7 @@ class AAM_Backend_Filter {
             if (isset($views[$id])) {
                 if ($roleMax > $max) {
                     unset($views[$id]);
-                } elseif ($roleMax == $max && $this->filterSameLevel()) {
+                } elseif ($roleMax === $max && $this->filterSameLevel()) {
                     unset($views[$id]);
                 }
             }

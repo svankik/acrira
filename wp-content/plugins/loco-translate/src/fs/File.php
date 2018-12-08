@@ -59,7 +59,7 @@ class Loco_fs_File {
     
 
     /**
-     * @internal
+     * Create file with initial, unvalidated path
      */    
     public function __construct( $path ){
         $this->setPath( $path );
@@ -68,6 +68,8 @@ class Loco_fs_File {
 
     /**
      * Internally set path value and flag whether relative or absolute
+     * @param string
+     * @return string
      */
     private function setPath( $path ){
         $path = (string) $path;
@@ -87,7 +89,7 @@ class Loco_fs_File {
 
 
     /**
-     * @return array
+     * @return bool
      */
     public function isAbsolute(){
         return ! $this->rel;
@@ -268,6 +270,7 @@ class Loco_fs_File {
 
 
     /**
+     * Get file modification time as unix timestamp in seconds
      * @return int
      */
     public function modified(){
@@ -276,6 +279,7 @@ class Loco_fs_File {
 
 
     /**
+     * Get file size in bytes
      * @return int
      */
     public function size(){
@@ -342,7 +346,6 @@ class Loco_fs_File {
     public function equal( $path ){
         return $this->path === (string) $path;
     }
-
 
 
     /**

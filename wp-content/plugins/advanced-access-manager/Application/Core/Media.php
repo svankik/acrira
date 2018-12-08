@@ -64,8 +64,8 @@ class AAM_Core_Media {
      * 
      */
     protected function initialize() {
-        $media   = filter_input(INPUT_GET, 'aam-media');
-        $request = ($media != '1' ? $media : urldecode(AAM_Core_Request::server('REQUEST_URI')));
+        $media   = filter_input(INPUT_GET, 'aam-media', FILTER_VALIDATE_INT);
+        $request = ($media !== 1 ? $media : urldecode(AAM_Core_Request::server('REQUEST_URI')));
         $root    = AAM_Core_Request::server('DOCUMENT_ROOT');
         
         $this->request     = str_replace('\\', '/', $root . $request);
@@ -87,18 +87,16 @@ class AAM_Core_Media {
             if (empty($media)) {
                 $this->printMedia();
             } else {
-                $read   = $media->has('frontend.read');
-                $others = $media->has('frontend.read_others');
-                $author = ($media->post_author == get_current_user_id());
-                
-                if ($read || ($others && !$author)) {
+                if (!$media->allowed('frontend.read')) {
                     $args = array(
                         'hook'   => 'media_read', 
                         'action' => "{$area}.read", 
                         'post'   => $media->getPost()
                     );
-
-                    if ($default = AAM_Core_Config::get('media.default.placeholder')) {
+                        
+                    $default = AAM_Core_Config::get('media.default.placeholder');
+                    
+                    if ($default) {
                         do_action('aam-access-rejected-action', $area, $args);
                         $this->printMedia(get_post($default));
                     } else {

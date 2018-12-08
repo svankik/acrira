@@ -89,7 +89,7 @@ class AAM_Core_Object_Metabox extends AAM_Core_Object {
 
         if (is_array($wp_meta_boxes)) {
             foreach ($wp_meta_boxes as $screen_id => $zones) {
-                if ($screen == $screen_id) {
+                if ($screen === $screen_id) {
                     $this->filterZones($zones, $screen_id);
                 }
             }
@@ -166,8 +166,12 @@ class AAM_Core_Object_Metabox extends AAM_Core_Object {
      */
     public function has($screen, $metabox) {
         $options = $this->getOption();
+        
+        $area      = ($screen === 'widgets' ? 'Widget' : 'Metabox');
+        $uid       = crc32($screen . $metabox);
+        $isAllowed = AAM::api()->isAllowed("{$area}:{$uid}");
 
-        return !empty($options[$screen][$metabox]);
+        return !empty($options[$screen][$metabox]) || ($isAllowed === false);
     }
     
     /**
@@ -196,6 +200,15 @@ class AAM_Core_Object_Metabox extends AAM_Core_Object {
      */
     public function deny($screen, $metabox) {
         return $this->save("{$screen}|{$metabox}", 1);
+    }
+    
+    /**
+     * 
+     * @param type $external
+     * @return type
+     */
+    public function mergeOption($external) {
+        return AAM::api()->mergeSettings($external, $this->getOption(), 'metabox');
     }
 
 }
