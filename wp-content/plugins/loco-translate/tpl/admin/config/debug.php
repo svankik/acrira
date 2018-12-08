@@ -30,9 +30,9 @@ $this->extend('../layout');
             <dl>
                 <dt>UTF-8 rendering:</dt>
                 <dd><?php echo $encoding->OK?> <span id="loco-utf8-check"><?php echo $encoding->tick?></span></dd>
-                
+
                 <dt>Multibyte support:</dt>
-                <dd><?php echo $encoding->mbstring?'Yes':'No'?></dd>
+                <dd><?php echo $encoding->mbstring?></dd>
             </dl>
         </div>
     
@@ -90,6 +90,23 @@ $this->extend('../layout');
                 
             </dl>
         </div>
+
+        <?php /*div class="panel" id="loco-ob">
+            <h3>
+                Output buffering
+                <a href="#loco-ob" class="loco-anchor" aria-hidden="true"></a>
+            </h3>
+            <dl><?php
+                foreach( $ob as $key => $value ):?>
+                    <dt>
+                        <?php echo $ob->escape($key)?>:
+                    </dt>
+                    <dd>
+                    <?php $ob->e($key)?>
+                    </dd><?php
+                endforeach?>
+            </dl>
+        </div*/?>
 
         <div class="panel" id="loco-debug">
             <h3>

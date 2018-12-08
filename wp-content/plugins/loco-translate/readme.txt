@@ -3,8 +3,8 @@ Contributors: timwhitlock
 Tags: translation, translators, localization, localisation, l10n, i18n, Gettext, PO, MO, productivity, multilingual, internationalization
 Requires at least: 4.1
 Requires PHP: 5.2.4
-Tested up to: 4.9.6
-Stable tag: 2.1.4
+Tested up to: 5.0.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,6 +91,26 @@ Sure thing. See the [plugin privacy notice](https://localise.biz/wordpress/plugi
 
 
 == Changelog ==
+
+= 2.2.0 =
+* Fix for empty language code when getting plural rules
+* Added X-Loco-Version header to generated Gettext files
+* Added sanity check for mbstring.func_overload madness
+* Added "Assign template" link on missing template page
+* Added JavaScript string extraction (experimental)
+* Editor supports sprintf-js when javascript-format tag present
+* Fix for duplicate comments when end punctuation differs
+* Marking msgctxt more clearly in editor views
+* Added `loco_admin_shutdown` action hook
+* Bumped WP compatibility to 5.0 (beta)
+
+= 2.1.5 =
+* Updated locale data
+* Minor fix to file reference resolution
+* Fixed windows paths with trailing backslash
+* Fixed ssh-keys toggling issue
+* Rejigged buffer handling during Ajax
+* Bumped WP compatibility to 4.9.8
 
 = 2.1.4 =
 * Bumped WP compatibility to 4.9.6
@@ -260,7 +280,7 @@ Sure thing. See the [plugin privacy notice](https://localise.biz/wordpress/plugi
 
 == Upgrade Notice ==
 
-= 2.1.4 =
+= 2.2.0 =
 * Various bug fixes and improvements
 
 

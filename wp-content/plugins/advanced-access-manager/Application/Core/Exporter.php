@@ -69,7 +69,7 @@ class AAM_Core_Exporter {
                 call_user_func(array($this, $method), explode(',', $features));
             } else {
                 $this->output = apply_filters(
-                        'aam-export-filter', $this->output, $backet, $this->config
+                    'aam-export-filter', $this->output, $backet, $this->config
                 );
             }
         }
@@ -86,23 +86,23 @@ class AAM_Core_Exporter {
         global $wpdb;
 
         foreach($features as $feature) {
-            if ($feature == 'roles') {
-                $this->add('_user_roles', serialize(
+            if ($feature === 'roles') {
+                $this->add(
+                    '_user_roles',
                     AAM_Core_API::getOption(
                         $wpdb->get_blog_prefix($this->blog) . 'user_roles',
                         array(),
                         $this->blog
                     )
-                ));
-            } elseif ($feature == 'utilities') {
+                );
+            } elseif (in_array($feature, array('utilities', 'settings'), true)) {
                 $this->add(
                     AAM_Core_Config::OPTION, 
-                    serialize(AAM_Core_API::getOption(AAM_Core_Config::OPTION)
-                ));
-            } elseif ($feature == 'configpress') {
+                    AAM_Core_API::getOption(AAM_Core_Config::OPTION, '', 'site')
+                );
+            } elseif ($feature === 'configpress') {
                 $this->add(
-                    'aam-configpress', 
-                    AAM_Core_ConfigPress::getInstance()->read()
+                    'aam-configpress', AAM_Core_ConfigPress::getInstance()->read()
                 );
             } else {
                 do_action('aam-export-action', 'system', $feature, $this);
@@ -116,15 +116,19 @@ class AAM_Core_Exporter {
      */
     protected function exportRoles($features) {
         foreach($features as $feature) {
-            if ($feature == 'menu') {
+            if ($feature === 'menu') {
                 $this->pushData('options', '/^aam_menu_role/');
-            } elseif ($feature == 'metabox') {
+            } elseif ($feature === 'toolbar') {
+                $this->pushData('options', '/^aam_toolbar_role/');
+            } elseif ($feature === 'route') {
+                $this->pushData('options', '/^aam_route_role/');
+            } elseif ($feature === 'metabox') {
                 $this->pushData('options', '/^aam_metabox_role/');
-            } elseif ($feature == 'post') {
-                $this->pushData('options', '/^aam_type_post_role/');
+            } elseif ($feature === 'post') {
+                $this->pushData('options', '/^aam_type_[\w_\-]+_role/');
                 $this->pushData('options', '/^aam_term_[\d]+\|.+_role/');
                 $this->pushData('postmeta', '/^aam-post-access-role/');
-            } elseif ($feature == 'redirect') {
+            } elseif ($feature === 'redirect') {
                 $this->pushData('options', '/^aam_redirect_role/');
                 $this->pushData('options', '/^aam_loginredirect_role/');
                 $this->pushData('options', '/^aam_logoutredirect_role/');
@@ -140,19 +144,23 @@ class AAM_Core_Exporter {
         global $wpdb;
         
         foreach($features as $feature) {
-            if ($feature == 'menu') {
+            if ($feature === 'menu') {
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_menu/');
-            } elseif ($feature == 'metabox') {
+            } elseif ($feature === 'toolbar') {
+                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_toolbar/');
+            } elseif ($feature === 'route') {
+                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_route/');
+            } elseif ($feature === 'metabox') {
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_metabox/');
-            } elseif ($feature == 'post') {
-                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_type_post/');
-                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_term_[\d]+\|/');
+            } elseif ($feature === 'post') {
+                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_type/');
+                $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_term/');
                 $this->pushData('postmeta', '/^aam-post-access-user/');
-            } elseif ($feature == 'redirect') {
+            } elseif ($feature === 'redirect') {
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_redirect/');
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_loginredirect/');
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_logoutredirect/');
-            } elseif ($feature == 'capability') {
+            } elseif ($feature === 'capability') {
                 $this->pushData('usermeta', '/^' . $wpdb->prefix . 'aam_capability/');
             }
         }
@@ -164,14 +172,16 @@ class AAM_Core_Exporter {
      */
     protected function exportVisitor($features) {
         foreach($features as $feature) {
-            if ($feature == 'metabox') {
+            if ($feature === 'metabox') {
                 $this->pushData('options', '/^aam_visitor_metabox/');
-            } elseif ($feature == 'post') {
-                $this->pushData('options', '/^aam_visitor_type_post/');
-                $this->pushData('options', '/^aam_visitor_term_/');
+            } elseif ($feature === 'post') {
+                $this->pushData('options', '/^aam_visitor_type/');
+                $this->pushData('options', '/^aam_visitor_term/');
                 $this->pushData('postmeta', '/^aam-post-access-visitor/');
-            } elseif ($feature == 'redirect') {
+            } elseif ($feature === 'redirect') {
                 $this->pushData('options', '/^aam_visitor_redirect/');
+            } elseif ($feature === 'route') {
+                $this->pushData('options', '/^aam_visitor_route/');
             }
         }
     }
@@ -182,15 +192,19 @@ class AAM_Core_Exporter {
      */
     protected function exportDefault($features) {
         foreach($features as $feature) {
-            if ($feature == 'menu') {
+            if ($feature === 'menu') {
                 $this->pushData('options', '/^aam_menu_default/');
-            } elseif ($feature == 'metabox') {
+            } elseif ($feature === 'metabox') {
                 $this->pushData('options', '/^aam_metabox_default/');
-            } elseif ($feature == 'post') {
-                $this->pushData('options', '/^aam_type_post_default/');
+            } elseif ($feature === 'route') {
+                $this->pushData('options', '/^aam_route_default/');
+            } elseif ($feature === 'toolbar') {
+                $this->pushData('options', '/^aam_toolbar_default/');
+            } elseif ($feature === 'post') {
+                $this->pushData('options', '/^aam_type_[\w_\-]_default/');
                 $this->pushData('options', '/^aam_term_[\d]+\|.+_default/');
                 $this->pushData('postmeta', '/^aam-post-access-default/');
-            } elseif ($feature == 'redirect') {
+            } elseif ($feature === 'redirect') {
                 $this->pushData('options', '/^aam_redirect_default/');
                 $this->pushData('options', '/^aam_loginredirect_default/');
                 $this->pushData('options', '/^aam_logoutredirect_default/');
@@ -220,7 +234,7 @@ class AAM_Core_Exporter {
                     if (preg_match($regexp, $option->option_name)) {
                         $this->add(
                             $this->stripPrefix($option->option_name), 
-                            $option->option_value, 
+                            maybe_unserialize($option->option_value), 
                             '_' . $group,
                             $id
                         );
@@ -229,7 +243,7 @@ class AAM_Core_Exporter {
                     if (preg_match($regexp, $option->meta_key)) {
                         $this->add(
                             $this->stripPrefix($option->meta_key),
-                            $option->meta_value, 
+                            maybe_unserialize($option->meta_value), 
                             '_' . $group,
                             $id
                         );
@@ -258,10 +272,12 @@ class AAM_Core_Exporter {
      * @param type $group
      */
     public function add($key, $value, $group = '_options', $id = null) {
+        $compressed = base64_encode(json_encode($value));
+        
         if (is_null($id)) { 
-            $this->output['dataset'][$group][$key] = $value;
+            $this->output['dataset'][$group][$key] = $compressed;
         } else {
-            $this->output['dataset'][$group][$id][$key] = $value;
+            $this->output['dataset'][$group][$id][$key] = $compressed;
         }
     }
     
@@ -274,6 +290,10 @@ class AAM_Core_Exporter {
         global $wpdb;
         
         if (empty($this->cache)) {
+            if (is_multisite()) {
+                switch_to_blog(get_main_site_id());
+            }
+            
             $query  = "SELECT option_name, option_value FROM {$wpdb->options} ";
             $query .= "WHERE option_name LIKE 'aam%'";
             
@@ -288,6 +308,10 @@ class AAM_Core_Exporter {
             $query .= "WHERE meta_key LIKE 'aam%'";
             
             $this->cache['postmeta'] = $wpdb->get_results($query);
+            
+            if (is_multisite()) {
+                restore_current_blog();
+            }
         }
         
         return $this->cache;

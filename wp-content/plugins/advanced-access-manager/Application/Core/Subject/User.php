@@ -37,25 +37,45 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
     
     /**
      * 
-     * @param type $id
      */
-    public function __construct($id) {
-        parent::__construct($id);
-        
-        if (get_current_user_id() == $id) {
-            //check if user is expired
-            $expired = get_user_option('aam_user_expiration');
-            if (!empty($expired)) {
-                $parts = explode('|', $expired);
-                if ($parts[0] <= date('Y-m-d H:i:s')) {
-                    $this->triggerExpiredUserAction($parts);
-                }
-            }
+    public function validateUserStatus() {
+        //check if user is blocked
+        if ($this->user_status === 1) {
+            wp_logout();
+        }
             
-            //check if user's role expired
-            $roleExpire = get_user_option('aam-role-expires');
-            if ($roleExpire && ($roleExpire <= time())) {
-                $this->restoreRoles();
+        //check if user is expired
+        $expired = get_user_option('aam_user_expiration', $this->ID);
+        if (!empty($expired)) {
+            $parts = explode('|', $expired);
+            if ($parts[0] <= date('Y-m-d H:i:s')) {
+                $this->triggerExpiredUserAction($parts);
+            }
+        }
+
+        //check if user's role expired
+        $roleExpire = get_user_option('aam-role-expires', $this->ID);
+        if ($roleExpire && ($roleExpire <= time())) {
+            $this->restoreRoles();
+        }
+        
+        //finally check if session tracking is enabled and if so, check if used
+        //has to be logged out
+        if (AAM::api()->getConfig('core.session.tracking', false)) {
+            $ttl = AAM::api()->getConfig(
+                    "core.session.user.{$this->ID}.ttl",
+                    AAM::api()->getConfig("core.session.user.ttl", null)
+            );
+
+            if (!empty($ttl)) {
+                $timestamp = get_user_meta(
+                    $this->ID, 'aam-authenticated-timestamp', true
+                );
+                
+                if ($timestamp && ($timestamp + intval($ttl) <= time())) {
+                    delete_user_meta($this->ID, 'aam-authenticated-timestamp');
+                    wp_logout();
+                }
             }
         }
     }
@@ -162,7 +182,7 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
             $subject->allcaps = $allcaps;
             $subject->caps    = $caps;
             
-            if (wp_get_current_user()->ID == $subject->ID) {
+            if (wp_get_current_user()->ID === $subject->ID) {
                 wp_get_current_user()->allcaps = $allcaps;
                 wp_get_current_user()->caps    = $caps;
             }
@@ -247,10 +267,10 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      * @return void
      */
     public function resetObject($object) {
-        if ($object == 'capability') {
+        if ($object === 'capability') {
             $result = delete_user_option($this->getId(), self::AAM_CAPKEY);
         } else {
-            $result = $this->deleteOption($object);
+            $result = parent::resetObject($object);
         }
 
         return $result;
@@ -312,12 +332,20 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
         if (is_null($this->parent)) {
             //try to get this option from the User's Role
             $roles  = $this->getSubject()->roles;
-            //first user role is counted only. AAM does not support multi-roles
-            $parent = array_shift($roles);
-
-            //in case of multisite & current user does not belong to the site
-            if ($parent) {
-                $this->parent = new AAM_Core_Subject_Role($parent);
+            $base   = array_shift($roles);
+            
+            if ($base) {
+                $this->parent = new AAM_Core_Subject_Role($base);
+                
+                // if user has more than one role that set subject as multi
+                if (AAM::api()->getConfig('core.settings.multiSubject', false) 
+                        && count($roles)) {
+                    $siblings = array();
+                    foreach($roles as $role) {
+                        $siblings[] = new AAM_Core_Subject_Role($role);
+                    }
+                    $this->parent->setSiblings($siblings);
+                }
             } else {
                 $this->parent = null;
             }

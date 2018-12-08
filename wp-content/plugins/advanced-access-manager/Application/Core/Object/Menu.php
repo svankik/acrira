@@ -157,7 +157,7 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
         if (is_array($submenu)) {
             foreach($submenu as $parent => $subs) {
                 foreach($subs as $sub) {
-                    if ($sub[2] == $search) {
+                    if ($sub[2] === $search) {
                         $result = $parent;
                         break;
                     }
@@ -186,17 +186,24 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
     public function has($menu, $both = false) {
         //decode URL in case of any special characters like &amp;
         $decoded = htmlspecialchars_decode($menu);
+        
         $options = $this->getOption();
         $parent  = $this->getParentMenu($decoded);
         
+        // Policy API
+        $api  = AAM::api();
+        $crc  = crc32($decoded);
+        $bcrc = crc32('menu-' . $decoded);
+        $pcrc = crc32('menu-' . $parent);
+        
         // Step #1. Check if menu is directly restricted
-        $direct = !empty($options[$decoded]);
+        $direct = !empty($options[$decoded]) || ($api->isAllowed("BackendMenu:{$crc}") === false);
         
         // Step #2. Check if whole branch is restricted
-        $branch = ($both && !empty($options['menu-' . $decoded]));
+        $branch = ($both && (!empty($options['menu-' . $decoded]) || ($api->isAllowed("BackendMenu:{$bcrc}") === false)));
         
         // Step #3. Check if dynamic submenu is restricted because of whole branch
-        $indirect = ($parent && !empty($options['menu-' . $parent]));
+        $indirect = ($parent && (!empty($options['menu-' . $parent]) || ($api->isAllowed("BackendMenu:{$pcrc}") === false)));
         
         return $direct || $branch || $indirect;
     }
@@ -251,6 +258,15 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
      */
     public function reset() {
         return $this->getSubject()->deleteOption('menu');
+    }
+    
+    /**
+     * 
+     * @param type $external
+     * @return type
+     */
+    public function mergeOption($external) {
+        return AAM::api()->mergeSettings($external, $this->getOption(), 'menu');
     }
 
 }

@@ -152,6 +152,17 @@ abstract class Loco_package_Bundle extends ArrayObject implements JsonSerializab
 
 
     /**
+     * Get parent bundle if possible
+     * @codeCoverageIgnore
+     * @return Loco_package_Bundle|null
+     */
+    public function getParent(){
+        trigger_error( $this->getType().' bundles cannot have parents. Check isTheme first', E_USER_NOTICE );
+        return null;
+    }
+
+
+    /**
      * @return bool
      */
     public function isPlugin(){
@@ -249,7 +260,7 @@ abstract class Loco_package_Bundle extends ArrayObject implements JsonSerializab
             return $this->root->getPath();
         }
         // without a root directory return WordPress root
-        return rtrim(ABSPATH,'/');
+        return untrailingslashit(ABSPATH);
     }
 
 
@@ -323,10 +334,11 @@ abstract class Loco_package_Bundle extends ArrayObject implements JsonSerializab
     
     /**
      * Add all projects defined in a TextDomain
+     * @param Loco_package_TextDomain
      * @return Loco_package_Bundle
      */
     public function addDomain( Loco_package_TextDomain $domain ){
-        /* @var $proj Loco_package_Project */
+        /* @var Loco_package_Project $proj */
         foreach( $domain as $proj ){
             $this->addProject($proj);
         }
@@ -470,6 +482,7 @@ abstract class Loco_package_Bundle extends ArrayObject implements JsonSerializab
 
     /**
      * Do basic configuration from bundle meta data (file headers)
+     * @param array header tags from theme or plugin bootstrapper
      * @return bool whether configured
      */
     public function configureMeta( array $header ){
@@ -680,9 +693,8 @@ abstract class Loco_package_Bundle extends ArrayObject implements JsonSerializab
     }
 
 
-
     /**
-     * Create a copy of this bundle containg any files found that aren't currently configured
+     * Create a copy of this bundle containing any files found that aren't currently configured
      * @return Loco_package_Bundle
      */
     public function invert(){

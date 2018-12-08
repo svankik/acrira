@@ -44,9 +44,7 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
             $this->setPost(get_post($post));
         }
         
-        if ($this->getPost()) {
-            $this->read();
-        }
+        $this->initialize();
     }
     
     /**
@@ -62,6 +60,15 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         $post = $this->getPost();
         
         return (is_object($post) && property_exists($post, $name) ? $post->$name : null);
+    }
+    
+    /**
+     * 
+     */
+    public function initialize() {
+        if ($this->getPost()) {
+            $this->read();
+        }
     }
 
     /**
@@ -120,7 +127,7 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
                 'core.cache.post.levels', array('role', 'visitor', 'user')
         );
         
-        return is_array($config) && in_array($subject::UID, $config);
+        return is_array($config) && in_array($subject::UID, $config, true);
     }
     
     /**
@@ -161,7 +168,7 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         
         // Very specific WP case. According to the WP core, you are not allowed to
         // set meta for revision, so let's bypass this constrain.
-        if ($this->getPost()->post_type == 'revision') {
+        if ($this->getPost()->post_type === 'revision') {
             $result =  update_metadata(
                 'post', $this->getPost()->ID, $this->getOptionName(), $option
             );
@@ -190,9 +197,9 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         
         // Very specific WP case. According to the WP core, you are not allowed to
         // set meta for revision, so let's bypass this constrain.
-        if ($this->getPost()->post_type == 'revision') {
+        if ($this->getPost()->post_type === 'revision') {
             $result = delete_metadata(
-                    'post', $this->getPost()->ID, $this->getOptionName()
+                'post', $this->getPost()->ID, $this->getOptionName()
             );
         } else {
             $result = delete_post_meta($this->getPost()->ID, $this->getOptionName());
@@ -200,7 +207,7 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         
         return $result;
     }
-
+    
     /**
      * Set Post
      *
@@ -243,7 +250,26 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
     public function has($property) {
         $option = $this->getOption();
 
-        return (array_key_exists($property, $option) && $option[$property]);
+        return (array_key_exists($property, $option) && !empty($option[$property]));
+    }
+    
+    /**
+     * Check if subject can do certain action
+     * 
+     * The difference between `can` and `allowed` is that can is more in-depth way 
+     * to take in consideration relationships between properties.
+     *  
+     * @return boolean
+     * 
+     * @access public
+     */
+    public function allowed() {
+        return apply_filters(
+            'aam-post-action-allowed-filter', 
+            !call_user_func_array(array($this, 'has'), func_get_args()), 
+            func_get_arg(0), 
+            $this
+        );
     }
     
     /**
@@ -278,7 +304,7 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         
         // Very specific WP case. According to the WP core, you are not allowed to
         // set meta for revision, so let's bypass this constrain.
-        if ($this->getPost()->post_type == 'revision') {
+        if ($this->getPost()->post_type === 'revision') {
             $result =  update_metadata(
                 'post', $this->getPost()->ID, $this->getOptionName(), $option
             );
@@ -331,6 +357,15 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         $this->setOption($option);
         
         return true;
+    }
+    
+    /**
+     * 
+     * @param type $external
+     * @return type
+     */
+    public function mergeOption($external) {
+        return AAM::api()->mergeSettings($external, $this->getOption(), 'post');
     }
     
     /**

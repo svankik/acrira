@@ -55,6 +55,15 @@ class AAM_Extension_Repository {
     private static $_instance = null;
     
     /**
+     * List of detected extensions during the boot
+     * 
+     * @var array
+     * 
+     * @access protected 
+     */
+    protected $depectedExtensions = array();
+    
+    /**
      * Extension list
      * 
      * @var array
@@ -88,7 +97,7 @@ class AAM_Extension_Repository {
         if (file_exists($basedir)) {
             //iterate through each active extension and load it
             foreach (scandir($basedir) as $extension) {
-                if (!in_array($extension, array('.', '..'))) {
+                if (!in_array($extension, array('.', '..'), true)) {
                     $this->bootstrapExtension($basedir . '/' . $extension);
                 }
             }
@@ -116,17 +125,38 @@ class AAM_Extension_Repository {
             $cache = AAM_Core_Compatibility::getLicenseList();
         }
         
-        $load      = true;
+        $load      = false;
         $config    = "{$path}/config.php";
         $bootstrap = "{$path}/bootstrap.php";
         
         if (file_exists($config)) {
             $conf = require $config;
-            $load = empty($cache[$conf['id']]['status']) || ($cache[$conf['id']]['status'] != self::STATUS_INACTIVE);
+            
+            $this->depectedExtensions[$conf['id']] = $conf['version'];
+            
+            // determin if extension needs to be loaded based on the status
+            $status = empty($cache[$conf['id']]['status']) || ($cache[$conf['id']]['status'] !== self::STATUS_INACTIVE);
+            
+            // determin if extension meets minimum required AAM version
+            $list    = AAM_Extension_List::get();
+            $version = !empty($conf['requires']['aam']) && (version_compare(AAM_Core_API::version(), $conf['requires']['aam']) >= 0);
+            $load    = $status && $version;
+            
+            if (!$version) {
+                if (!empty($list[$conf['id']]['title'])) { // Any custom extensions
+                    AAM_Core_Console::add(AAM_Backend_View_Helper::preparePhrase(
+                        sprintf(
+                            __('[%s] was not loaded. Update extension to the latest version.', AAM_KEY),
+                            $list[$conf['id']]['title']
+                        ),
+                        'b'
+                    ));
+                }
+            }
         } else { // TODO - Remove May 2019
             AAM_Core_Console::add(AAM_Backend_View_Helper::preparePhrase(
                 sprintf(
-                    __('The [%s] file is missing. Update extension to the latest version. %sRead more.%s', AAM_KEY),
+                    __('The [%s] does not appear to be a valid AAM extension. %sRead more.%s', AAM_KEY),
                     str_replace(AAM_EXTENSION_BASE . '/', '', $config),
                    '<a href="https://aamplugin.com/help/how-to-fix-the-config-php-file-is-missing-notification" target="_blank">',
                    '</a>'
@@ -176,7 +206,7 @@ class AAM_Extension_Repository {
         foreach((array) $licenses as $key => $data) {
             if (isset($extensions[$key]) 
                     && !empty($data['license']) 
-                    && $extensions[$key]['type'] == 'commercial') {
+                    && $extensions[$key]['type'] === 'commercial') {
                 
                 if ($details) {
                     $response[] = array(
@@ -243,7 +273,7 @@ class AAM_Extension_Repository {
      * @access public
      */
     public function getVersion($id) {
-        return (defined($id) ? constant($id) : null);
+        return (isset($this->depectedExtensions[$id]) ? $this->depectedExtensions[$id] : null);
     }
     
     /**
@@ -293,10 +323,10 @@ class AAM_Extension_Repository {
         if (is_null($status)) {
             $status = AAM_Extension_Repository::STATUS_DOWNLOAD;
             
-            if (defined($id)) {
+            if (isset($this->depectedExtensions[$id])) {
                 $status = AAM_Extension_Repository::STATUS_INSTALLED;
                 
-                if ($this->isOutdatedVersion($item, $retrieved, constant($id))) {
+                if ($this->isOutdatedVersion($item, $retrieved, $this->depectedExtensions[$id])) {
                     $status = AAM_Extension_Repository::STATUS_UPDATE;
                     AAM_Core_Console::add(
                         AAM_Backend_View_Helper::preparePhrase(sprintf(
@@ -306,10 +336,10 @@ class AAM_Extension_Repository {
                     );
                 }
             }
-        } elseif ($status == AAM_Extension_Repository::STATUS_INSTALLED) {
-            if (!defined($id)) {
+        } elseif ($status === AAM_Extension_Repository::STATUS_INSTALLED) {
+            if (!isset($this->depectedExtensions[$id])) {
                 $status = AAM_Extension_Repository::STATUS_DOWNLOAD;
-            } elseif ($this->isOutdatedVersion($item, $retrieved, constant($id))) {
+            } elseif ($this->isOutdatedVersion($item, $retrieved, $this->depectedExtensions[$id])) {
                 $status = AAM_Extension_Repository::STATUS_UPDATE;
             }
         }
@@ -327,21 +357,11 @@ class AAM_Extension_Repository {
     protected function isOutdatedVersion($item, $retrieved, $version) {
         $id = $item['id'];
         
-        if ($item['type'] == 'commercial') {
-            $valid = !empty($item['license']);
+        // first check the retrieved version from the server
+        if (isset($retrieved->$id)) {
+            $outdated = version_compare($version, $retrieved->$id->version) === -1;
         } else {
-            $valid = true;
-        }
-        
-        $outdated = false;
-        
-        if ($valid) {
-            // first check the retrieved version from the server
-            if (isset($retrieved->$id)) {
-                $outdated = version_compare($version, $retrieved->$id->version) == -1;
-            } else {
-                $outdated = version_compare($version, $item['latest']) == -1;
-            }
+            $outdated = version_compare($version, $item['latest']) === -1;
         }
 
         return $outdated;
@@ -405,7 +425,7 @@ class AAM_Extension_Repository {
         $updates = 0;
         
         foreach($this->getList() as $item) {
-            $updates += ($item['status'] == self::STATUS_UPDATE);
+            $updates += ($item['status'] === self::STATUS_UPDATE);
         }
         
         return $updates ? true : false;

@@ -63,22 +63,179 @@ class AAM_Shared_Manager {
                 );
             }
             
+            //Register policy post type
+            add_action('init', array(self::$_instance, 'init'));
+            
             // Control post visibility
-            //important to keep this option optional for optimization reasons
-            if (AAM_Core_Config::get('core.settings.checkPostVisibility', true)) {
-                add_filter(
-                    'posts_clauses_request', 
-                    array(self::$_instance, 'filterPostQuery'), 
-                    999, 
-                    2
-                );
+            add_filter(
+                'posts_clauses_request', 
+                array(self::$_instance, 'filterPostQuery'), 
+                999, 
+                2
+            );
+
+            //filter post content
+            add_filter(
+                'the_content', array(self::$_instance, 'filterPostContent'), 999
+            );
+            
+            //filter admin toolbar
+            if (AAM_Core_Config::get('core.settings.backendAccessControl', true)) {
+                if (filter_input(INPUT_GET, 'init') !== 'toolbar') {
+                    add_action(
+                        'wp_before_admin_bar_render', 
+                        array(self::$_instance, 'filterToolbar'), 
+                        999
+                    );
+                }
             }
             
-            //filter post content
-            add_filter('the_content', array(self::$_instance, 'filterPostContent'), 999);
+            // Check if user has ability to perform certain task based on provided
+            // capability and meta data
+            add_filter('user_has_cap', array(self::$_instance, 'userHasCap'), 999, 3);
+            
+            // Security. Make sure that we escaping all translation strings
+            add_filter(
+                'gettext', array(self::$_instance, 'escapeTranslation'), 999, 3
+            );
+            
+            // Role Manager. Tracking user role changes and if there is expiration
+            // set, then trigger hooks
+            add_action('add_user_role', array(self::$_instance, 'userRoleAdded'), 10, 2);
+            add_action('remove_user_role', array(self::$_instance, 'userRoleRemoved'), 10, 2);
         }
         
         return self::$_instance;
+    }
+    
+    /**
+     * 
+     */
+    public function init() {
+        //check URI
+        self::$_instance->checkURIAccess();
+            
+        //register CPT AAM_E_Product
+        register_post_type('aam_policy', array(
+            'label'        => __('Access Policy', AAM_KEY),
+            'labels'       => array(
+                'name' => __('Access Policies', AAM_KEY),
+                'edit_item' => __('Edit Policy', AAM_KEY),
+                'add_new_item' => __('Add New Policy', AAM_KEY),
+                'new_item' => __('New Policy', AAM_KEY)
+            ),
+            'description'  => __('Access and security policy', AAM_KEY),
+            'public'       => true,
+            'show_ui'      => true,
+            'show_in_menu' => false,
+            'exclude_from_search' => true,
+            'publicly_queryable' => false,
+            'hierarchical' => false,
+            'supports'     => array('title', 'excerpt', 'revisions'),
+            'delete_with_user' => false,
+            'capabilities' => array(
+                'edit_post'         => 'aam_manage_policy',
+                'read_post'         => 'aam_manage_policy',
+                'delete_post'       => 'aam_manage_policy',
+                'delete_posts'      => 'aam_manage_policy',
+                'edit_posts'        => 'aam_manage_policy',
+                'edit_others_posts' => 'aam_manage_policy',
+                'publish_posts'     => 'aam_manage_policy',
+            )
+        ));
+    }
+    
+    /**
+     * 
+     */
+    protected function checkURIAccess() {
+        $uri    = wp_parse_url(AAM_Core_Request::server('REQUEST_URI'));
+        $object = AAM::api()->getUser()->getObject('uri');
+        $params = array();
+        
+        if (isset($uri['query'])) {
+            parse_str($uri['query'], $params);
+        }
+        
+        if ($match = $object->findMatch($uri['path'], $params)) {
+            if ($match['type'] !== 'allow') {
+                AAM::api()->redirect($match['type'], $match['action']);
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param type $userId
+     * @param type $role
+     */
+    public function userRoleAdded($userId, $role) {
+        $user = new AAM_Core_Subject_User($userId);
+        AAM_Core_API::clearCache($user);
+        
+        $expire = AAM_Core_API::getOption("aam-role-{$role}-expiration", '');
+            
+        if ($expire) {
+            update_user_option($userId, "aam-original-roles", $user->roles);
+            update_user_option($userId, "aam-role-expires", strtotime($expire));
+        }
+    }
+    
+    /**
+     * 
+     * @param type $userId
+     * @param type $role
+     */
+    public function userRoleRemoved($userId, $role) {
+        $user = new AAM_Core_Subject_User($userId);
+        AAM_Core_API::clearCache($user);
+        
+        $expire = AAM_Core_API::getOption("aam-role-{$role}-expiration", '');
+            
+        if ($expire) {
+            delete_user_option($userId, "aam-role-expires");
+        }
+    }
+    
+    /**
+     * 
+     * @param type $translation
+     * @param type $text
+     * @param type $domain
+     * @return type
+     */
+    public function escapeTranslation($translation, $text, $domain) {
+        if ($domain === AAM_KEY) {
+            $translation = esc_js($translation);
+        }
+        
+        return $translation;
+    }
+    
+    /**
+     * 
+     * @global type $wp_admin_bar
+     */
+    public function filterToolbar() {
+        global $wp_admin_bar;
+        
+        $toolbar = AAM::api()->getUser()->getObject('toolbar');
+        $nodes   = $wp_admin_bar->get_nodes();
+        
+        foreach((is_array($nodes) ? $nodes : array()) as $id => $node) {
+            if ($toolbar->has($id, true)) {
+                if (!empty($node->parent)) { // update parent node with # link
+                    $parent = $wp_admin_bar->get_node($node->parent);
+                    if ($parent && ($parent->href === $node->href)) {
+                        $wp_admin_bar->add_node(array(
+                            'id'   => $parent->id,
+                            'href' => '#'
+                        ));
+                    }
+                }
+                $wp_admin_bar->remove_node($id);
+            }
+        }
     }
     
     /**
@@ -108,8 +265,8 @@ class AAM_Shared_Manager {
      * @global WPDB $wpdb
      */
     public function filterPostQuery($clauses, $wpQuery) {
-        if ($this->isPostFilterEnabled()) {
-            $option = AAM::getUser()->getObject('visibility')->getOption();
+        if (!$wpQuery->is_singular && $this->isPostFilterEnabled()) {
+            $option = AAM::getUser()->getObject('visibility', 0)->getOption();
             
             if (!empty($option['post'])) {
                 $query = $this->preparePostQuery($option['post'], $wpQuery);
@@ -120,7 +277,7 @@ class AAM_Shared_Manager {
             $clauses['where'] .= apply_filters(
                 'aam-post-where-clause-filter', $query, $wpQuery, $option
             );
-
+            
             $this->finalizePostQuery($clauses);
         }
         
@@ -132,16 +289,12 @@ class AAM_Shared_Manager {
      * @return type
      */
     protected function isPostFilterEnabled() {
-        $visibility = AAM_Core_Config::get('core.settings.checkPostVisibility', true);
-        
-        if ($visibility) {
-            if (AAM_Core_Api_Area::isBackend()) {
-                $visibility = AAM_Core_Config::get('core.settings.backendAccessControl', true);
-            } elseif (AAM_Core_Api_Area::isAPI()) {
-                $visibility = AAM_Core_Config::get('core.settings.apiAccessControl', true);
-            } else {
-                $visibility = AAM_Core_Config::get('core.settings.frontendAccessControl', true);
-            }
+        if (AAM_Core_Api_Area::isBackend()) {
+            $visibility = AAM_Core_Config::get('core.settings.backendAccessControl', true);
+        } elseif (AAM_Core_Api_Area::isAPI()) {
+            $visibility = AAM_Core_Config::get('core.settings.apiAccessControl', true);
+        } else {
+            $visibility = AAM_Core_Config::get('core.settings.frontendAccessControl', true);
         }
         
         return $visibility;
@@ -166,10 +319,10 @@ class AAM_Shared_Manager {
         } elseif ($wpQuery->is_page) {
             $postType = 'page';
         } else {
-            $postType = 'post';
+            $postType = 'any';
         }
         
-        if ($postType == 'any') {
+        if ($postType === 'any') {
             $postType = array_keys(
                 get_post_types(
                     array('public' => true, 'exclude_from_search' => false), 
@@ -203,7 +356,7 @@ class AAM_Shared_Manager {
         foreach($visibility as $id => $access) {
             $chunks = explode('|', $id);
 
-            if (in_array($chunks[1], $postTypes)) {
+            if (in_array($chunks[1], $postTypes, true)) {
                 if (!empty($access["{$area}.list"])) {
                     $not[] = $chunks[0];
                 }
@@ -285,6 +438,13 @@ class AAM_Shared_Manager {
         $capability = (isset($args[0]) && is_string($args[0]) ? $args[0] : '');
         $uid        = (isset($args[2]) && is_numeric($args[2]) ? $args[2] : 0);
         
+        // Apply policy first
+        $effect = AAM::api()->isAllowed("Capability:{$capability}");
+        
+        if ($effect !== null) {
+            $caps = $this->updateCapabilities($caps, $meta, $effect);
+        }
+        
         switch($capability) {
             case 'edit_user':
             case 'delete_user':
@@ -304,8 +464,75 @@ class AAM_Shared_Manager {
                 $caps = $this->authorizePublishPost($caps, $meta);
                 break;
             
+            case 'install_plugins':
+                $caps = $this->checkPluginsAction('install', $caps, $meta);
+                break;
+            
+            case 'delete_plugins':
+                $caps = $this->checkPluginsAction('delete', $caps, $meta);
+                break;
+            
+            case 'edit_plugins':
+                $caps = $this->checkPluginsAction('edit', $caps, $meta);
+                break;
+            
+            case 'update_plugins':
+                $caps = $this->checkPluginsAction('update', $caps, $meta);
+                break;
+                
+            case 'activate_plugin':
+                $caps = $this->checkPluginAction(
+                    (isset($args[2]) ? $args[2] : ''), 'activate', $caps, $meta
+                );
+                break;
+            
+            case 'deactivate_plugin':
+                $caps = $this->checkPluginAction(
+                    (isset($args[2]) ? $args[2] : ''), 'deactivate', $caps, $meta
+                );
+                break;
+            
             default:
                 break;
+        }
+        
+        return $caps;
+    }
+    
+    /**
+     * 
+     * @param type $action
+     * @param type $caps
+     * @param type $meta
+     * @return type
+     */
+    protected function checkPluginsAction($action, $caps, $meta) {
+        $allow = AAM::api()->isAllowed("Plugin", "WP:{$action}");
+        
+        if ($allow !== null) {
+            $caps = $this->updateCapabilities($caps, $meta);
+        }
+        
+        return $caps;
+    }
+    
+    /**
+     * 
+     * @param type $plugin
+     * @param type $action
+     * @param type $caps
+     * @param type $meta
+     * @return type
+     */
+    protected function checkPluginAction($plugin, $action, $caps, $meta) {
+        $parts = explode('/', $plugin);
+        $slug  = (!empty($parts[0]) ? $parts[0] : null);
+
+        if ($slug) {
+            $allow = AAM::api()->isAllowed("Plugin:{$slug}", "WP:{$action}");
+            if ($allow !== null) {
+                $caps = $this->updateCapabilities($caps, $meta, $allow);
+            }
         }
         
         return $caps;
@@ -327,7 +554,7 @@ class AAM_Shared_Manager {
         
         $qfields = (isset($query->query['fields']) ? $query->query['fields'] : '');
         
-        if ($qfields == 'id=>parent') {
+        if ($qfields === 'id=>parent') {
             $author = "{$wpdb->posts}.post_author";
             if (strpos($fields, $author) === false) {
                 $fields .= ", $author"; 
@@ -394,7 +621,7 @@ class AAM_Shared_Manager {
         $userLevel = AAM_Core_API::maxLevel($user->allcaps);
 
         if ($maxLevel < $userLevel) {
-            $allcaps = $this->restrictCapabilities($allcaps, $metacaps);
+            $allcaps = $this->updateCapabilities($allcaps, $metacaps);
         }
         
         return $allcaps;
@@ -413,11 +640,11 @@ class AAM_Shared_Manager {
      */
     protected function authorizePostEdit($id, $allcaps, $metacaps) {
         $object = AAM::getUser()->getObject('post', $id);
-        $draft  = $object->post_status == 'auto-draft';
+        $draft  = $object->post_status === 'auto-draft';
         $area   = AAM_Core_Api_Area::get();
 
-        if (!$draft && !$this->isActionAllowed($area . '.edit', $object)) {
-            $allcaps = $this->restrictCapabilities($allcaps, $metacaps);
+        if (!$draft && !$object->allowed($area . '.edit')) {
+            $allcaps = $this->updateCapabilities($allcaps, $metacaps);
         }
         
         return $allcaps;
@@ -438,8 +665,8 @@ class AAM_Shared_Manager {
         $object = AAM::getUser()->getObject('post', $id);
         $area   = AAM_Core_Api_Area::get();
         
-        if (!$this->isActionAllowed($area . '.delete', $object)) {
-            $allcaps = $this->restrictCapabilities($allcaps, $metacaps);
+        if (!$object->allowed($area . '.delete')) {
+            $allcaps = $this->updateCapabilities($allcaps, $metacaps);
         }
         
         return $allcaps;
@@ -462,33 +689,13 @@ class AAM_Shared_Manager {
         if (is_a($post, 'WP_Post')) {
             $object = AAM::getUser()->getObject('post', $post->ID);
             $area   = AAM_Core_Api_Area::get();
-
-            if (!$this->isActionAllowed($area . '.publish', $object)) {
-                 $allcaps = $this->restrictCapabilities($allcaps, $metacaps);
+            
+            if (!$object->allowed($area . '.publish')) {
+                $allcaps = $this->updateCapabilities($allcaps, $metacaps);
             }
         }
         
         return $allcaps;
-    }
-    
-    /**
-     * Check if action is allowed
-     * 
-     * This method will take in consideration also *_others action
-     * 
-     * @param string               $action
-     * @param AAM_Core_Object_Post $object
-     * 
-     * @return boolean
-     * 
-     * @access protected
-     */
-    protected function isActionAllowed($action, $object) {
-        $edit   = $object->has($action);
-        $others = $object->has("{$action}_others");
-        $author = ($object->post_author == get_current_user_id());
-        
-        return ($edit || ($others && !$author)) ? false : true;
     }
     
     /**
@@ -500,14 +707,15 @@ class AAM_Shared_Manager {
      * 
      * @param array $allCaps
      * @param array $metaCaps
+     * @param bool  $allow
      * 
      * @return array
      * 
      * @access protected
      */
-    protected function restrictCapabilities($allCaps, $metaCaps) {
+    protected function updateCapabilities($allCaps, $metaCaps, $allow = false) {
         foreach($metaCaps as $cap) {
-            $allCaps[$cap] = false;
+            $allCaps[$cap] = $allow;
         }
         
         return $allCaps;

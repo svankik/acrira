@@ -33,7 +33,10 @@ class AAM_Backend_View {
      */
     protected function __construct() {
         //register default features
+        AAM_Backend_Feature_Main_GetStarted::register();
+        AAM_Backend_Feature_Main_Policy::register();
         AAM_Backend_Feature_Main_Menu::register();
+        AAM_Backend_Feature_Main_Toolbar::register();
         AAM_Backend_Feature_Main_Metabox::register();
         AAM_Backend_Feature_Main_Capability::register();
         AAM_Backend_Feature_Main_Route::register();
@@ -42,14 +45,40 @@ class AAM_Backend_View {
         AAM_Backend_Feature_Main_LoginRedirect::register();
         AAM_Backend_Feature_Main_LogoutRedirect::register();
         AAM_Backend_Feature_Main_404Redirect::register();
+        AAM_Backend_Feature_Main_Uri::register();
         
         AAM_Backend_Feature_Settings_Core::register();
         AAM_Backend_Feature_Settings_Content::register();
-        AAM_Backend_Feature_Settings_Tools::register();
+        AAM_Backend_Feature_Settings_Security::register();
         AAM_Backend_Feature_Settings_ConfigPress::register();
         
         //feature registration hook
         do_action('aam-feature-registration-action');
+    }
+    
+    /**
+     * Clear all AAM settings
+     * 
+     * @global wpdb $wpdb
+     * 
+     * @return string
+     * 
+     * @access public
+     */
+    public function clearSettings() {
+        AAM_Core_API::clearSettings();
+
+        return wp_json_encode(array('status' => 'success'));
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    public function clearCache() {
+        AAM_Core_API::clearCache();
+
+        return wp_json_encode(array('status' => 'success'));
     }
 
     /**
@@ -61,7 +90,7 @@ class AAM_Backend_View {
      */
     public function renderPage() {
         ob_start();
-        require_once(dirname(__FILE__) . '/phtml/index.phtml');
+        require_once dirname(__FILE__) . '/phtml/index.phtml';
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -77,7 +106,7 @@ class AAM_Backend_View {
      */
     public function renderAccessFrame() {
         ob_start();
-        require_once(dirname(__FILE__) . '/phtml/metabox/metabox-content.phtml');
+        require_once dirname(__FILE__) . '/phtml/metabox/metabox-content.phtml';
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -91,7 +120,35 @@ class AAM_Backend_View {
      */
     public function renderPostMetabox($post) {
         ob_start();
-        require_once(dirname(__FILE__) . '/phtml/metabox/post-metabox.phtml');
+        require_once dirname(__FILE__) . '/phtml/metabox/post-metabox.phtml';
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        return $content;
+    }
+    
+    /**
+     * 
+     * @param type $post
+     * @return type
+     */
+    public function renderPolicyMetabox($post) {
+        ob_start();
+        require_once dirname(__FILE__) . '/phtml/metabox/policy-metabox.phtml';
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        return $content;
+    }
+    
+    /**
+     * 
+     * @param type $post
+     * @return type
+     */
+    public function renderPolicyPrincipalMetabox($post) {
+        ob_start();
+        require_once dirname(__FILE__) . '/phtml/metabox/policy-principal-metabox.phtml';
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -105,7 +162,7 @@ class AAM_Backend_View {
      */
     public function renderTermMetabox($term) {
         ob_start();
-        require_once(dirname(__FILE__) . '/phtml/metabox/term-metabox.phtml');
+        require_once dirname(__FILE__) . '/phtml/metabox/term-metabox.phtml';
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -127,7 +184,7 @@ class AAM_Backend_View {
         
         if (method_exists($this, $parts[0])) {
             $response = call_user_func(array($this, $parts[0]));
-        } elseif (count($parts) == 2) { //cover the Model.method pattern
+        } elseif (count($parts) === 2) { //cover the Model.method pattern
             try {
                 $classname = 'AAM_Backend_Feature_' . $parts[0];
                 if (class_exists($classname)) {
@@ -160,12 +217,12 @@ class AAM_Backend_View {
         
         if (is_null($content)) {
             ob_start();
-            if ($type == 'extensions') {
+            if ($type === 'extensions') {
                 AAM_Backend_Feature_Extension_Manager::getInstance()->render();
-            } elseif ($type == 'postform') {
+            } elseif ($type === 'postform') {
                 echo AAM_Backend_Feature_Main_Post::renderAccessForm();
             } else {
-                require_once(dirname(__FILE__) . '/phtml/main-panel.phtml');
+                require_once dirname(__FILE__) . '/phtml/main-panel.phtml';
             }
             $content = ob_get_contents();
             ob_end_clean();
@@ -181,7 +238,7 @@ class AAM_Backend_View {
      */
     public function loadPartial($partial) {
         ob_start();
-        require_once(dirname(__FILE__) . '/phtml/partial/' . $partial);
+        require_once dirname(__FILE__) . '/phtml/partial/' . $partial;
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -208,7 +265,7 @@ class AAM_Backend_View {
                 $param, $value, $object, $objectId
         );
 
-        return json_encode(array('status' => ($result ? 'success' : 'failure')));
+        return wp_json_encode(array('status' => ($result ? 'success' : 'failure')));
     }
 
     /**
@@ -239,6 +296,26 @@ class AAM_Backend_View {
                 AAM_Core_API::updateOption(
                         'aam-user-switch-' . $user->ID, get_current_user_id()
                 );
+                
+                // Making sure that user that we are switching too is not logged in
+                // already. Reported by https://github.com/KenAer
+                $sessions = WP_Session_Tokens::get_instance($user->ID);
+                if (count($sessions->get_all()) > 1) {
+                    $sessions->destroy_all();
+                }
+                
+                // If there is jwt token in cookie, make sure it is deleted otherwise
+                // user technically will never be switched
+                if (AAM_Core_Request::cookie('aam-jwt')) {
+                    setcookie(
+                        'aam-jwt', 
+                        '', 
+                        time() - YEAR_IN_SECONDS,
+                        '/', 
+                        parse_url(get_bloginfo('url'), PHP_URL_HOST), 
+                        is_ssl()
+                    );
+                }
 
                 wp_clear_auth_cookie();
                 wp_set_auth_cookie( $user->ID, true );
@@ -248,7 +325,7 @@ class AAM_Backend_View {
             }
         }
         
-        return json_encode($response);
+        return wp_json_encode($response);
     }
     
     /**
