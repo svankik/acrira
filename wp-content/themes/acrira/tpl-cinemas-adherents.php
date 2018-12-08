@@ -48,45 +48,9 @@ get_header(); ?>
 
 		?>
 
-		<div class="entry-map col-md-12">
-				
-			<div class="acf-map">
-
-				<?php
-
-				while ( $cinemas->have_posts() ) : $cinemas->the_post();
-
-					$map = get_field ( 'location' );
-
-				?>
-
-					<div class="marker" data-lat="<?php echo $map['lat']; ?>" data-lng="<?php echo $map['lng']; ?>">
-
-                        <div>
-
-                            <h2><?php the_title(); ?></h2>
-
-                        </div>
-
-						<div class="logo"><span class="icon-logo"></span></div>
-
-						<p class="map-address bold"><?php echo $map['address']; ?></p>
-
-					</div>
-				<?php
-
-				endwhile; // End of the loop.
-
-				?>
-			</div>
-		</div>
-
-
 		<div class="accordion col-md-12">
 		
 			<?php
-				
-				$cinemas->wp_rewind_posts();
 
 				while ( $cinemas->have_posts() ) : $cinemas->the_post();
 
@@ -97,6 +61,41 @@ get_header(); ?>
 			?>
 		
 		</div>
+
+        <div class="entry-map col-md-12">
+
+            <div class="acf-map">
+
+				<?php
+
+				$cinemas->wp_rewind_posts();
+
+				while ( $cinemas->have_posts() ) : $cinemas->the_post();
+
+					$map = get_field ( 'location' );
+
+					?>
+
+                    <div class="marker" data-lat="<?php echo $map['lat']; ?>" data-lng="<?php echo $map['lng']; ?>">
+
+                        <div>
+
+                            <h2><?php the_title(); ?></h2>
+
+                        </div>
+
+                        <div class="logo"><span class="icon-logo"></span></div>
+
+                        <p class="map-address bold"><?php echo $map['address']; ?></p>
+
+                    </div>
+				<?php
+
+				endwhile; // End of the loop.
+
+				?>
+            </div>
+        </div>
 
 	</div><!-- #primary -->
 

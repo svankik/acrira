@@ -48,11 +48,27 @@ get_header(); ?>
 
 		?>
 
+        <div class="accordion col-md-12">
+		
+			<?php
+
+			    while ( $cinemas->have_posts() ) : $cinemas->the_post();
+
+					get_template_part( 'template-parts/post/content', 'accordion' );
+
+				endwhile; // End of the loop.
+
+			?>
+		
+		</div>
+
         <div class="entry-map col-md-12">
 
             <div class="acf-map">
 
 				<?php
+
+				$cinemas->wp_rewind_posts();
 
 				while ( $cinemas->have_posts() ) : $cinemas->the_post();
 
@@ -80,22 +96,6 @@ get_header(); ?>
 				?>
             </div>
         </div>
-
-		<div class="accordion col-md-12">
-		
-			<?php
-
-			    $cinemas->wp_rewind_posts();
-
-				while ( $cinemas->have_posts() ) : $cinemas->the_post();
-
-					get_template_part( 'template-parts/post/content', 'accordion' );
-
-				endwhile; // End of the loop.
-
-			?>
-		
-		</div>
 
 	</div><!-- #primary -->
 
