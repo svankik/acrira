@@ -222,8 +222,8 @@
 
 
 			//Associate the styled map with the MapTypeId and set it to display.
-			map.mapTypes.set('styled_map', styledMapType);
-			map.setMapTypeId('styled_map');
+			// map.mapTypes.set('styled_map', styledMapType);
+			// map.setMapTypeId('styled_map');
 			
 			
 			// add a markers reference
