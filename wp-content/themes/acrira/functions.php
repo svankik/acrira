@@ -469,3 +469,17 @@ function acrira_color_luminance( $hex, $percent ) {
 	
 	return $new_hex;
 }
+
+// Function to change email address
+function acrira_sender_email( $original_email_address ) {
+    return 'no-reply@acrira.org';
+}
+
+// Function to change sender name
+function acrira_sender_name( $original_email_from ) {
+    return 'Acrira.org - No-Reply';
+}
+
+// Hooking up our functions to WordPress filters 
+add_filter( 'wp_mail_from', 'acrira_sender_email' );
+add_filter( 'wp_mail_from_name', 'acrira_sender_name' );
