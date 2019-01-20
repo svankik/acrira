@@ -35,7 +35,15 @@
 	<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'twentyseventeen' ); ?></a>
 
 	<header id="masthead" class="site-header" role="banner">
-		<div class="container">
+		<?php if ( is_front_page() && has_nav_menu( 'social' ) ) : ?>
+            <div class="navigation-header">
+                <div class="row">
+					<?php get_template_part( 'template-parts/navigation/navigation', 'header' ); ?>
+                </div><!-- .navigation-header -->
+            </div><!-- .navigation-header -->
+		<?php endif; ?>
+
+        <div class="container">
 			<div class="row">
 
 				<?php get_template_part( 'template-parts/header/header', 'image' ); ?>

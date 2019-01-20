@@ -1,11 +1,10 @@
 
 @mixin editor-style() {
 	h1 {
-		font-size: 60px;
+		font-size: 30px;
 		line-height: 65px;
 		text-transform: inherit;
 		font-family: $ff-b;
-		text-align: right;
 		letter-spacing: 0;
 		@include opacity(0.5);
 	}
