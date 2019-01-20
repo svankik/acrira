@@ -43,6 +43,16 @@ register_field_group(array (
 			'required' => 1,
 			'default_value' => '',
 		),
+		array (
+			'key' => 'field_5c444e7c049de',
+			'label' => 'Divers',
+			'name' => 'divers',
+			'type' => 'wysiwyg',
+			'toolbar' => 'full',
+			'media_upload' => 'yes',
+			'required' => 1,
+			'default_value' => '',
+		),
 	),
 	'location' => array (
 		array (
