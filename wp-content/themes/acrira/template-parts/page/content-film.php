@@ -21,25 +21,43 @@
                 ?>
                  de
                 <?php
-                    the_field( 'realisateur' );
+                    $first = TRUE;
+                    $realisateurs = get_field( 'realisateurs' );
+
+                    foreach ($realisateurs as $realisateur) {
+
+                        if( !$first ) {
+                            echo ', ';
+                        }
+
+                        echo $realisateur['realisateur'];
+
+                        $first = FALSE;
+                    }
                 ?>
             </h3>
 		</div>
 	</header><!-- .entry-header -->
 
 	<div class="entry-content">
-        <div class="film-casting">
-            <span class="film-section-title">Casting :</span>
-            <?php
-                the_field( 'casting' );
-            ?>
-        </div>
-        <div class="film-origine">
-            <span class="film-section-title">Pays :</span>
-            <?php
-                the_field( 'origine' );
-            ?>
-        </div>
+        <?php if (!empty(get_field('casting'))) : ?>
+            <div class="film-casting">
+                <span class="film-section-title">Casting :</span>
+		        <?php
+		        the_field( 'casting' );
+		        ?>
+            </div>
+        <?php endif; ?>
+
+		<?php if (!empty(get_field('origine'))) : ?>
+            <div class="film-origine">
+                <span class="film-section-title">Pays :</span>
+				<?php
+				the_field( 'origine' );
+				?>
+            </div>
+		<?php endif; ?>
+
         <?php
             $dateformatstring = "j F Y";
             $unixtimestamp = strtotime( get_field( 'sortie_nationale' ) );
