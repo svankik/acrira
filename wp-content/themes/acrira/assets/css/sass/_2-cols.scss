@@ -1,0 +1,24 @@
+
+.page-template-tpl-2cols {
+
+    #main {
+
+        article {
+
+            .entry-content {
+                
+                @media (min-width: $screen-sm-min) {
+                    @include content-columns(2);
+                }
+                
+                @media (max-width: $screen-xs-max) {
+                    
+                    img {
+                        margin: 0 auto;
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+.single-film {
+
+    #content {
+
+        header {
+            border-bottom: 5px solid #cccc00;
+        }
+
+        h1.entry-title {
+            margin-bottom: $ggw;
+        }
+
+        h2.film-title {
+            font-size: 50px;
+            line-height: 55px;
+            padding-top: 0;
+            margin-bottom: 0;
+        }
+
+        h3.realisateurs {
+            padding-top: $ggw/3;
+            font-size: 30px;
+            line-height: 35px;
+        }
+
+        .cover {
+            width: 320px;
+            max-width: 100%;
+
+            @media (max-width: $screen-xs-max) {
+                display: block;
+                margin: 0 auto !important;
+                float: none !important;
+            }
+        }
+
+        .entry-metas {
+            font-weight: bold;
+            margin-top: $ggw;
+            margin-bottom: $ggw;
+
+            > span {
+
+                &:not(:last-child):not(:nth-last-child(3)):after {
+                    content: ' - ';
+                }
+
+                &:last-child {
+                    font-weight: normal;
+                }
+            }
+        }
+    }
+}

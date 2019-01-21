@@ -93,11 +93,16 @@
 			height: 200px;
 			margin-bottom: $grid-gutter-width/2;
 
+			img {
+				max-height: 100%;
+			}
+
 			a {
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				width: 95%;
+				max-height: 100%;
 				@include translate(-50%, -50%);
 			}
 

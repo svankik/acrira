@@ -48,7 +48,7 @@
 				$image = get_sub_field( 'image' );
 
 				?>
-					<div class="partner col-md-2 col-sm-3 col-xs-4 <?php echo $type; ?>">
+					<div class="partner col-sm-3 col-xs-4 <?php echo $type; ?>">
 						
 						<a href="<?php echo $link; ?>" target="_blank">
 							<img src="<?php echo $image['sizes']['partner']; ?>" alt="<?php echo $name; ?>" />
