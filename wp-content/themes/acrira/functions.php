@@ -14,6 +14,14 @@ require_once( 'inc/custom-fields.php' );
  * @return  void
  */
 function acrira_setup() {
+	global $content_width;
+	
+	$content_width = 1200;
+
+	if( is_page_template( 'tpl-2cols.php' ) ) {
+		$content_width = 600;
+	}
+
 	/*
 	 * Make theme available for translation.
 	 * If you're building a theme based on Twenty Seventeen, use a find and replace
@@ -27,9 +35,23 @@ function acrira_setup() {
 	add_image_size ( 'partner', 300, 300 );
 	add_image_size ( 'news', 200, 150, true );
 	add_image_size ( 'educationaltool', 600, 600 );
+	add_image_size ( 'half_size', 600, 9999 );
 }
-add_action( 'after_setup_theme', 'acrira_setup' );
+add_action( 'after_setup_theme', 'acrira_setup', 11 );
 
+/**
+ * add custom size to editor image size options
+ *
+ * @param [type] $sizes
+ * @return void
+ */
+function acrira_image_sizes( $sizes ) {
+    $sizes = array_merge( $sizes, array(
+      'half_size' => __( 'Image moitié/moitié', 'acrira' )
+    ));
+    return $sizes;
+}
+add_filter( 'image_size_names_choose', 'acrira_image_sizes' );
 /**
  * Enqueue scripts and stylesheets
  *
@@ -483,3 +505,7 @@ function acrira_sender_name( $original_email_from ) {
 // Hooking up our functions to WordPress filters 
 add_filter( 'wp_mail_from', 'acrira_sender_email' );
 add_filter( 'wp_mail_from_name', 'acrira_sender_name' );
+
+add_filter('wp_calculate_image_srcset', function() {
+	return false;
+} );

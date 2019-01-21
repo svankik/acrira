@@ -1,0 +1,14 @@
+
+.page-template-tpl-2cols {
+
+    #main {
+
+        article {
+
+            .entry-content {
+                @include content-columns(2);
+            }
+
+        }
+    }
+}
