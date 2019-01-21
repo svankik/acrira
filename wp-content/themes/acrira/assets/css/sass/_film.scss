@@ -26,6 +26,12 @@
         .cover {
             width: 320px;
             max-width: 100%;
+
+            @media (max-width: $screen-xs-max) {
+                display: block;
+                margin: 0 auto !important;
+                float: none !important;
+            }
         }
 
         .entry-metas {

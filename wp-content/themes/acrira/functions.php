@@ -32,10 +32,14 @@ function acrira_setup() {
 	// Add image sizes
 	add_image_size ( 'aslider', 1200, 545, true );
 	add_image_size ( 'hslider', 1200, 400, true );
-	add_image_size ( 'partner', 300, 300 );
+	add_image_size ( 'partner', 300, 200, false );
 	add_image_size ( 'news', 200, 150, true );
 	add_image_size ( 'educationaltool', 600, 600 );
 	add_image_size ( 'half_size', 600, 9999 );
+
+	if (!current_user_can('administrator') && !is_admin()) {
+		show_admin_bar(false);
+	}
 }
 add_action( 'after_setup_theme', 'acrira_setup', 11 );
 
