@@ -13,72 +13,162 @@
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<div class="film-title">
-            <h3 class="entry-title">
-                <?php
-                    the_title( );
-                ?>
-                 de
+    <div class="row">
+        <header class="col-md-12">
+            <h1 class="entry-title">Espace adhérents</h1>
+            <h2 class="film-title">
+                <?php the_title(); ?>
+            </h2>
+            <h3 class="realisateurs">
                 <?php
                     $first = TRUE;
                     $realisateurs = get_field( 'realisateurs' );
-
+                    $str_realisateurs = '';
+                    
                     foreach ($realisateurs as $realisateur) {
-
+                        
                         if( !$first ) {
-                            echo ', ';
+                            $str_realisateurs .= ', ';
                         }
-
-                        echo $realisateur['realisateur'];
-
+                        
+                        $str_realisateurs .= $realisateur['realisateur'];
+                        
                         $first = FALSE;
                     }
-                ?>
+                    
+                    printf( 'de %s', $str_realisateurs );
+                    ?>
             </h3>
-		</div>
-	</header><!-- .entry-header -->
+        </header><!-- .entry-header -->
+        <div class="col-md-12">
 
-	<div class="entry-content">
-        <?php if (!empty(get_field('casting'))) : ?>
-            <div class="film-casting">
-                <span class="film-section-title">Casting :</span>
-		        <?php
-		        the_field( 'casting' );
-		        ?>
+            <?php the_post_thumbnail( 'educationaltool', array( 'class' => 'cover alignright' ) ); ?>
+            
+            <div class="entry-metas">  
+                <?php
+                
+                    $public = get_field( 'type_public' );
+                    
+                    if( isset( $public[0] ) && $public[0] ) :
+                        ?>
+                            <span class="public">
+                                <?php _e( 'Jeune public', 'acrira' ); ?>
+                            </span>
+                        <?php 
+                    endif;
+                    
+                ?>
+                <?php if (!empty(get_field('genres'))) : ?>
+                    <span class="film-genres">
+                        <?php
+                            $genres = get_field( 'genres' );
+                            $str_genres = '';
+                            $first = true;
+                            
+                            foreach( $genres as $genre ) {
+                                if( !$first ) {
+                                    $str_genres .= ', ';
+                                }
+                                
+                                $str_genres .= $genre['genre'];
+                                
+                                $first = false;
+                            }
+                            
+                            print $str_genres;
+                        ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if (!empty(get_field('origines'))) : ?>
+                    <span class="film-origines">
+                        <?php
+                            $origines = get_field( 'origines' );
+                            $str_origines = '';
+                            $first = true;
+                            
+                            foreach( $origines as $origine ) {
+                                if( !$first ) {
+                                    $str_origines .= ', ';
+                                }
+                                
+                                $str_origines .= $origine['origine'];
+                                
+                                $first = false;
+                            }
+                            
+                            print $str_origines;
+                            ?>
+                    </span>
+                    <?php endif; ?>
+                    
+                <?php if (!empty(get_field('distributeur'))) : ?>
+                    <span class="film-distributeur">
+                        <?php
+                            the_field( 'distributeur' );
+                        ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if (!empty(get_field('duree'))) : ?>
+                    <span class="film-duree">
+                        <?php
+                            the_field( 'duree' );
+                        ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php                    
+                    if( !empty( get_field( 'sortie_nationale' ) ) ) :
+                        $dateformatstring = "j F Y";
+                        $unixtimestamp = strtotime( get_field( 'sortie_nationale' ) );
+                        
+                        ?>
+                            <span class="film-date-sortie">
+                                <?php
+                                    printf( '%s %s', __( 'Sortie le', 'acrira' ), date_i18n( $dateformatstring, $unixtimestamp ) );
+                                    ?>
+                            </span>
+                        <?php 
+                    endif; 
+                ?>
+
+                <?php if (!empty(get_field('soutiens'))) : ?>
+                    <span class="film-soutiens">
+                        <?php
+                            $soutiens = get_field( 'soutiens' );
+                            $str_soutiens = '';
+                            $first = true;
+                            
+                            foreach( $soutiens as $soutien ) {
+                                if( !$first ) {
+                                    $str_soutiens .= ', ';
+                                }
+                                
+                                $str_soutiens .= $soutien['soutien'];
+                                
+                                $first = false;
+                            }
+                            
+                            printf( '%s %s', _n( 'Soutien', 'Soutiens', count( $soutiens ), 'acrira' ), $str_soutiens );
+                        ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if (!empty(get_field('casting'))) : ?>
+                    <br />
+                    <span class="film-casting">
+                        <?php
+                            the_field( 'casting' );
+                        ?>
+                    </span>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
 
-		<?php if (!empty(get_field('origine'))) : ?>
-            <div class="film-origine">
-                <span class="film-section-title">Pays :</span>
-				<?php
-				the_field( 'origine' );
-				?>
+
+            <div class="entry-content">
+                <?php the_content(); ?>
             </div>
-		<?php endif; ?>
-
-        <?php
-            $dateformatstring = "j F Y";
-            $unixtimestamp = strtotime( get_field( 'sortie_nationale' ) );
-        ?>
-        <div class="film-date-sortie">
-            <span class="film-section-title">Date de sortie :</span>
-            <?php
-                echo date_i18n( $dateformatstring, $unixtimestamp );
-            ?>
         </div>
-        <div class="film-duree">
-            <span class="film-section-title">Durée :</span>
-            <?php
-                the_field( 'duree' );
-            ?>
-        </div>
-        <div class="film-link">
-            <?php
-                $post_link = get_the_permalink( get_the_ID() );
-            ?>
-            <a href="<?php echo $post_link; ?>">Voir la fiche film complète</a>
-        </div>
-	</div><!-- .entry-content -->
+    </div>
 </article><!-- #post-## -->
