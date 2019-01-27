@@ -16,6 +16,7 @@
     <div class="row">
         <header class="col-md-12">
             <h1 class="entry-title">Espace adhérents</h1>
+            <p><a href="/espace-adherents-parlons-cinema"><< Retour à la liste des films</a></p>
             <h2 class="film-title">
                 <?php the_title(); ?>
             </h2>
