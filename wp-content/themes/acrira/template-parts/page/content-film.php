@@ -60,7 +60,7 @@
 
         <?php
             $dateformatstring = "j F Y";
-            $unixtimestamp = strtotime( get_field( 'sortie_nationale' ) );
+            $unixtimestamp = strtotime( get_field( 'sortie_nationale', false, false ) );
         ?>
         <div class="film-date-sortie">
             <span class="film-section-title">Date de sortie :</span>

@@ -122,7 +122,7 @@
                 <?php                    
                     if( !empty( get_field( 'sortie_nationale' ) ) ) :
                         $dateformatstring = "j F Y";
-                        $unixtimestamp = strtotime( get_field( 'sortie_nationale' ) );
+                        $unixtimestamp = strtotime( get_field( 'sortie_nationale', false, false ) );
                         
                         ?>
                             <span class="film-date-sortie">
