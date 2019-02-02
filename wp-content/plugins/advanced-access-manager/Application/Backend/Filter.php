@@ -33,7 +33,9 @@ class AAM_Backend_Filter {
      */
     protected function __construct() {
         //menu filter
-        add_filter('parent_file', array($this, 'filterMenu'), 999, 1);
+        if (!AAM::isAAM() || !current_user_can('aam_manage_admin_menu')) {
+            add_filter('parent_file', array($this, 'filterMenu'), 999, 1);
+        }
         
         //manager WordPress metaboxes
         add_action("in_admin_header", array($this, 'metaboxes'), 999);
@@ -216,15 +218,19 @@ class AAM_Backend_Filter {
      * @return array
      */
     public function filterRoles($roles) {
-        $userLevel = AAM_Core_API::maxLevel(AAM::getUser()->allcaps);
+        static $levels = array(); // to speed-up the execution
+        
+        $userLevel = AAM::getUser()->getMaxLevel();
         
         //filter roles
         foreach($roles as $id => $role) {
             if (!empty($role['capabilities']) && is_array($role['capabilities'])) {
-                $roleLevel = AAM_Core_API::maxLevel($role['capabilities']);
-                if ($userLevel < $roleLevel) {
+                if (!isset($levels[$id])) {
+                    $levels[$id] = AAM_Core_API::maxLevel($role['capabilities']);
+                }
+                if ($userLevel < $levels[$id]) {
                     unset($roles[$id]);
-                } elseif ($userLevel === $roleLevel && $this->filterSameLevel()) {
+                } elseif ($userLevel === $levels[$id] && $this->filterSameLevel()) {
                     unset($roles[$id]);
                 }
             }
@@ -260,7 +266,7 @@ class AAM_Backend_Filter {
      */
     public function filterUserQuery($query) {
         //current user max level
-        $max     = AAM_Core_API::maxLevel(AAM::getUser()->allcaps);
+        $max     = AAM::getUser()->getMaxLevel();
         $exclude = array();
         $roles   = AAM_Core_API::getRoles();
         
@@ -286,7 +292,7 @@ class AAM_Backend_Filter {
      * @access public
      */
     public function filterViews($views) {
-        $max   = AAM_Core_API::maxLevel(AAM::getUser()->allcaps);
+        $max   = AAM::getUser()->getMaxLevel();
         $roles = AAM_Core_API::getRoles();
         
         foreach($roles->role_objects as $id => $role) {

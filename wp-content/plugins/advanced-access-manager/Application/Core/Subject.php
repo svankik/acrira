@@ -76,6 +76,11 @@ abstract class AAM_Core_Subject {
     }
     
     /**
+     * 
+     */
+    public function initialize() { }
+    
+    /**
      * Trigger Subject native methods
      *
      * @param string $name
@@ -252,7 +257,6 @@ abstract class AAM_Core_Subject {
             }
         } else {
             $object = $this->_objects[$type][$id];
-            $object->initialize();
         }
 
         return $object;
