@@ -42,6 +42,7 @@ get_header(); ?>
 					$films = new WP_Query(
 						array(
 							'post_type'      => 'film',
+							'orderby'        => 'title',
 							'order'          => 'ASC',
 							'posts_per_page' => -1,
 						)

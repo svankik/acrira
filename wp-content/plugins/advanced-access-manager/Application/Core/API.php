@@ -193,17 +193,17 @@ final class AAM_Core_API {
      * @access public
      */
     public static function maxLevel($caps, $default = 0) {
-        $levels = array($default);
+        $max = $default;
         
         if (is_array($caps)) { //WP Error Fix bug report
             foreach($caps as $cap => $granted) {
-                if ($granted && preg_match('/^level_([0-9]+)$/i', $cap, $match)) {
-                    $levels[] = intval($match[1]);
+                if ($granted && preg_match('/^level_([0-9]+)$/', $cap, $match)) {
+                    $max = ($max < $match[1] ? $match[1] : $max);
                 }
             }
         }
         
-        return max($levels);
+        return intval($max);
     }
     
     /**
@@ -216,11 +216,13 @@ final class AAM_Core_API {
      * @access public
      */
     public static function getAllCapabilities() {
-        $caps = array();
+        static $caps = array();
         
-        foreach (self::getRoles()->role_objects as $role) {
-            if (is_array($role->capabilities)) {
-                $caps = array_merge($caps, $role->capabilities);
+        if (empty($caps)) {
+            foreach (self::getRoles()->role_objects as $role) {
+                if (is_array($role->capabilities)) {
+                    $caps = array_merge($caps, $role->capabilities);
+                }
             }
         }
         

@@ -11,20 +11,20 @@
         }
 
         h2.film-title {
-            font-size: 50px;
-            line-height: 55px;
+            font-size: 30px;
+            line-height: 35px;
             padding-top: 0;
             margin-bottom: 0;
         }
 
         h3.realisateurs {
             padding-top: $ggw/3;
-            font-size: 30px;
-            line-height: 35px;
+            font-size: 20px;
+            line-height: 25px;
         }
 
         .cover {
-            width: 320px;
+            width: 160px;
             max-width: 100%;
 
             @media (max-width: $screen-xs-max) {
@@ -36,16 +36,16 @@
 
         .entry-metas {
             font-weight: bold;
-            margin-top: $ggw;
-            margin-bottom: $ggw;
+            margin-top: $ggw/2;
+            margin-bottom: $ggw/2;
 
             > span {
 
-                &:not(:last-child):not(:nth-last-child(3)):after {
+                &:not(:first-child):not(.film-casting):before {
                     content: ' - ';
                 }
 
-                &:last-child {
+                &.film-casting {
                     font-weight: normal;
                 }
             }

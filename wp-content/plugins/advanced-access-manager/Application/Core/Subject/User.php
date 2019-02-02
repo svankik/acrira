@@ -33,7 +33,34 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      *
      * @var type 
      */
+    protected $aamCaps = array();
+    
+    /**
+     *
+     * @var type 
+     */
     protected $parent = null;
+    
+    /**
+     *
+     * @var type 
+     */
+    protected $maxLevel = null;
+    
+    /**
+     * 
+     * @param type $id
+     */
+    public function __construct($id = '') {
+        parent::__construct($id);
+        
+        // Retrieve user capabilities set with AAM
+        $aamCaps = get_user_option(self::AAM_CAPKEY, $id);
+        
+        if (is_array($aamCaps)) {
+            $this->aamCaps = $aamCaps;
+        }
+    }
     
     /**
      * 
@@ -45,10 +72,23 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
         }
             
         //check if user is expired
-        $expired = get_user_option('aam_user_expiration', $this->ID);
+        $expired = get_user_meta($this->ID, 'aam_user_expiration', true);
         if (!empty($expired)) {
-            $parts = explode('|', $expired);
-            if ($parts[0] <= date('Y-m-d H:i:s')) {
+            $parts   = explode('|', $expired);
+            
+            // Set time
+            // TODO: Remove in Jan 2020
+            if (preg_match('/^[\d]{4}-/', $parts[0])) {
+                $expires = DateTime::createFromFormat('Y-m-d H:i:s', $parts[0]);
+            } else {
+                $expires = DateTime::createFromFormat('m/d/Y, H:i O', $parts[0]);
+            }
+            
+            $compare = new DateTime();
+            //TODO - PHP Warning:  DateTime::setTimezone(): Can only do this for zones with ID for now in
+            @$compare->setTimezone($expires->getTimezone());
+            
+            if ($expires <= $compare) {
                 $this->triggerExpiredUserAction($parts);
             }
         }
@@ -93,6 +133,10 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
         switch($config[1]) {
             case 'lock':
                 $this->block();
+                break;
+            
+            case 'logout':
+                wp_logout();
                 break;
             
             case 'change-role':
@@ -170,25 +214,72 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      * @access protected
      */
     protected function retrieveSubject() {
-        $subject = new WP_User($this->getId());
-
-        //retrieve aam capabilities if are not retrieved yet
-        $caps = get_user_option(self::AAM_CAPKEY, $this->getId());
-        if (is_array($caps)) {
-            $caps    = array_merge($subject->caps, $caps);
-            $allcaps = array_merge($subject->allcaps, $caps);
-            
-            //reset the user capabilities
-            $subject->allcaps = $allcaps;
-            $subject->caps    = $caps;
-            
-            if (wp_get_current_user()->ID === $subject->ID) {
-                wp_get_current_user()->allcaps = $allcaps;
-                wp_get_current_user()->caps    = $caps;
-            }
+        if ($this->getId() === get_current_user_id()) {
+            $subject = wp_get_current_user();
+        } else {
+            $subject = new WP_User($this->getId());
         }
         
         return $subject;
+    }
+    
+    /**
+     * 
+     */
+    public function initialize($isolated = false) {
+        $subject = $this->getSubject();
+        
+        // Retrieve all capabilities set in Access Policy
+        // Load Capabilities from the policy
+        $stms = AAM_Core_Policy_Manager::getInstance()->find(
+            "/^Capability:/i", ($isolated ? $this : null)
+        );
+
+        $policyCaps = array();
+        
+        foreach($stms as $key => $stm) {
+            $chunks = explode(':', $key);
+            if (count($chunks) === 2) {
+                $policyCaps[$chunks[1]] = ($stm['Effect'] === 'allow' ? 1 : 0);
+            }
+        }
+        
+        // Load Roles from the policy
+        $stms = AAM_Core_Policy_Manager::getInstance()->find(
+            "/^Role:/i", ($isolated ? $this : null)
+        );
+
+        $roles    = (array) $subject->roles;
+        
+        $allRoles = AAM_Core_API::getRoles();
+        $roleCaps = array();
+        
+        foreach($stms as $key => $stm) {
+            $chunks = explode(':', $key);
+            
+            if ($stm['Effect'] === 'allow') {
+                if (!in_array($chunks[1], $roles, true)) {
+                    if ($allRoles->is_role($chunks[1])) {
+                        $roleCaps = array_merge($roleCaps, $allRoles->get_role($chunks[1])->capabilities);
+                        $roleCaps[] = $chunks[1];
+                    }
+                    $roles[] = $chunks[1];
+                }
+            } elseif (in_array($chunks[1], $roles, true)) {
+                // Make sure that we delete all instanses of the role
+                foreach($roles as $i => $role){ 
+                    if ($role === $chunks[1]) {
+                        unset($roles[$i]);
+                    }
+                }
+            }
+        }
+        
+        $subject->roles = $roles;
+        
+        //reset the user capabilities
+        $subject->allcaps = array_merge($subject->allcaps, $roleCaps, $policyCaps,  $this->aamCaps);
+        $subject->caps    = array_merge($subject->caps, $roleCaps, $policyCaps,  $this->aamCaps);
     }
 
     /**
@@ -394,7 +485,11 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      * @return type
      */
     public function getMaxLevel() {
-        return AAM_Core_API::maxLevel($this->allcaps);
+        if (is_null($this->maxLevel)) {
+            $this->maxLevel = AAM_Core_API::maxLevel($this->allcaps);
+        }
+        
+        return $this->maxLevel;
     }
     
 }
