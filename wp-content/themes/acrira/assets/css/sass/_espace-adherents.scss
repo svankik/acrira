@@ -28,7 +28,7 @@
 			margin-top: -65px;
 		}
 
-		&.parlons-cinema {
+		&.parlons-cinema, &.rapports-dactivite {
 			border-top-left-radius: 0;
 			border-top-right-radius: 50px;
 			border-bottom-left-radius: 50px;
@@ -44,7 +44,7 @@
 			}
 		}
 
-		&.rapport-annuel-activites {
+		&.rapport-annuel-activites, &.divers {
 			border-top-left-radius: 50px;
 			border-top-right-radius: 0;
 			border-bottom-left-radius: 50px;

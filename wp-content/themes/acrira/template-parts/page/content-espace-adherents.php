@@ -56,7 +56,10 @@ $user = wp_get_current_user();
 						<div class="rapport-annuel-activites block">
 							<?php the_field( 'rapport_annuel_activites' ); ?>
 						</div>
-                        <div class="parlons-cinema block">
+                        <div class="rapports-dactivite block">
+							<?php the_field( 'rapports_dactivite' ); ?>
+                        </div>
+                        <div class="divers block">
 							<?php the_field( 'divers' ); ?>
                         </div>
 					</div>
