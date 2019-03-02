@@ -513,3 +513,18 @@ add_filter( 'wp_mail_from_name', 'acrira_sender_name' );
 add_filter('wp_calculate_image_srcset', function() {
 	return false;
 } );
+
+function acrira_previous_post_orderby_name($orderby){
+	return "ORDER BY p.post_title DESC LIMIT 1";
+}
+function acrira_previous_post_where_name(){
+	global $post, $wpdb;
+	return $wpdb->prepare( "WHERE p.post_title < %s AND p.post_type = %s AND ( p.post_status = 'publish' OR p.post_status = 'private' )", $post->post_title, $post->post_type );
+}
+function acrira_next_post_orderby_name($orderby){
+	return "ORDER BY p.post_title ASC LIMIT 1";
+}
+function acrira_next_post_where_name(){
+	global $post, $wpdb;
+	return $wpdb->prepare( "WHERE p.post_title > %s AND p.post_type = %s AND ( p.post_status = 'publish' OR p.post_status = 'private' )", $post->post_title, $post->post_type );
+}

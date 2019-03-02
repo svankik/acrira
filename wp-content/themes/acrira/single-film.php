@@ -30,10 +30,20 @@ get_header(); ?>
                             comments_template();
                         endif;
 
+	                    add_filter('get_previous_post_sort', 'acrira_previous_post_orderby_name', 10, 1);
+	                    add_filter('get_next_post_sort', 'acrira_next_post_orderby_name', 10, 1);
+	                    add_filter('get_previous_post_where', 'acrira_previous_post_where_name', 10);
+	                    add_filter('get_next_post_where', 'acrira_next_post_where_name', 10);
+
                         the_post_navigation( array(
                             'prev_text' => '<span class="screen-reader-text">' . __( 'Previous Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Previous', 'twentyseventeen' ) . '</span> <span class="nav-title"><span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '</span>%title</span>',
                             'next_text' => '<span class="screen-reader-text">' . __( 'Next Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Next', 'twentyseventeen' ) . '</span> <span class="nav-title">%title<span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ) . '</span></span>',
                         ) );
+
+	                    remove_filter('get_previous_post_sort', 'acrira_previous_post_orderby_name', 10);
+	                    remove_filter('get_next_post_sort', 'acrira_next_post_orderby_name', 10);
+	                    remove_filter('get_previous_post_where', 'acrira_previous_post_where_name', 10);
+	                    remove_filter('get_next_post_where', 'acrira_next_post_where_name', 10);
 
                     endwhile; // End of the loop.
 
