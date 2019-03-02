@@ -51,6 +51,12 @@ class AAM_Backend_Manager {
         
         //user profile update action
         add_action('profile_update', array($this, 'profileUpdate'), 10, 2);
+
+        //alter user edit screen with support for multiple roles
+        if (AAM::api()->getConfig('core.settings.multiSubject', false)) {
+            add_action('show_user_profile', array($this, 'userEditPage'));
+            add_action('edit_user_profile', array($this, 'userEditPage'));
+        }
         
         //post title decorator
         add_filter('the_title', array($this, 'theTitle'), 999, 2);
@@ -95,6 +101,10 @@ class AAM_Backend_Manager {
         
         //manager WordPress metaboxes
         add_action("in_admin_header", array($this, 'initMetaboxes'), 999);
+        
+        // manage Navigation Menu page to support
+        // https://forum.aamplugin.com/d/61-restrict-role-from-updating-or-deleting-specific-navigation-menus
+        add_filter('nav_menu_meta_box_object', array($this, 'manageNavMenuMetabox'));
         
         if (AAM_Core_Config::get('ui.settings.renderAccessActionLink', true)) {
             //extend post inline actions
@@ -142,6 +152,32 @@ class AAM_Backend_Manager {
             );
         }
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @return void
+     */
+    public function userEditPage($user) {
+        ob_start();
+        require_once dirname(__FILE__) . '/phtml/user/multiple-roles.phtml';
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        echo $content;
+    }
+    
+    /**
+     * 
+     * @param type $postType
+     * @return type
+     */
+    public function manageNavMenuMetabox($postType) {
+        $postType->_default_query['suppress_filters'] = false;
+        
+        return $postType;
+    }
     
     /**
      * 
@@ -153,11 +189,11 @@ class AAM_Backend_Manager {
         $isProfile = $user->ID === get_current_user_id();
         if ($isProfile) {
             if (AAM_Core_API::capabilityExists('change_own_password') 
-                && !AAM::getUser()->hasCapability('change_own_password')) {
+                && !current_user_can('change_own_password')) {
                 $result = false;
             }
         } elseif (AAM_Core_API::capabilityExists('change_passwords') 
-                && !AAM::getUser()->hasCapability('change_passwords')) {
+                && !current_user_can('change_passwords')) {
             $result = false;
         }
         
@@ -175,11 +211,11 @@ class AAM_Backend_Manager {
         
         if ($isProfile) {
             if (AAM_Core_API::capabilityExists('change_own_password') 
-                && !AAM::getUser()->hasCapability('change_own_password')) {
+                && !current_user_can('change_own_password')) {
                 $password = $password2 = null;
             }
         } elseif (AAM_Core_API::capabilityExists('change_passwords') 
-                && !AAM::getUser()->hasCapability('change_passwords')) {
+                && !current_user_can('change_passwords')) {
             $password = $password2 = null;
         }
     }
@@ -189,7 +225,7 @@ class AAM_Backend_Manager {
      * @param type $data
      * @return type
      */
-    public function filterPostData($data, $postarr) {
+    public function filterPostData($data) {
         if (isset($data['post_type']) && ($data['post_type'] === 'aam_policy')) {
             $content = trim(filter_input(INPUT_POST, 'aam-policy'));
             
@@ -266,14 +302,14 @@ class AAM_Backend_Manager {
             'aam', 
             'AAM Access Settings', 
             'Advanced Access Manager access settings and configurations', 
-            array($this, 'renderImporer')
+            array($this, 'renderImporter')
         );
     }
     
     /**
      * 
      */
-    public function renderImporer() {
+    public function renderImporter() {
         $importer = new AAM_Core_Importer();
         $importer->dispatch();
     }
@@ -301,7 +337,7 @@ class AAM_Backend_Manager {
      */
     public function getPermalinkHtml($html) {
         if (AAM_Core_API::capabilityExists('edit_permalink') 
-                && !AAM::getUser()->hasCapability('edit_permalink')) {
+                && !current_user_can('edit_permalink')) {
             $html = '';
         }
         
@@ -322,12 +358,28 @@ class AAM_Backend_Manager {
      */
     public function profileUpdate($id, $old) {
         $user = get_user_by('ID', $id);
+
+        //save selected user roles
+        if (AAM::api()->getConfig('core.settings.multiSubject', false)) {
+            $roles = filter_input(INPUT_POST, 'aam_user_roles', FILTER_DEFAULT , FILTER_REQUIRE_ARRAY);
+
+            // prepare the final list of roles that needs to be set
+            $newRoles = array_intersect($roles, array_keys(get_editable_roles()));
+
+            if (!empty($newRoles)) {
+                //remove all current roles and then set new
+                $user->set_role($role);
+                foreach($newRoles as $role) {
+                    $user->add_role($role);
+                }
+            }
+        }
         
         //role changed?
         if (implode('', $user->roles) !== implode('', $old->roles)) {
             AAM_Core_API::clearCache(new AAM_Core_Subject_User($id));
             
-            //check if role has expiration data set
+            // check if role has expiration data set
             // TODO: This supports only the first role and NOT the multi-roles
             if (is_array($user->roles)) {
                 $roles  = array_values($user->roles);
@@ -367,7 +419,7 @@ class AAM_Backend_Manager {
      */
     public function screenOptions($flag) {
         if (AAM_Core_API::capabilityExists('show_screen_options')) {
-            $flag = AAM::getUser()->hasCapability('show_screen_options');
+            $flag = current_user_can('show_screen_options');
         } 
         
         if (AAM::isAAM()) {
@@ -386,7 +438,7 @@ class AAM_Backend_Manager {
      */
     public function helpOptions($help, $id, $screen) {
         if (AAM_Core_API::capabilityExists('show_help_tabs')) {
-            if (!AAM::getUser()->hasCapability('show_help_tabs')) {
+            if (!current_user_can('show_help_tabs')) {
                 $screen->remove_help_tabs();
                 $help = array();
             }
@@ -414,10 +466,9 @@ class AAM_Backend_Manager {
      * 
      */
     public function adminInit() {
-        $user  = AAM::getUser();
         $frame = AAM_Core_Request::get('aamframe');
         
-        if ($frame && $user->hasCapability('aam_manage_posts')) {
+        if ($frame && current_user_can('aam_manage_posts')) {
             echo AAM_Backend_View::getInstance()->renderAccessFrame();
             exit;
         }
@@ -534,12 +585,12 @@ class AAM_Backend_Manager {
         $api      = AAM_Core_Config::get('core.settings.apiAccessControl', true);
         
         $needAC  = ($frontend || $backend || $api);
-        $allowed = AAM::getUser()->hasCapability('aam_manage_posts');
+        $allowed = current_user_can('aam_manage_posts');
         $notASP  = (!is_a($post, 'WP_Post') || ($post->post_type !== 'aam_policy'));
         
         if ($needAC && $allowed && $notASP) {
             add_meta_box(
-                'aam-acceess-manager', 
+                'aam-access-manager', 
                 __('Access Manager', AAM_KEY) . ' <small style="color:#999999;">by AAM plugin</small>', 
                 array($this, 'renderPostMetabox'),
                 null,
@@ -653,14 +704,14 @@ class AAM_Backend_Manager {
             $backend  = AAM_Core_Config::get('core.settings.backendAccessControl', true);
             $api      = AAM_Core_Config::get('core.settings.apiAccessControl', true);
 
-            if (($frontend || $backend || $api) && AAM::getUser()->hasCapability('aam_manage_posts')) {
+            if (($frontend || $backend || $api) && current_user_can('aam_manage_posts')) {
                 echo AAM_Backend_View::getInstance()->renderTermMetabox($term);
             }
         }
     }
     
     /**
-     * Hanlde Metabox initialization process
+     * Handle Metabox initialization process
      *
      * @return void
      *
@@ -766,8 +817,8 @@ class AAM_Backend_Manager {
         $frontend       = AAM_Core_Config::get('core.settings.frontendAccessControl', true);
         $backend        = AAM_Core_Config::get('core.settings.backendAccessControl', true);
         $api            = AAM_Core_Config::get('core.settings.apiAccessControl', true);
-        $aamManager     = AAM::getUser()->hasCapability('aam_manager');
-        $featureManager = AAM::getUser()->hasCapability($cap);
+        $aamManager     = current_user_can('aam_manager');
+        $featureManager = current_user_can($cap);
         
         return ($frontend || $backend || $api) && $aamManager && $featureManager;
     }
@@ -782,7 +833,7 @@ class AAM_Backend_Manager {
     public function printJavascript() {
         if (AAM::isAAM()) {
             wp_enqueue_script('aam-vendor', AAM_MEDIA . '/js/vendor.js');
-            wp_enqueue_script('aam-main', AAM_MEDIA . '/js/aam-5.8.js');
+            wp_enqueue_script('aam-main', AAM_MEDIA . '/js/aam-5.9.js');
             
             //add plugin localization
             $this->printLocalization('aam-main');
@@ -934,7 +985,7 @@ class AAM_Backend_Manager {
         // flush any output buffer
         @ob_clean();
         
-        if (AAM::getUser()->hasCapability('aam_manager')) {
+        if (current_user_can('aam_manager')) {
             $response = AAM_Backend_View::getInstance()->renderContent(
                     AAM_Core_Request::post('uiType', 'main')
             );
@@ -979,7 +1030,7 @@ class AAM_Backend_Manager {
         while (@ob_end_clean()){}
         
         //process ajax request
-        if (AAM::getUser()->hasCapability('aam_manager')) {
+        if (current_user_can('aam_manager')) {
             echo AAM_Backend_View::getInstance()->processAjax();
         } else {
             echo __('Access Denied', AAM_KEY);

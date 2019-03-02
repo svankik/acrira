@@ -50,10 +50,6 @@ class AAM_Backend_Filter {
         add_filter('page_row_actions', array($this, 'postRowActions'), 10, 2);
         add_filter('post_row_actions', array($this, 'postRowActions'), 10, 2);
 
-        //default category filder
-        // TODO - THIS HAS TO GO TO THE PLUS PACKAGE EXTENSION
-        add_filter('pre_option_default_category', array($this, 'filterDefaultCategory'));
-        
         add_action('pre_post_update', array($this, 'prePostUpdate'), 10, 2);
         
         //user/role filters
@@ -118,7 +114,7 @@ class AAM_Backend_Filter {
      */
     public function adminNotices() {
         if (AAM_Core_API::capabilityExists('show_admin_notices')) {
-            if (!AAM::getUser()->hasCapability('show_admin_notices')) {
+            if (!current_user_can('show_admin_notices')) {
                 remove_all_actions('admin_notices');
                 remove_all_actions('network_admin_notices');
                 remove_all_actions('user_admin_notices');
@@ -163,31 +159,6 @@ class AAM_Backend_Filter {
         }
 
         return $actions;
-    }
-    
-    /**
-     * Override default category if defined
-     * 
-     * @param type $category
-     * 
-     * @return int
-     * 
-     * @access public
-     * @staticvar type $default
-     */
-    public function filterDefaultCategory($category) {
-        //check if user category is defined
-        $id      = get_current_user_id();
-        $default = AAM_Core_Config::get('feature.post.defaultTerm.user.' . $id , null);
-        $roles   = AAM::getUser()->roles;
-        
-        if (is_null($default) && count($roles)) {
-            $default = AAM_Core_Config::get(
-                'feature.post.defaultTerm.role.' . array_shift($roles), false
-            );
-        }
-        
-        return ($default ? $default : $category);
     }
     
     /**
@@ -247,7 +218,7 @@ class AAM_Backend_Filter {
         $response = false;
         
         if (AAM_Core_API::capabilityExists('manage_same_user_level')) {
-            $response = !AAM::getUser()->hasCapability('manage_same_user_level');
+            $response = !current_user_can('manage_same_user_level');
         }
         
         return $response;

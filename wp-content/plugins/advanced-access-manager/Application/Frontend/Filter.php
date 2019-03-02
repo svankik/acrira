@@ -81,7 +81,7 @@ class AAM_Frontend_Filter {
             $post = AAM_Core_API::getCurrentPost();
             
             if ($post) {
-                AAM_Frontend_Authorization::getInstance()->chechReadAuth($post);
+                AAM_Frontend_Authorization::getInstance()->checkReadAuth($post);
             }
         }
     }
@@ -105,7 +105,7 @@ class AAM_Frontend_Filter {
         $post = AAM_Core_API::getCurrentPost();
         
         if ($post) {
-            AAM_Frontend_Authorization::getInstance()->chechReadAuth($post);
+            AAM_Frontend_Authorization::getInstance()->checkReadAuth($post);
         }
         
         return $template;
