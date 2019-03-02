@@ -25,11 +25,13 @@ final class AAM_Core_Policy_Token {
      * @static 
      */
     protected static $map = array(
-        'USER'     => 'AAM_Core_Policy_Token::getUserValue',
-        'DATETIME' => 'AAM_Core_Policy_Token::getDateTimeValue',
-        'GET'      => 'AAM_Core_Request::get',
-        'POST'     => 'AAM_Core_Request::post',
-        'COOKIE'   => 'AAM_Core_Request::cookie'
+        'USER'          => 'AAM_Core_Policy_Token::getUserValue',
+        'DATETIME'      => 'AAM_Core_Policy_Token::getDateTimeValue',
+        'GET'           => 'AAM_Core_Request::get',
+        'POST'          => 'AAM_Core_Request::post',
+        'COOKIE'        => 'AAM_Core_Request::cookie',
+        'SERVER'        => 'AAM_Core_Request::server',
+        'ARGS'          => 'AAM_Core_Policy_Token::getArgValue'
     );
     
     /**
@@ -43,11 +45,16 @@ final class AAM_Core_Policy_Token {
      * @access public
      * @static
      */
-    public static function evaluate($part, array $tokens) {
+    public static function evaluate($part, array $tokens, array $args = array()) {
         foreach($tokens as $token) {
+            $val = self::getValue(
+                preg_replace('/^\$\{([^}]+)\}$/', '${1}', $token),
+                $args
+            );
+
             $part = str_replace(
                 $token, 
-                self::getValue(preg_replace('/^\$\{([^}]+)\}$/', '${1}', $token)), 
+                (is_scalar($val) ? $val : json_encode($val)), 
                 $part
             );
         }
@@ -59,20 +66,20 @@ final class AAM_Core_Policy_Token {
      * Get token value
      * 
      * @param string $token
-     * @param mixed  $value
+     * @param array  $args
      * 
      * @return mixed
      * 
      * @access protected
      * @static
      */
-    protected static function getValue($token, $value = null) {
+    protected static function getValue($token, $args) {
         $parts = explode('.', $token);
         
         if (isset(self::$map[$parts[0]])) {
-            $value = call_user_func(self::$map[$parts[0]], $parts[1], $value);
+            $value = call_user_func(self::$map[$parts[0]], $parts[1], $args);
         } elseif ($parts[0] === 'CALLBACK' && is_callable($parts[1])) {
-            $value = call_user_func($parts[1], $value);
+            $value = call_user_func($parts[1], $args);
         }
         
         return $value;
@@ -100,6 +107,15 @@ final class AAM_Core_Policy_Token {
             case 'authenticated':
                 $value = $user->isVisitor() ? false : true;
                 break;
+
+            case 'capabilities':
+                $value = array();
+                foreach($user->allcaps as $cap => $effect) {
+                    if (!empty($effect)) {
+                        $value[] = $cap;
+                    }
+                }
+                break;
             
             default:
                 $value = $user->{$prop};
@@ -107,6 +123,21 @@ final class AAM_Core_Policy_Token {
         }
         
         return $value;
+    }
+    
+    /**
+     * Get inline argument
+     * 
+     * @param string $prop
+     * @param array  $args
+     * 
+     * @return mixed
+     * 
+     * @access protected
+     * @static
+     */
+    protected static function getArgValue($prop, $args) {
+        return (isset($args[$prop]) ? $args[$prop] : null);
     }
     
     /**

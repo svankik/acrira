@@ -61,13 +61,14 @@ final class AAM_Core_Policy_Condition {
     /**
      * Evaluate the group of conditions based on type
      * 
-     * @param array $conditions
+     * @param array $conditions List of conditions
+     * @param array $args       Since 5.9 - Inline args for evaluation
      * 
      * @return boolean
      * 
      * @access public
      */
-    public function evaluate($conditions) {
+    public function evaluate($conditions, $args = array()) {
         $result = true;
         
         foreach($conditions as $type => $conditions) {
@@ -75,7 +76,7 @@ final class AAM_Core_Policy_Condition {
             
             if (isset($this->map[$type])) {
                 $callback = array($this, $this->map[$type]);
-                $result   = $result && call_user_func($callback, $conditions);
+                $result   = $result && call_user_func($callback, $conditions, $args);
             } else {
                 $result = false;
             }
@@ -88,20 +89,21 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of BETWEEN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateBetweenConditions($conditions) {
+    protected function evaluateBetweenConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            foreach((array)$right as $subset) {
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            foreach((array)$condition['right'] as $subset) {
                 $min = (is_array($subset) ? array_shift($subset) : $subset);
                 $max = (is_array($subset) ? end($subset) : $subset);
 
-                $result = $result || ($left >= $min && $left <= $max);
+                $result = $result || ($condition['left'] >= $min && $condition['left'] <= $max);
             }
         }
         
@@ -114,16 +116,17 @@ final class AAM_Core_Policy_Condition {
      * The values have to be identical
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateEqualsConditions($conditions) {
+    protected function evaluateEqualsConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || ($left === $right);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || ($condition['left'] === $condition['right']);
         }
         
         return $result;
@@ -133,29 +136,31 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of NOT EQUALs conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateNotEqualsConditions($conditions) {
-        return !$this->evaluateEqualsConditions($conditions);
+    protected function evaluateNotEqualsConditions($conditions, $args) {
+        return !$this->evaluateEqualsConditions($conditions, $args);
     }
     
     /**
      * Evaluate group of GREATER THEN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateGreaterConditions($conditions) {
+    protected function evaluateGreaterConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || ($left > $right);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || ($condition['left'] > $condition['right']);
         }
         
         return $result;
@@ -165,16 +170,17 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of LESS THEN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateLessConditions($conditions) {
+    protected function evaluateLessConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || ($left < $right);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || ($condition['left'] < $condition['right']);
         }
         
         return $result;
@@ -184,16 +190,17 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of GREATER OR EQUALS THEN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateGreaterOrEqualsConditions($conditions) {
+    protected function evaluateGreaterOrEqualsConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || ($left >= $right);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || ($condition['left'] >= $condition['right']);
         }
         
         return $result;
@@ -203,16 +210,17 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of LESS OR EQUALS THEN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateLessOrEqualsConditions($conditions) {
+    protected function evaluateLessOrEqualsConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || ($left <= $right);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || ($condition['left'] <= $condition['right']);
         }
         
         return $result;
@@ -222,16 +230,17 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of IN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateInConditions($conditions) {
+    protected function evaluateInConditions($conditions, $args) {
         $result = false;
-        
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || in_array($left, (array) $right, true);
+
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || in_array($condition['left'], (array)$condition['right'], true);
         }
         
         return $result;
@@ -241,31 +250,33 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of NOT IN conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateNotInConditions($conditions) {
-        return !$this->evaluateInConditions($conditions);
+    protected function evaluateNotInConditions($conditions, $args) {
+        return !$this->evaluateInConditions($conditions, $args);
     }
     
     /**
      * Evaluate group of LIKE conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateLikeConditions($conditions) {
+    protected function evaluateLikeConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            foreach((array)$right as $el) {
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            foreach((array)$condition['right'] as $el) {
                 $sub    = str_replace('\*', '.*', preg_quote($el));
-                $result = $result || preg_match('@^' . $sub . '$@', $left);
+                $result = $result || preg_match('@^' . $sub . '$@', $condition['left']);
             }
         }
         
@@ -276,29 +287,31 @@ final class AAM_Core_Policy_Condition {
      * Evaluate group of NOT LIKE conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateNotLikeConditions($conditions) {
-        return !$this->evaluateLikeConditions($conditions);
+    protected function evaluateNotLikeConditions($conditions, $args) {
+        return !$this->evaluateLikeConditions($conditions, $args);
     }
     
     /**
      * Evaluate group of REGEX conditions
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return boolean
      * 
      * @access protected
      */
-    protected function evaluateRegexConditions($conditions) {
+    protected function evaluateRegexConditions($conditions, $args) {
         $result = false;
         
-        foreach($this->prepareConditions($conditions) as $left => $right) {
-            $result = $result || preg_match($right, $left);
+        foreach($this->prepareConditions($conditions, $args) as $condition) {
+            $result = $result || preg_match($condition['right'], $condition['left']);
         }
         
         return $result;
@@ -308,22 +321,21 @@ final class AAM_Core_Policy_Condition {
      * Prepare conditions by replacing all defined tokens
      * 
      * @param array $conditions
+     * @param array $args
      * 
      * @return array
      * 
      * @access protected
      */
-    protected function prepareConditions($conditions) {
+    protected function prepareConditions($conditions, $args) {
         $result = array();
         
         if (is_array($conditions)) {
             foreach($conditions as $left => $right) {
-                $left  = $this->parseExpression($left);
-                $right = $this->parseExpression($right);
-                
-                if ($left !== false) { // Do not include any failed conditions
-                    $result[$left] = $right;
-                }
+                $result[] = array(
+                    'left'  => $this->parseExpression($left, $args),
+                    'right' => $this->parseExpression($right, $args)
+                );
             }
         }
         
@@ -333,26 +345,25 @@ final class AAM_Core_Policy_Condition {
     /**
      * Parse condition and try to replace all defined tokens
      * 
-     * @param mixed $exp Part of the condition (either left or right)
+     * @param mixed $exp  Part of the condition (either left or right)
+     * @param array $args Inline arguments
      * 
      * @return mixed Prepared part of the condition or false on failure
      * 
      * @access protected
      */
-    protected function parseExpression($exp) {
+    protected function parseExpression($exp, $args) {
         if (is_scalar($exp)) {
             if (preg_match_all('/(\$\{[^}]+\})/', $exp, $match)) {
-                $exp = AAM_Core_Policy_Token::evaluate($exp, $match[1]);
+                $exp = AAM_Core_Policy_Token::evaluate($exp, $match[1], $args);
             }
             // If there is type scaling, perform it too
-            if (preg_match('/^\(\*(string|ip|int|boolean|bool)\)(.*)/i', $exp, $scale)) {
-                $exp = str_replace(
-                    "(*{$scale[1]}", '', $this->scaleValue($scale[2], $scale[1])
-                );
+            if (preg_match('/^\(\*(string|ip|int|boolean|bool|array)\)(.*)/i', $exp, $scale)) {
+                $exp = $this->scaleValue($scale[2], $scale[1]);
             }
         } elseif (is_array($exp) || is_object($exp)) {
             foreach($exp as &$value) {
-                $value = $this->parseExpression($value);
+                $value = $this->parseExpression($value, $args);
             }
         } else {
             $exp = false;
@@ -388,6 +399,10 @@ final class AAM_Core_Policy_Condition {
             case 'boolean':
             case 'bool':
                 $value = (bool)$value;
+                break;
+
+            case 'array':
+                $value = json_decode($value, true);
                 break;
         }
         

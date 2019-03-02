@@ -125,23 +125,4 @@ class AAM_Core_Object_Cache extends AAM_Core_Object {
         return $this->getSubject()->deleteOption('cache');
     }
     
-    /**
-     * Read object from parent subject
-     * 
-     * @return mixed
-     * 
-     * @access public
-     */
-    public function inheritFromParent(){
-        $subject = $this->getParent();
-                
-        if (is_a($subject, 'AAM_Core_Subject')){
-            $option = $subject->getObject('cache')->getOption();
-        } else {
-            $option = array();
-        }
-        
-        return $option;
-    }
-    
 }

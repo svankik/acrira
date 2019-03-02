@@ -30,26 +30,40 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
     const AAM_CAPKEY = 'aam_capability';
     
     /**
-     *
-     * @var type 
+     * List of all user specific capabilities
+     * 
+     * @var array
+     * 
+     * @access protected 
      */
     protected $aamCaps = array();
     
     /**
-     *
-     * @var type 
+     * Parent subject
+     * 
+     * @var AAM_Core_Subject
+     * 
+     * @access protected 
      */
     protected $parent = null;
     
     /**
-     *
-     * @var type 
+     * Max user level
+     * 
+     * @var int
+     * 
+     * @access protected 
      */
     protected $maxLevel = null;
     
     /**
+     * Constructor
      * 
-     * @param type $id
+     * @param int $id
+     * 
+     * @return void
+     * 
+     * @access public
      */
     public function __construct($id = '') {
         parent::__construct($id);
@@ -65,6 +79,55 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
     /**
      * 
      */
+    public function initialize() {
+        $subject = $this->getSubject();
+        $manager = AAM_Core_Policy_Factory::get($this);
+        
+        // Retrieve all capabilities set in Access Policy
+        // Load Capabilities from the policy
+        $policyCaps = array();
+        
+        foreach($manager->find("/^Capability:[\w]+/i") as $key => $stm) {
+            $chunks = explode(':', $key);
+            $policyCaps[$chunks[1]] = ($stm['Effect'] === 'allow' ? 1 : 0);
+        }
+        
+        // Load Roles from the policy
+        $roles    = (array) $subject->roles;
+        $allRoles = AAM_Core_API::getRoles();
+        $roleCaps = array();
+        
+        foreach($manager->find("/^Role:/i") as $key => $stm) {
+            $chunks = explode(':', $key);
+            
+            if ($stm['Effect'] === 'allow') {
+                if (!in_array($chunks[1], $roles, true)) {
+                    if ($allRoles->is_role($chunks[1])) {
+                        $roleCaps = array_merge($roleCaps, $allRoles->get_role($chunks[1])->capabilities);
+                        $roleCaps[] = $chunks[1];
+                    }
+                    $roles[] = $chunks[1];
+                }
+            } elseif (in_array($chunks[1], $roles, true)) {
+                // Make sure that we delete all instances of the role
+                foreach($roles as $i => $role){ 
+                    if ($role === $chunks[1]) {
+                        unset($roles[$i]);
+                    }
+                }
+            }
+        }
+        
+        $subject->roles = $roles;
+        
+        //reset the user capabilities
+        $subject->allcaps = array_merge($subject->allcaps, $roleCaps, $policyCaps,  $this->aamCaps);
+        $subject->caps    = array_merge($subject->caps, $roleCaps, $policyCaps,  $this->aamCaps);
+    }
+    
+    /**
+     * 
+     */
     public function validateUserStatus() {
         //check if user is blocked
         if ($this->user_status === 1) {
@@ -74,7 +137,7 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
         //check if user is expired
         $expired = get_user_meta($this->ID, 'aam_user_expiration', true);
         if (!empty($expired)) {
-            $parts   = explode('|', $expired);
+            $parts = explode('|', $expired);
             
             // Set time
             // TODO: Remove in Jan 2020
@@ -88,7 +151,7 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
             //TODO - PHP Warning:  DateTime::setTimezone(): Can only do this for zones with ID for now in
             @$compare->setTimezone($expires->getTimezone());
             
-            if ($expires <= $compare) {
+            if ($expires->getTimestamp() <= $compare->getTimestamp()) {
                 $this->triggerExpiredUserAction($parts);
             }
         }
@@ -223,65 +286,6 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
         return $subject;
     }
     
-    /**
-     * 
-     */
-    public function initialize($isolated = false) {
-        $subject = $this->getSubject();
-        
-        // Retrieve all capabilities set in Access Policy
-        // Load Capabilities from the policy
-        $stms = AAM_Core_Policy_Manager::getInstance()->find(
-            "/^Capability:/i", ($isolated ? $this : null)
-        );
-
-        $policyCaps = array();
-        
-        foreach($stms as $key => $stm) {
-            $chunks = explode(':', $key);
-            if (count($chunks) === 2) {
-                $policyCaps[$chunks[1]] = ($stm['Effect'] === 'allow' ? 1 : 0);
-            }
-        }
-        
-        // Load Roles from the policy
-        $stms = AAM_Core_Policy_Manager::getInstance()->find(
-            "/^Role:/i", ($isolated ? $this : null)
-        );
-
-        $roles    = (array) $subject->roles;
-        
-        $allRoles = AAM_Core_API::getRoles();
-        $roleCaps = array();
-        
-        foreach($stms as $key => $stm) {
-            $chunks = explode(':', $key);
-            
-            if ($stm['Effect'] === 'allow') {
-                if (!in_array($chunks[1], $roles, true)) {
-                    if ($allRoles->is_role($chunks[1])) {
-                        $roleCaps = array_merge($roleCaps, $allRoles->get_role($chunks[1])->capabilities);
-                        $roleCaps[] = $chunks[1];
-                    }
-                    $roles[] = $chunks[1];
-                }
-            } elseif (in_array($chunks[1], $roles, true)) {
-                // Make sure that we delete all instanses of the role
-                foreach($roles as $i => $role){ 
-                    if ($role === $chunks[1]) {
-                        unset($roles[$i]);
-                    }
-                }
-            }
-        }
-        
-        $subject->roles = $roles;
-        
-        //reset the user capabilities
-        $subject->allcaps = array_merge($subject->allcaps, $roleCaps, $policyCaps,  $this->aamCaps);
-        $subject->caps    = array_merge($subject->caps, $roleCaps, $policyCaps,  $this->aamCaps);
-    }
-
     /**
      * Get user capabilities
      * 

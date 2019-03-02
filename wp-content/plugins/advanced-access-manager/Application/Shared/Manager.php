@@ -139,13 +139,13 @@ class AAM_Shared_Manager {
             'supports'     => array('title', 'excerpt', 'revisions'),
             'delete_with_user' => false,
             'capabilities' => array(
-                'edit_post'         => 'aam_manage_policy',
-                'read_post'         => 'aam_manage_policy',
-                'delete_post'       => 'aam_manage_policy',
-                'delete_posts'      => 'aam_manage_policy',
-                'edit_posts'        => 'aam_manage_policy',
-                'edit_others_posts' => 'aam_manage_policy',
-                'publish_posts'     => 'aam_manage_policy',
+                'edit_post'         => 'aam_edit_policy',
+                'read_post'         => 'aam_read_policy',
+                'delete_post'       => 'aam_delete_policy',
+                'delete_posts'      => 'aam_delete_policies',
+                'edit_posts'        => 'aam_edit_policies',
+                'edit_others_posts' => 'aam_edit_other_policies',
+                'publish_posts'     => 'aam_publish_policies',
             )
         ));
     }
@@ -267,7 +267,6 @@ class AAM_Shared_Manager {
      * @return array
      * 
      * @access public
-     * @global WPDB $wpdb
      */
     public function filterPostQuery($clauses, $wpQuery) {
         if (!$wpQuery->is_singular && $this->isPostFilterEnabled()) {
@@ -450,20 +449,24 @@ class AAM_Shared_Manager {
             
             case 'edit_post':
             case 'edit_page':
+            case 'aam_edit_policy':
                 $caps = $this->authorizePostEdit($caps, $args[0]);
                 break;
             
             case 'delete_post':
             case 'delete_page':
+            case 'aam_delete_policy':
                 $caps = $this->authorizePostDelete($caps, $args[0]);
                 break;
             
             case 'read_post':
             case 'read_page':
+            case 'aam_read_policy':
                 $caps = $this->authorizePostRead($caps, $args[0]);
                 break;
             
             case 'publish_post':
+            case 'aam_publish_policy':
                 $caps = $this->authorizePublishPost($caps, $args[0]);
                 break;
             
@@ -472,6 +475,8 @@ class AAM_Shared_Manager {
                 break;
             
             case 'publish_posts':
+            case 'publish_pages':
+            case 'aam_publish_policies':
                 // There is a bug in WP core that instead of checking if user has
                 // ability to publish_post, it checks for edit_post
                 if (is_a($post, 'WP_Post')) {
@@ -518,7 +523,7 @@ class AAM_Shared_Manager {
      * @return type
      */
     protected function checkPluginsAction($action, $caps, $cap) {
-        $allow = AAM::api()->isAllowed("Plugin:WP:{$action}");
+        $allow = AAM::api()->getPolicyManager()->isAllowed("Plugin:WP:{$action}");
         
         if ($allow !== null) {
             $caps[] = $allow ? $cap : 'do_not_allow';
@@ -539,7 +544,7 @@ class AAM_Shared_Manager {
         $parts = explode('/', $plugin);
         $slug  = (!empty($parts[0]) ? $parts[0] : null);
 
-        $allow = AAM::api()->isAllowed("Plugin:{$slug}:WP:{$action}");
+        $allow = AAM::api()->getPolicyManager()->isAllowed("Plugin:{$slug}:WP:{$action}");
         if ($allow !== null) {
             $caps[] = $allow ? $cap : 'do_not_allow';
         }
@@ -613,9 +618,8 @@ class AAM_Shared_Manager {
     /**
      * Check if current user is allowed to manager specified user
      * 
-     * @param int   $id
-     * @param array $allcaps
-     * @param array $metacaps
+     * @param array $caps
+     * @param int   $userId
      * 
      * @return array
      * 
@@ -639,9 +643,8 @@ class AAM_Shared_Manager {
     /**
      * Check if current user is allowed to edit post
      * 
-     * @param int    $id
-     * @param array  $allcaps
-     * @param array  $metacaps
+     * @param array $caps
+     * @param int   $id
      * 
      * @return array
      * 
@@ -662,9 +665,8 @@ class AAM_Shared_Manager {
     /**
      * Check if current user is allowed to delete post
      * 
-     * @param int    $id
-     * @param array  $allcaps
-     * @param array  $metacaps
+     * @param array $caps
+     * @param int   $id
      * 
      * @return array
      * 
@@ -684,8 +686,8 @@ class AAM_Shared_Manager {
     /**
      * Check if user is allowed to publish post
      * 
-     * @param array $allcaps
-     * @param array $metacaps
+     * @param array $caps
+     * @param int   $id
      * 
      * @return array
      * 
@@ -706,8 +708,8 @@ class AAM_Shared_Manager {
     /**
      * Check if user is allowed to publish post
      * 
-     * @param array $allcaps
-     * @param array $metacaps
+     * @param array $caps
+     * @param int   $id
      * 
      * @return array
      * 
