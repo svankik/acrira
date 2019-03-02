@@ -19,23 +19,24 @@
                 <?php
                     the_title( );
                 ?>
-                 de
-                <?php
-                    $first = TRUE;
-                    $realisateurs = get_field( 'realisateurs' );
-
-                    foreach ($realisateurs as $realisateur) {
-
-                        if( !$first ) {
-                            echo ', ';
-                        }
-
-                        echo $realisateur['realisateur'];
-
-                        $first = FALSE;
-                    }
-                ?>
             </h3>
+            <p>de
+                <?php
+                $first = TRUE;
+                $realisateurs = get_field( 'realisateurs' );
+
+                foreach ($realisateurs as $realisateur) {
+
+                    if( !$first ) {
+                        echo ', ';
+                    }
+
+                    echo $realisateur['realisateur'];
+
+                    $first = FALSE;
+                }
+                ?>
+            </p>
 		</div>
 	</header><!-- .entry-header -->
 
@@ -58,16 +59,16 @@
             </div>
 		<?php endif; ?>
 
-        <?php
+        <?php if (!empty(get_field( 'sortie_nationale', false, false ))) :
             $dateformatstring = "j F Y";
-            $unixtimestamp = strtotime( get_field( 'sortie_nationale', false, false ) );
-        ?>
-        <div class="film-date-sortie">
-            <span class="film-section-title">Date de sortie :</span>
-            <?php
-                echo date_i18n( $dateformatstring, $unixtimestamp );
-            ?>
-        </div>
+            $unixtimestamp = strtotime( get_field( 'sortie_nationale', false, false ) ); ?>
+            <div class="film-date-sortie">
+                <span class="film-section-title">Date de sortie :</span>
+                <?php
+                    echo date_i18n( $dateformatstring, $unixtimestamp );
+                ?>
+            </div>
+        <?php endif; ?>
         <div class="film-duree">
             <span class="film-section-title">Durée :</span>
             <?php

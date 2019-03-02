@@ -26,6 +26,14 @@
 				line-height: 19px !important;
 				color: $gray-dark;
 			}
+			
+			h3, p {
+				display: inline;
+			}
+
+			p {
+				font-style: italic;
+			}
 
 			.subtitle {
 				position: absolute;
