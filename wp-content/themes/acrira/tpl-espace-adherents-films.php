@@ -84,7 +84,7 @@ get_header(); ?>
                                 <option value="">Tous</option>
                                 <?php
                                 foreach ($realisateurs as $realisateur) {
-                                    print '<option value="' . $realisateur . '">' . $realisateur . '</option>';
+                                    print '<option value="' . $realisateur . '"' . ( !empty( $_GET['realisateur'] && $_GET['realisateur'] == $realisateur ) ? " selected" : "" ) . '>' . $realisateur . '</option>';
                                 }
                                 ?>
                             </select>
@@ -94,7 +94,7 @@ get_header(); ?>
                                 <option value="">Tous</option>
 		                        <?php
 		                        foreach ($genres as $genre) {
-			                        print '<option value="' . $genre . '">' . $genre . '</option>';
+			                        print '<option value="' . $genre . '"' . ( !empty( $_GET['genre'] && $_GET['genre'] == $genre ) ? " selected" : "" ) . '>' . $genre . '</option>';
 		                        }
 		                        ?>
                             </select>
@@ -104,13 +104,13 @@ get_header(); ?>
                                 <option value="">Toutes</option>
 		                        <?php
 		                        foreach ($origines as $origine) {
-			                        print '<option value="' . $origine . '">' . $origine . '</option>';
+			                        print '<option value="' . $origine . '"' . ( !empty( $_GET['origine'] && $_GET['origine'] == $origine ) ? " selected" : "" ) . '>' . $origine . '</option>';
 		                        }
 		                        ?>
                             </select>
 
                             <span>Jeune public :</span>
-                            <input type="checkbox" name="type_public" value="1" />
+                            <input type="checkbox" name="type_public" value="1" <?php ( !empty( $_GET['type_public'] ) && $_GET['type_public'] == '1' ) ? print " checked" : ""; ?> />
 
                             <input type="submit" value="Filtrer" />
 
@@ -123,26 +123,38 @@ get_header(); ?>
 
 							<?php
 
-							if(!empty($_GET['realisateur'])) {
-
-							}
-
-							if(!empty($_GET['genre'])) {
-
-							}
-
-							if(!empty($_GET['origine'])) {
-
-							}
-
-							$films = new WP_Query(
-								array(
-									'post_type'      => 'film',
-									'orderby'        => 'title',
-									'order'          => 'ASC',
-									'posts_per_page' => -1,
-								)
+							$args = array(
+								'post_type'      => 'film',
+								'orderby'        => 'title',
+								'order'          => 'ASC',
+								'posts_per_page' => -1
 							);
+
+							$args['meta_query'] = array(
+								'relation' => 'AND',
+								(!empty($_GET['realisateur'])) ? array(
+									'key'		=> 'realisateurs_%_realisateur',
+									'value'		=> $_GET['realisateur'],
+									'compare'	=> '='
+								) : '',
+								(!empty($_GET['genre'])) ? array(
+									'key'		=> 'genres_%_genre',
+									'value'		=> $_GET['genre'],
+									'compare'	=> '='
+								) : '',
+								(!empty($_GET['origine'])) ? array(
+									'key'		=> 'origines_%_origine',
+									'value'		=> $_GET['origine'],
+									'compare'	=> '='
+								) : '',
+								(!empty($_GET['type_public'])) ? array(
+									'key'		=> 'type_public',
+									'value'		=> '',
+									'compare'	=> '!='
+								) : '',
+							);
+
+							$films = new WP_Query( $args );
 
 							while ( $films->have_posts() ) : $films->the_post();
 

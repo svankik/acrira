@@ -528,3 +528,12 @@ function acrira_next_post_where_name(){
 	global $post, $wpdb;
 	return $wpdb->prepare( "WHERE p.post_title > %s AND p.post_type = %s AND ( p.post_status = 'publish' OR p.post_status = 'private' )", $post->post_title, $post->post_type );
 }
+
+add_filter('posts_where', 'acrira_posts_where');
+function acrira_posts_where( $where ) {
+	$where = str_replace("meta_key = 'realisateurs", "meta_key LIKE 'realisateurs", $where);
+	$where = str_replace("meta_key = 'genres", "meta_key LIKE 'genres", $where);
+	$where = str_replace("meta_key = 'origines", "meta_key LIKE 'origines", $where);
+
+	return $where;
+}
