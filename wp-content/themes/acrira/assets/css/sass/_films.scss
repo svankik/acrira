@@ -1,0 +1,26 @@
+.page-template-tpl-espace-adherents-films {
+
+    #content {
+
+        .orderby-area, .filters-area {
+            clear: both;
+            float: right;
+            margin-top: 10px;
+
+            h2, select, span {
+                font-size: 12px;
+                line-height: 12px;
+                display: inline;
+            }
+
+            select {
+                height: 2em;
+            }
+
+            input[type="submit"] {
+                width: 75px;
+            }
+        }
+    }
+}
+
