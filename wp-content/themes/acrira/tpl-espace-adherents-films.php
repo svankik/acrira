@@ -41,9 +41,9 @@ get_header(); ?>
 
                         <form name="films-filter" action="/espace-adherents-parlons-cinema" method="get">
 
-                        <div class="filters-area">
+                        <div class="orderby-area">
 
-                            <h2>Trier les films par</h2>
+                            <h2>Trier les films par :</h2>
 
                             <select name="orderby">
                                 <option value="title" <?php ( empty( $_GET['orderby'] || $_GET['orderby'] == 'title' ) ? print " selected" : "" ); ?>>Titre</option>
@@ -57,7 +57,7 @@ get_header(); ?>
 
                         <div class="filters-area">
 
-                            <h2>Filtrer les films</h2>
+                            <h2>Filtrer les films par :</h2>
 
                             <?php
 
