@@ -39,17 +39,65 @@ get_header(); ?>
 
 				if ( $user->ID ) : ?>
 
+                        <form name="films-filter" action="/espace-adherents-parlons-cinema" method="get">
+
+                        <div class="filters-area">
+
+                            <h2>Trier les films par</h2>
+
+                            <select name="orderby">
+                                <option value="title" <?php ( empty( $_GET['orderby'] || $_GET['orderby'] == 'title' ) ? print " selected" : "" ); ?>>Titre</option>
+                                <option value="comment" <?php ( !empty( $_GET['orderby'] && $_GET['orderby'] == 'comment' ) ? print " selected" : "" ); ?>>Commentaires les plus récents</option>
+                                <option value="sortie_nationale" <?php ( !empty( $_GET['orderby'] && $_GET['orderby'] == 'sortie_nationale' ) ? print " selected" : "" ); ?>>Date de sortie</option>
+                            </select>
+
+                            <input type="submit" value="Trier" />
+
+                        </div>
+
                         <div class="filters-area">
 
                             <h2>Filtrer les films</h2>
 
                             <?php
 
+                            $orderby = 'title';
+
+                            if(!empty($_GET['orderby'])) {
+                                switch ($_GET['orderby']) {
+                                    case 'title':
+                                        $orderby = 'title';
+                                        $order = 'ASC';
+                                        break;
+                                    case 'comment':
+                                        $post_in = array();
+
+	                                    $comments_args = array(
+		                                    'status' => 'approve',
+		                                    'order' => 'DESC'
+	                                    );
+
+	                                    $comments = get_comments( $comments_args );
+
+	                                    foreach ( $comments as $comment ) {
+		                                    $post = get_post( $comment->comment_post_ID );
+		                                    $post_in[] = $post->ID;
+	                                    }
+
+                                        $orderby = 'post__in';
+	                                    $order = 'ASC';
+                                        break;
+                                    case 'sortie_nationale':
+                                        $meta_key = 'sortie_nationale';
+                                        $orderby = 'meta_value';
+                                        $order = 'ASC';
+                                        break;
+                                }
+                            }
+
                             $films = new WP_Query(
 	                            array(
 		                            'post_type'      => 'film',
-		                            'orderby'        => 'title',
-		                            'order'          => 'ASC',
 		                            'posts_per_page' => -1,
 	                            )
                             );
@@ -76,8 +124,6 @@ get_header(); ?>
                             sort($origines);
 
                             ?>
-
-                            <form name="films-filter" action="/espace-adherents-parlons-cinema" method="get">
 
                             <span>Réalisateur :</span>
                             <select name="realisateur">
@@ -113,9 +159,9 @@ get_header(); ?>
                             <input type="checkbox" name="type_public" value="1" <?php ( !empty( $_GET['type_public'] ) && $_GET['type_public'] == '1' ) ? print " checked" : ""; ?> />
 
                             <input type="submit" value="Filtrer" />
-
-                            </form>
                         </div>
+
+                        </form>
 
                         <h2>Les films</h2>
 
@@ -125,10 +171,18 @@ get_header(); ?>
 
 							$args = array(
 								'post_type'      => 'film',
-								'orderby'        => 'title',
-								'order'          => 'ASC',
+								'orderby'        => $orderby,
+								'order'          => $order,
 								'posts_per_page' => -1
 							);
+
+							if(is_array($post_in)) {
+							    $args['post__in'] = $post_in;
+							}
+
+							if(isset($meta_key)) {
+								$args['meta_key'] = $meta_key;
+                            }
 
 							$args['meta_query'] = array(
 								'relation' => 'AND',
