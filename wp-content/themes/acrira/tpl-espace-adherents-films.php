@@ -62,6 +62,7 @@ get_header(); ?>
                             <?php
 
                             $orderby = 'title';
+                            $order = 'ASC';
 
                             if(!empty($_GET['orderby'])) {
                                 switch ($_GET['orderby']) {
