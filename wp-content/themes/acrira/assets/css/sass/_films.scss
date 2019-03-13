@@ -8,12 +8,20 @@
             margin-top: 10px;
 
             h2, select, span {
-                font-size: 12px;
                 line-height: 12px;
                 display: inline;
             }
 
+            h2 {
+                font-size: 15px;
+            }
+
+            span {
+                font-size: 12px;
+            }
+
             select {
+                font-size: 12px;
                 height: 2em;
             }
 
