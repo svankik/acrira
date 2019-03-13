@@ -2293,10 +2293,14 @@ ul.bxslider {
   float: right;
   margin-top: 10px; }
   .page-template-tpl-espace-adherents-films #content .orderby-area h2, .page-template-tpl-espace-adherents-films #content .orderby-area select, .page-template-tpl-espace-adherents-films #content .orderby-area span, .page-template-tpl-espace-adherents-films #content .filters-area h2, .page-template-tpl-espace-adherents-films #content .filters-area select, .page-template-tpl-espace-adherents-films #content .filters-area span {
-    font-size: 12px;
     line-height: 12px;
     display: inline; }
+  .page-template-tpl-espace-adherents-films #content .orderby-area h2, .page-template-tpl-espace-adherents-films #content .filters-area h2 {
+    font-size: 15px; }
+  .page-template-tpl-espace-adherents-films #content .orderby-area span, .page-template-tpl-espace-adherents-films #content .filters-area span {
+    font-size: 12px; }
   .page-template-tpl-espace-adherents-films #content .orderby-area select, .page-template-tpl-espace-adherents-films #content .filters-area select {
+    font-size: 12px;
     height: 2em; }
   .page-template-tpl-espace-adherents-films #content .orderby-area input[type="submit"], .page-template-tpl-espace-adherents-films #content .filters-area input[type="submit"] {
     width: 75px; }
