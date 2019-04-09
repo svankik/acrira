@@ -98,10 +98,9 @@ class AAM_Backend_Feature_Subject_User {
         );
         
         if (current_user_can('aam_switch_users')) { 
-            $user  = new WP_User(AAM_Core_Request::post('user'));
-            $max   = AAM::getUser()->getMaxLevel();
+            $user = AAM_Backend_Subject::getInstance()->get();
 
-            if ($max >= AAM_Core_API::maxLevel($user->allcaps)) {
+            if ($this->isAllowed($user)) {
                 AAM_Core_API::updateOption(
                         'aam-user-switch-' . $user->ID, get_current_user_id()
                 );
@@ -109,7 +108,7 @@ class AAM_Backend_Feature_Subject_User {
                 // Making sure that user that we are switching too is not logged in
                 // already. Reported by https://github.com/KenAer
                 $sessions = WP_Session_Tokens::get_instance($user->ID);
-                if (count($sessions->get_all()) > 1) {
+                if (count($sessions->get_all()) >= 1) {
                     $sessions->destroy_all();
                 }
                 
@@ -135,22 +134,6 @@ class AAM_Backend_Feature_Subject_User {
         }
         
         return wp_json_encode($response);
-    }
-    
-    /**
-     * 
-     * @return type
-     */
-    public function generateJWT() {
-        $userId  = filter_input(INPUT_POST, 'user');
-        $expires = filter_input(INPUT_POST, 'expires');
-        
-        $jwt = AAM_Core_JwtAuth::generateJWT($userId, $expires);
-        
-        return wp_json_encode(array(
-            'status' => 'success',
-            'jwt'    => $jwt->token
-        ));
     }
     
     /**
@@ -361,9 +344,23 @@ class AAM_Backend_Feature_Subject_User {
      * @access protected
      */
     protected function isAllowed(AAM_Core_Subject_User $user) {
-        $max = AAM::getUser()->getMaxLevel();
+        $sameLevel = false;
+        if (AAM_Core_API::capabilityExists('manage_same_user_level')) {
+            $sameLevel = current_user_can('manage_same_user_level');
+        } else {
+            $sameLevel = current_user_can('administrator');
+        }
+
+        $userMaxLevel    = AAM::api()->getUser()->getMaxLevel();
+        $subjectMaxLevel = $user->getMaxLevel();
+
+        if ($sameLevel) {
+            $allowed = $userMaxLevel >= $subjectMaxLevel;
+        } else {
+            $allowed = $userMaxLevel > $subjectMaxLevel;
+        }
         
-        return $max >= AAM_Core_API::maxLevel($user->allcaps);
+        return $allowed;
     }
 
 }

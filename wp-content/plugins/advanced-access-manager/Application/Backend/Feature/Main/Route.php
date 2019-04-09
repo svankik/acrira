@@ -21,7 +21,8 @@ class AAM_Backend_Feature_Main_Route extends AAM_Backend_Feature_Abstract {
     public function __construct() {
         parent::__construct();
         
-        if (!current_user_can('aam_manage_api_routes')) {
+        $allowed = AAM_Backend_Subject::getInstance()->isAllowedToManage();
+        if (!$allowed || !current_user_can('aam_manage_api_routes')) {
             AAM::api()->denyAccess(array('reason' => 'aam_manage_api_routes'));
         }
     }
@@ -86,6 +87,7 @@ class AAM_Backend_Feature_Main_Route extends AAM_Backend_Feature_Abstract {
 
                 foreach(array_unique($methods) as $method) {
                     $response[] = array(
+                        $route,
                         'restful',
                         $method,
                         htmlspecialchars($route),
@@ -99,6 +101,7 @@ class AAM_Backend_Feature_Main_Route extends AAM_Backend_Feature_Abstract {
         if (AAM::api()->getConfig('core.settings.xmlrpc', true)) {
             foreach(array_keys(AAM_Core_API::getXMLRPCServer()->methods) as $route) {
                 $response[] = array(
+                    $route,
                     'xmlrpc',
                     'POST',
                     htmlspecialchars($route),
