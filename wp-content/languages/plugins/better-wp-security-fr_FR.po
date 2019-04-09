@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - iThemes Security (formerly Better WP Security) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-02-16 09:45:45+0000\n"
+"PO-Revision-Date: 2019-03-17 18:10:59+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -998,7 +998,7 @@ msgstr "Échec de l’envoi de l’e-mail"
 msgid "Email Send Succeeded"
 msgstr "E-mail bien envoyé"
 
-#: core/lockout.php:1259
+#: core/lockout.php:1298
 msgid "User Lockout"
 msgstr "Verrouillage de l’utilisateur"
 
@@ -1143,7 +1143,7 @@ msgstr "Impossible d’écrire dans le fichier journal. Cela pourrait indiquer q
 msgid "File Created but Email Send Failed"
 msgstr "Fichier créé mais envoi d’e-mail échoué"
 
-#: core/lockout.php:1247
+#: core/lockout.php:1286
 msgid "Host Lockout"
 msgstr "Verrouillage de l’adresse IP"
 
@@ -1155,23 +1155,23 @@ msgstr "Analyse"
 msgid "Scan Failed: Sucuri Error"
 msgstr "Échec de l’analyse : erreur Sucuri"
 
-#: core/lockout.php:1257
+#: core/lockout.php:1296
 msgid "User Lockout: <code>%s</code>"
 msgstr "Verrouillage de l’utilisateur : <code>%s</code>"
 
-#: core/lockout.php:1245
+#: core/lockout.php:1284
 msgid "Host Lockout: <code>%s</code>"
 msgstr "Verrouillage de l’adresse IP : <code>%s</code>"
 
-#: core/lockout.php:1242
+#: core/lockout.php:1281
 msgid "Whitelisted Host Triggered Host Lockout"
 msgstr "Verrouillage de l’adresse IP déclenché par une adresse IP sur liste blanche"
 
-#: core/lockout.php:1250
+#: core/lockout.php:1289
 msgid "Whitelisted Host Triggered User Lockout"
 msgstr "Verrouillage de l’utilisateur déclenché par une adresse IP sur liste blanche"
 
-#: core/lockout.php:1240
+#: core/lockout.php:1279
 msgid "Host Triggered Blacklist"
 msgstr "Liste noire déclenchée par l’adresse IP"
 
@@ -1187,19 +1187,19 @@ msgstr "Un échec de la requête a empêché l’accès aux données du journal�
 msgid "Your screen options saved successfully."
 msgstr "Vos options d’écran ont bien été enregistrées."
 
-#: core/lockout.php:1238
+#: core/lockout.php:1277
 msgid "Whitelisted Host Triggered Blacklist"
 msgstr "Liste noire déclenchée par une adresse IP sur liste blanche"
 
-#: core/lockout.php:1262
+#: core/lockout.php:1301
 msgid "Whitelisted Host Triggered Username Lockout"
 msgstr "Verrouillage de l’identifiant déclenché par une adresse IP sur liste blanche"
 
-#: core/lockout.php:1265
+#: core/lockout.php:1304
 msgid "Username Lockout: <code>%s</code>"
 msgstr "Verrouillage de l’identifiant : <code>%s</code>"
 
-#: core/lockout.php:1267
+#: core/lockout.php:1306
 msgid "Username Lockout"
 msgstr "Verrouillage par identifiant"
 
@@ -1525,15 +1525,15 @@ msgstr "Fichiers supprimés"
 msgid "Scan Summary"
 msgstr "Résumé de l'analyse"
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:396
+#: core/modules/hide-backend/class-itsec-hide-backend.php:400
 msgid "The new login link."
 msgstr "Le nouveau lien de connexion."
 
-#: core/lockout.php:1130
+#: core/lockout.php:1169
 msgid "Site Lockouts"
 msgstr "Verrouillages du site"
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:398
+#: core/modules/hide-backend/class-itsec-hide-backend.php:402
 msgid "The URL to your website."
 msgstr "L'URL de votre site web."
 
@@ -1549,19 +1549,19 @@ msgstr "Ignorer la notification"
 msgid "New Notification from iThemes Security"
 msgstr "Nouvelle notification d’iThemes Security"
 
-#: core/lockout.php:1131
+#: core/lockout.php:1170
 msgid "Various modules send emails to notify you when a user or host is locked out of your website."
 msgstr "Différents modules envoient des e-mails pour vous prévenir lorsqu’un utilisateur ou une adresse IP est banni de votre site."
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:397
+#: core/modules/hide-backend/class-itsec-hide-backend.php:401
 msgid "The WordPress Site Title. Can be changed under Settings -> General -> Site Title"
 msgstr "Le titre du site WordPress. Modifiable dans Réglages -> Général -> Titre du site"
 
-#: core/modules/backup/class-itsec-backup.php:354
+#: core/modules/backup/class-itsec-backup.php:358
 msgid "The %1$sDatabase Backup%2$s module will send a copy of any backups to the email addresses listed below."
 msgstr "Le module %1$s« Sauvegarde de la base de données »%2$s enverra une copie des sauvegardes aux adresses de messagerie indiquées ci-dessous."
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:392
+#: core/modules/hide-backend/class-itsec-hide-backend.php:396
 msgid "%1$sHide Backend%2$s will notify the chosen recipients whenever the login URL is changed."
 msgstr "%1$s« Déplacement de l’administration »%2$s avertira les destinataires sélectionnés à chaque fois que l’URL de connexion sera modifiée."
 
@@ -1597,7 +1597,7 @@ msgctxt "Files removed"
 msgid "Removed"
 msgstr "Supprimés"
 
-#: core/modules/backup/class-itsec-backup.php:285
+#: core/modules/backup/class-itsec-backup.php:289
 msgid "Site Database Backup for %s"
 msgstr "Sauvegarde de base de données de %s"
 
@@ -1610,11 +1610,11 @@ msgstr "Le module %1$s Détection d’altération de fichiers %2$s envoie un rap
 msgid "File Change Warning"
 msgstr "Avertissement d’altération de fichier"
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:391
+#: core/modules/hide-backend/class-itsec-hide-backend.php:395
 msgid "Hide Backend – New Login URL"
 msgstr "Déplacer l’administration - Nouvelle URL de connexion"
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:394
+#: core/modules/hide-backend/class-itsec-hide-backend.php:398
 msgid "The login address for {{ $site_title }} has changed. The new login address is {{ $login_url }}. You will be unable to use the old login address."
 msgstr "L’adresse de connexion de {{ $site_title }} a changé. La nouvelle adresse est {{ $login_url }}. Vous ne pourrez plus utiliser l’ancienne adresse."
 
@@ -1828,11 +1828,11 @@ msgstr "Les réglages de blocage peuvent être configurés dans les <a href=\"%s
 msgid "Added by W3 Total Cache"
 msgstr "Ajouté par W3 Total Cache"
 
-#: core/modules/backup/class-itsec-backup.php:131
+#: core/modules/backup/class-itsec-backup.php:135
 msgid "Unable to write the backup file. This may be due to a permissions or disk space issue."
 msgstr "Impossible d’écrire le fichier de sauvegarde. Cela peut être dû à un problème de permissions ou d’espace disque."
 
-#: core/modules/backup/class-itsec-backup.php:125
+#: core/modules/backup/class-itsec-backup.php:129
 msgid "Unable to create the backup directory due to an unknown error."
 msgstr "Impossible de créer le répertoire de sauvegarde à cause d’une erreur inconnue."
 
@@ -1917,7 +1917,7 @@ msgstr "Verrouillage en vigueur jusqu’à"
 msgid "<b>User:</b> %1$s"
 msgstr "<b>Utilisateur :</b> %1$s"
 
-#: core/lockout.php:1207
+#: core/lockout.php:1246
 msgid "Visit Banned Users Settings"
 msgstr "Visitez les réglages de blocage d’utilisateurs"
 
@@ -1926,25 +1926,25 @@ msgstr "Visitez les réglages de blocage d’utilisateurs"
 msgid "<b>Host:</b> %1$s"
 msgstr "<b>Adresse IP :</b> %1$s"
 
-#: core/modules/global/settings-page.php:179
-msgid "The length of time a host or user will be banned from this site after hitting the limit of bad logins. The default setting of 15 minutes is recommended as increasing it could prevent attacking IP addresses from being added to the blacklist."
-msgstr "La durée pendant laquelle une adresse IP ou un utilisateur sera bloqué de ce site après avoir atteint le seuil de tentatives de connexions infructueuses. Le réglage par défaut de 15 minutes est recommandé car un réglage supérieur serait trop permissif."
-
-#: core/lockout.php:1201
+#: core/lockout.php:1240
 msgid "Release lockouts from the Active Lockouts section of the settings page."
 msgstr "Levez les blocages à partir de la section « blocages actifs » de la page des réglages."
 
-#: core/lockout.php:1202
+#: core/lockout.php:1241
 msgid "Visit Settings Page"
 msgstr "Visitez la page des réglages"
 
-#: core/lockout.php:1206
+#: core/lockout.php:1245
 msgid "Release the permanent host ban from Ban Hosts list in the Banned Users section of the settings page."
 msgstr "Retire le blocage permanent de la liste de « Blocage d’adresses IP » dans la section « Blocage d’utilisateurs » des réglages."
 
 #: core/lib/class-itsec-mail.php:286
 msgid "Host/User"
 msgstr "Adresse IP / Utilisateur"
+
+#: core/modules/global/settings-page.php:179
+msgid "The length of time a host or user will be banned from this site after hitting the limit of bad logins. The default setting of 15 minutes is recommended as increasing it could prevent attacking IP addresses from being added to the blacklist."
+msgstr "La durée pendant laquelle une adresse IP ou un utilisateur sera bloqué après avoir atteint le seuil de tentatives de connexions infructueuses. Le réglage par défaut de 15 minutes est recommandé car un réglage inférieur serait trop permissif."
 
 #: core/modules/malware/class-itsec-malware-scan-results-template.php:126
 msgid "Documentation: <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">%2$s</a>"
@@ -1970,9 +1970,9 @@ msgstr "Des altérations ont été détectées. Consultez <a href=\"%s\" target=
 msgid "Disable PHP in Themes"
 msgstr "Désactiver PHP dans les thèmes"
 
-#: core/modules/backup/class-itsec-backup.php:285
-#: core/modules/backup/class-itsec-backup.php:353
-#: core/modules/backup/class-itsec-backup.php:355
+#: core/modules/backup/class-itsec-backup.php:289
+#: core/modules/backup/class-itsec-backup.php:357
+#: core/modules/backup/class-itsec-backup.php:359
 msgid "Database Backup"
 msgstr "Sauvegarde de base de données"
 
@@ -2005,7 +2005,7 @@ msgstr "Désactivez PHP dans les extensions - iThemes Security > Réglages > Aju
 msgid "Disable PHP in Themes - Security > Settings > System Tweaks > PHP in Themes"
 msgstr "Désactivez PHP dans les thèmes - iThemes Security > Réglages > Ajustements système > PHP dans les thèmes"
 
-#: core/modules/backup/class-itsec-backup.php:289
+#: core/modules/backup/class-itsec-backup.php:293
 msgid "Website"
 msgstr "Site Internet"
 
@@ -2017,7 +2017,7 @@ msgstr "Désactive l’exécution de PHP dans le répertoire des téléchargemen
 msgid "Filter out hits with the trace, delete, or track request methods. This should not be enabled if you use the <a href=\"%s\">WordPress REST API</a>."
 msgstr "Filtre les résultats avec les méthodes « trace », « delete » ou « track ». Cela ne devrait être activé que si vous utilisez <a href=\"%s\">l’API REST WordPress</a>."
 
-#: core/modules/backup/class-itsec-backup.php:286
+#: core/modules/backup/class-itsec-backup.php:290
 msgid "Attached is the database backup file for your site."
 msgstr "Ci-joint, la sauvegarde de la base de données de votre site."
 
@@ -2239,10 +2239,6 @@ msgstr "Permissions de fichiers"
 msgid "Lists file and directory permissions of key areas of the site."
 msgstr "Liste les autorisations des fichiers et des répertoires clés du site."
 
-#: core/modules/file-permissions/settings-page.php:19
-msgid "Click the button to load the current file permissions."
-msgstr "Cliquez sur le bouton pour récupérer les permissions en cours."
-
 #: core/modules/file-permissions/settings-page.php:20
 msgid "Load File Permissions Details"
 msgstr "Récupérer les permissions de fichiers"
@@ -2250,6 +2246,10 @@ msgstr "Récupérer les permissions de fichiers"
 #: core/modules/file-permissions/settings-page.php:109
 msgid "Reload File Permissions Details"
 msgstr "Récupérer à nouveau les permissions"
+
+#: core/modules/file-permissions/settings-page.php:19
+msgid "Click the button to load the current file permissions."
+msgstr "Cliquez sur le bouton pour récupérer les permissions actuelles."
 
 #. translators: 1: New directory name
 #: core/modules/content-directory/settings-page.php:104
@@ -2813,15 +2813,15 @@ msgstr "Les %1$s et %2$s ne peuvent pas être identiques."
 msgid "The %1$s and %2$s settings restrict the current time and would result in locking you out immediately. Please select a %1$s and %2$s that does not restrict the current time."
 msgstr "Les réglages %1$s et %2$s sont dans le passé et vous verrouilleraient immédiatement. Veuillez sélectionner une %1$s et une %2$s dans le futur."
 
-#: core/modules/backup/class-itsec-backup.php:88
+#: core/modules/backup/class-itsec-backup.php:92
 msgid "Backup complete. The backup was sent to the selected email recipients and was saved locally."
 msgstr "Sauvegarde terminée. La sauvegarde a été envoyée par e-mail aux destinataires sélectionnés et a été enregistrée sur votre serveur."
 
-#: core/modules/backup/class-itsec-backup.php:91
+#: core/modules/backup/class-itsec-backup.php:95
 msgid "Backup complete. The backup was sent to the selected email recipients."
 msgstr "Sauvegarde terminée. La sauvegarde a été envoyée par e-mail aux destinataires sélectionnés."
 
-#: core/modules/backup/class-itsec-backup.php:94
+#: core/modules/backup/class-itsec-backup.php:98
 msgid "Backup complete. The backup was saved locally."
 msgstr "Sauvegarde terminée. La sauvegarde a été enregistrée sur votre serveur."
 
@@ -3268,10 +3268,6 @@ msgstr "Une erreur de « format non valide » a empêché la requête d’abou
 msgid "Enable Redirection"
 msgstr "Activer la redirection"
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:202
-msgid "This has been disabled."
-msgstr "Cela a été désactivé."
-
 #: core/modules/hide-backend/settings-page.php:101
 msgid "Redirect users to a custom location on your site, instead of throwing a 403 (forbidden) error."
 msgstr "Redirige les utilisateurs vers un emplacement personnalisé de votre site, au lieu de renvoyer une erreur 403 (accès refusé)."
@@ -3288,6 +3284,10 @@ msgstr "Le slug vers lequel rediriger les utilisateurs quand ils tentent d’acc
 #: core/modules/hide-backend/settings-page.php:105
 msgid "Redirection Slug"
 msgstr "Slug de redirection"
+
+#: core/modules/hide-backend/class-itsec-hide-backend.php:206
+msgid "This has been disabled."
+msgstr "Cette méthode de connexion a été désactivée. Passez par la nouvelle page de connexion !"
 
 #. Description of the plugin
 msgid "Take the guesswork out of WordPress security. iThemes Security offers 30+ ways to lock down WordPress in an easy-to-use WordPress security plugin."
@@ -3555,12 +3555,6 @@ msgstr "Fichiers systèmes"
 msgid "Force Unique Nickname"
 msgstr "Forcer un pseudonyme unique"
 
-#: core/modules/multisite-tweaks/settings-page.php:24
-#: core/modules/system-tweaks/settings-page.php:24
-#: core/modules/wordpress-tweaks/settings-page.php:48
-msgid "Note: These settings are listed as advanced because they block common forms of attacks but they can also block legitimate plugins and themes that rely on the same techniques. When activating the settings below, we recommend enabling them one by one to test that everything on your site is still working as expected."
-msgstr "Note : ces réglages sont répertoriés comme avancés car ils bloquent les formes courantes d’attaques, mais ils peuvent aussi bloquer les extensions et thèmes légitimes qui s’appuient sur les mêmes techniques. En activant les réglages ci-dessous, nous vous recommandons de les tester un par un pour vérifier que tout fonctionne toujours comme prévu."
-
 #: core/modules/multisite-tweaks/settings-page.php:6
 msgid "Multisite Tweaks"
 msgstr "Ajustements multisite"
@@ -3568,6 +3562,12 @@ msgstr "Ajustements multisite"
 #: core/modules/wordpress-tweaks/class-itsec-wordpress-tweaks.php:539
 msgid "A Nickname is required. Please choose a nickname or fill out your first and last name."
 msgstr "Un pseudonyme est nécessaire. Merci d’en choisir un ou renseignez votre prénom et votre nom."
+
+#: core/modules/multisite-tweaks/settings-page.php:24
+#: core/modules/system-tweaks/settings-page.php:24
+#: core/modules/wordpress-tweaks/settings-page.php:48
+msgid "Note: These settings are listed as advanced because they block common forms of attacks but they can also block legitimate plugins and themes that rely on the same techniques. When activating the settings below, we recommend enabling them one by one to test that everything on your site is still working as expected."
+msgstr "Note : ces réglages sont répertoriés comme avancés car ils bloquent les formes courantes d’attaques, mais ils peuvent aussi bloquer les extensions et thèmes légitimes qui s’appuient sur les mêmes techniques. En activant les réglages ci-dessous, nous vous recommandons de les tester un par un pour vérifier que tout fonctionne toujours comme prévu."
 
 #: core/modules/wordpress-tweaks/class-itsec-wordpress-tweaks.php:521
 msgid "Your Nickname must be different than your login name. Please choose a different Nickname."
@@ -3681,10 +3681,6 @@ msgstr "Empêche les scripts et les utilisateurs d’écrire sur les fichiers wp
 #: core/modules/wordpress-tweaks/settings-page.php:122
 msgid "Prevents error messages from being displayed to a user upon a failed login attempt."
 msgstr "Empêche l’affichage des messages d’erreurs aux utilisateurs n’ayant pas réussi à se connecter."
-
-#: core/modules/wordpress-tweaks/settings-page.php:121
-msgid "Disable login error messages"
-msgstr "Désactiver les message d’échec de connexion"
 
 #: core/modules/wordpress-tweaks/settings-page.php:72
 msgid "This option will cut down on comment spam by denying comments from bots with no referrer or without a user-agent identified."
@@ -3836,7 +3832,11 @@ msgstr "URL trop longues"
 msgid "Request Methods"
 msgstr "Méthodes de requête"
 
-#: core/modules/backup/class-itsec-backup.php:292
+#: core/modules/wordpress-tweaks/settings-page.php:121
+msgid "Disable login error messages"
+msgstr "Désactiver les messages d’échec de connexion"
+
+#: core/modules/backup/class-itsec-backup.php:296
 msgid "Date"
 msgstr "Date"
 
@@ -4093,7 +4093,7 @@ msgstr "Nombre maximum de tentatives de connexions par adresse IP"
 msgid "The number of login attempts a user has before their host or computer is locked out of the system. Set to 0 to record bad login attempts without locking out the host."
 msgstr "Nombre de tentatives de connexion infructueuses qu’un utilisateur peut faire avant que son adresse IP ou son ordinateur ne soit bloqué. Mettez à 0 pour enregistrer les mauvaises tentatives sans que cela ne conduise à un blocage."
 
-#: core/modules/hide-backend/class-itsec-hide-backend.php:393
+#: core/modules/hide-backend/class-itsec-hide-backend.php:397
 msgid "WordPress Login Address Changed"
 msgstr "L’adresse de connexion à WordPress a été déplacée"
 
@@ -4676,7 +4676,7 @@ msgstr "Impossible d’éliminer les commentaires du code source car la fonction
 msgid "Backup Full Database"
 msgstr "Sauvegarder l’ensemble de la base de données"
 
-#: core/lockout.php:1180
+#: core/lockout.php:1219
 msgid "Permanently"
 msgstr "De façon permanente"
 
@@ -4850,7 +4850,7 @@ msgstr "Saisissez un nouvel identifiant pour remplacer « admin ». Notez que 
 msgid "Off"
 msgstr "Désactivé"
 
-#: core/lockout.php:1132 core/lockout.php:1197
+#: core/lockout.php:1171 core/lockout.php:1236
 msgid "Site Lockout Notification"
 msgstr "Notifications de blocage"
 
@@ -5048,7 +5048,7 @@ msgstr "La ou les adresse(s) de messagerie où toutes les notifications de sécu
 msgid "You can use HTML in your message. Allowed tags include: a, br, em, strong, h1, h2, h3, h4, h5, h6, div."
 msgstr "Vous pouvez utiliser du HTML dans votre message. Les balises autorisées sont : a, br, em, strong, h1, h2, h3, h4, h5, h6, div."
 
-#: core/lockout.php:1235
+#: core/lockout.php:1274
 msgid "Lockout"
 msgstr "Blocage"
 
