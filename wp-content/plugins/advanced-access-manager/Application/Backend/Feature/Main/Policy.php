@@ -16,6 +16,18 @@
 class AAM_Backend_Feature_Main_Policy extends AAM_Backend_Feature_Abstract {
     
     /**
+     * Construct
+     */
+    public function __construct() {
+        parent::__construct();
+        
+        $allowed = AAM_Backend_Subject::getInstance()->isAllowedToManage();
+        if (!$allowed || !current_user_can('aam_manage_policy')) {
+            AAM::api()->denyAccess(array('reason' => 'aam_manage_policy'));
+        }
+    }
+
+    /**
      * 
      * @return type
      */
@@ -39,11 +51,11 @@ class AAM_Backend_Feature_Main_Policy extends AAM_Backend_Feature_Abstract {
             
             $result = wp_insert_post(array(
                 'post_author'  => get_current_user_id(),
-		'post_content' => $json,
-		'post_title'   => $package->title,
-		'post_excerpt' => $package->description,
-		'post_status'  => 'publish',
-		'post_type'    => 'aam_policy'
+                'post_content' => $json,
+                'post_title'   => $package->title,
+                'post_excerpt' => $package->description,
+                'post_status'  => 'publish',
+                'post_type'    => 'aam_policy'
             ));
             
             if (!is_wp_error($result)) {
@@ -131,9 +143,8 @@ class AAM_Backend_Feature_Main_Policy extends AAM_Backend_Feature_Abstract {
         
         $list = get_posts(array(
             'post_type'   => 'aam_policy',
-            'numberposts' => AAM_Core_Request::request('length'),
-            'offset'      => AAM_Core_Request::request('start'),
-            's'           => ($search ? $search . '*' : ''),
+            'numberposts' => -1,
+            'post_status' => 'publish'
         ));
         
         $response = array(
@@ -157,24 +168,6 @@ class AAM_Backend_Feature_Main_Policy extends AAM_Backend_Feature_Abstract {
         }
         
         return $response;
-    }
-    
-    /**
-     * 
-     * @global type $wpdb
-     * @param type $type
-     * @param type $search
-     * @return type
-     */
-    protected function getPolicyCount($type, $search) {
-        global $wpdb;
-        
-        $query  = "SELECT COUNT(*) AS total FROM {$wpdb->posts} ";
-        $query .= "WHERE (post_type = %s) AND (post_title LIKE %s) AND (post_status = %s)";
-        
-        $args   = array($type, "{$search}%", 'publish');
-        
-        return $wpdb->get_var($wpdb->prepare($query, $args));
     }
     
     /**

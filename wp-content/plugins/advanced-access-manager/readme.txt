@@ -3,7 +3,7 @@ Contributors: vasyltech
 Tags: access control, membership, backend menu, user role, restricted content, security, jwt
 Requires at least: 4.0
 Tested up to: 5.1
-Stable tag: 5.9
+Stable tag: 5.9.3
 
 All you need to manage access to you WordPress websites on frontend, backend and API levels for any role, user or visitors.
 
@@ -37,6 +37,7 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 
 * [free] Manage Backend Menu. Manage access to the backend menu for any user or role. Find out more from [How to manage WordPress backend menu](https://aamplugin.com/article/how-to-manage-wordpress-backend-menu) article;
 * [free] Manage Roles & Capabilities. Manage all your WordPress role and capabilities.
+* [free] All necessary set of tools to manage JWT authentication [Ultimate guide to WordPress JWT Authentication](https://aamplugin.com/article/ultimate-guide-to-wordpress-jwt-authentication)
 * [free] Create temporary user accounts. Create and manage temporary user accounts. Find out more from [How to create temporary WordPress user account](https://aamplugin.com/article/how-to-create-temporary-wordpress-user-account);
 * [limited] Content access. Very granular access to unlimited number of post, page or custom post type ([19 different options](https://aamplugin.com/reference/plugin#posts-terms)). With premium [Plus Package](https://aamplugin.com/extension/plus-package) extension also manage access to hierarchical taxonomies or setup the default access to all post types and taxonomies. Find out more from [How to manage access to the WordPress content](https://aamplugin.com/article/how-to-manage-access-to-the-wordpress-content) article;
 * [free] Manage Admin Toolbar. Filter out unnecessary items from the top admin toolbar for any role or user. 
@@ -79,6 +80,47 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 
 == Changelog ==
 
+= 5.9.3 =
+* Fixed the bug with LIST and LIST TO OTHERS options for multiple roles support
+* Fixed the bug with managing access to custom post types that contain "-" in name
+* Added ability to refresh JWT token with new RESTful endpoint /refresh-jwt
+* Added ability to filter out metabox by its name with Access Policy
+* Improved Posts & Terms access control with Access Policy
+
+= 5.9.2.1 =
+* Fixed several bugs that are related to post, page or custom post type editing
+
+= 5.9.2 =
+* Fixed the bug with Access Policy access control
+* Fixed the bug with Access Policy tab shows only 10 last Policies
+* Fixed the bug where AAM was not determining correct max user level
+* Fixed the bug where user was able to manage his roles on the profile page
+* Fixed the bug with Access Policy "Between" condition
+* Optimized AAM to support unusual access capabilities for custom post types https://forum.aamplugin.com/d/99-custom-post-type-does-not-honor-edit-delete-publish-overrides/5
+* Enhanced Access Policy with few new features. The complete reference is here https://aamplugin.com/reference/policy
+* Enabled 'JWT Authentication' by default
+* Significantly improved AAM UI page security
+* Added new JWT Tokens feature to the list of AAM features https://aamplugin.com/reference/plugin#jwt-tokens
+* Added new capability aam_manage_jwt
+* Added "Add New Policies" submenu to fix WordPress core bug with managing access to submenus
+* Removed "Role Expiration" feature - it was too confusing to work with
+* Removed allow_ajax_calls capability support - it was too confusing for end users
+
+= 5.9.1.1 =
+* Fixed the bug with saving Metaboxes & Widgets settings
+* Fixed the bug with saving Access Policy that has backward slashes in it
+* Fixed the bug with fetching Param values from the Access Policies
+* Fixed the bug with Access Policy resource "Role" when Effect is set to "deny"
+* Adjusted AAM core to prevent PHP warning when edit_user or delete_user capability is checked without user ID provided (caused by other plugins)
+
+= 5.9.1 =
+* Fixed the bug with controlling which capability can be deleted with Access Policy
+* Fixed typo in the aam_edit_others_policies capability slug
+* Fixed the bug with API Routes not being saved property for those that have htmlspecial characters in it
+* Fixed major bug with keeping track of active user sessions that prevents multiple session per same user
+* Added "Redirect To Login" to the LIMIT option for visitors on Posts & Terms tab
+* Added the new concept of "Boundary" to Access Policy that allows to Enforce certain statements
+
 = 5.9 =
 * Fixed the bug with publish pages not being managed correctly
 * Fixed the bug with getting correct post from the list of posts
@@ -90,7 +132,7 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 * Fixed the bug with multi-lingual support
 * Fixed the bug with LIMIT option that escaped quotes in the message
 * Fixed the bug with managing access to Access Policies
-* Added support for aam_edit_policy, aam_read_policy, aam_delete_policy, aam_delete_policies, aam_edit_policies, aam_edit_other_policies, aam_publish_policies capabilities
+* Added support for aam_edit_policy, aam_read_policy, aam_delete_policy, aam_delete_policies, aam_edit_policies, aam_edit_others_policies, aam_publish_policies capabilities
 * Refactored Default Category functionality (moved it to Plus Package extension)
 * Added support for the nav_menu_meta_box_object hook to filter posts on Menu Builder page
 * Extend Access Policy with more features

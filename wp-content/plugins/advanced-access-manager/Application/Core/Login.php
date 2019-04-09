@@ -92,7 +92,17 @@ class AAM_Core_Login {
             }
             
             if (AAM::api()->getConfig('core.settings.setJwtCookieAfterLogin', false)) {
-                AAM_Core_JwtAuth::getInstance()->issueJWT($user->ID, 'cookie');
+                $issuer = new AAM_Core_Jwt_Issuer();
+                $token  = $issuer->issueToken(array('userId' => $user->ID));
+                setcookie(
+                    'aam-jwt', 
+                    $token->token, 
+                    $token->claims['exp'],
+                    '/', 
+                    parse_url(get_bloginfo('url'), PHP_URL_HOST), 
+                    is_ssl(),
+                    AAM_Core_Config::get('authentication.jwt.cookie.httpOnly', false)
+                );
             }
             
             if ($this->aamLogin === false) {
@@ -150,7 +160,7 @@ class AAM_Core_Login {
             } elseif (AAM_Core_Config::get('core.settings.singleSession', false)) {
                 $sessions = WP_Session_Tokens::get_instance($user->ID);
                 
-                if (count($sessions->get_all()) > 1) {
+                if (count($sessions->get_all()) >= 1) {
                     $sessions->destroy_all();
                 }
             }
@@ -238,10 +248,10 @@ class AAM_Core_Login {
      * @access protected
      */
     protected function updateLoginCounter($increment) {
-        $attempts = get_transient('aam_login_attemtps');
+        $attempts = get_transient('aam_login_attempts');
 
         if ($attempts !== false) {
-            $timeout  = get_option('_transient_timeout_aam_login_attemtps') - time();
+            $timeout  = get_option('_transient_timeout_aam_login_attempts') - time();
             $attempts = intval($attempts) + $increment;
         } else {
             $attempts = 1;
@@ -252,10 +262,16 @@ class AAM_Core_Login {
         }
 
         if ($attempts >= AAM_Core_Config::get('security.login.attempts', 20)) {
-            wp_safe_redirect(site_url('index.php'));
-            exit;
+            if (AAM_Core_Api_Area::isAPI()) {
+                throw new Exception(
+                    'Exceeded maximum number for authentication attempts. Please try later again.'
+                );
+            } else {
+                wp_safe_redirect(site_url('index.php'));
+                exit;
+            }
         } else {
-            set_transient('aam_login_attemtps', $attempts, $timeout);
+            set_transient('aam_login_attempts', $attempts, $timeout);
         }
     }
     
@@ -270,7 +286,7 @@ class AAM_Core_Login {
         $this->aamLogin = true;
         
         if ($set_cookie === false) {
-            add_filter('send_auth_cookies', function() { return false; });
+            add_filter('send_auth_cookies', '__return_false');
         }
         
         $response = array(

@@ -21,7 +21,8 @@ class AAM_Backend_Feature_Main_Metabox extends AAM_Backend_Feature_Abstract {
     public function __construct() {
         parent::__construct();
         
-        if (!current_user_can('aam_manage_metaboxes')) {
+        $allowed = AAM_Backend_Subject::getInstance()->isAllowedToManage();
+        if (!$allowed || !current_user_can('aam_manage_metaboxes')) {
             AAM::api()->denyAccess(array('reason' => 'aam_manage_metaboxes'));
         }
     }
@@ -38,11 +39,9 @@ class AAM_Backend_Feature_Main_Metabox extends AAM_Backend_Feature_Abstract {
        $object = AAM_Backend_Subject::getInstance()->getObject('metabox');
 
        foreach($items as $item) {
-           $object->updateOptionItem($item, $status);
+           $object->save($item, $status);
        }
        
-       $object->save();
-
        return wp_json_encode(array('status' => 'success'));
     }
     
