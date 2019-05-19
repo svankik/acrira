@@ -164,54 +164,57 @@ get_header(); ?>
 
                         </form>
 
-                        <h2>Les films</h2>
+                        <?php
 
-						<div class="accordion col-md-12">
+                        $args = array(
+                            'post_type'      => 'film',
+                            'orderby'        => $orderby,
+                            'order'          => $order,
+                            'posts_per_page' => 50
+                        );
 
-							<?php
+                        if(is_array($post_in)) {
+                            $args['post__in'] = $post_in;
+                        }
 
-							$args = array(
-								'post_type'      => 'film',
-								'orderby'        => $orderby,
-								'order'          => $order,
-								'posts_per_page' => 50
-							);
+                        if(isset($meta_key)) {
+                            $args['meta_key'] = $meta_key;
+                        }
 
-							if(is_array($post_in)) {
-							    $args['post__in'] = $post_in;
-							}
+                        $args['meta_query'] = array(
+                            'relation' => 'AND',
+                            (!empty($_GET['realisateur'])) ? array(
+                                'key'		=> 'realisateurs_%_realisateur',
+                                'value'		=> $_GET['realisateur'],
+                                'compare'	=> '='
+                            ) : '',
+                            (!empty($_GET['genre'])) ? array(
+                                'key'		=> 'genres_%_genre',
+                                'value'		=> $_GET['genre'],
+                                'compare'	=> '='
+                            ) : '',
+                            (!empty($_GET['origine'])) ? array(
+                                'key'		=> 'origines_%_origine',
+                                'value'		=> $_GET['origine'],
+                                'compare'	=> '='
+                            ) : '',
+                            (!empty($_GET['type_public'])) ? array(
+                                'key'		=> 'type_public',
+                                'value'		=> '',
+                                'compare'	=> '!='
+                            ) : '',
+                        );
 
-							if(isset($meta_key)) {
-								$args['meta_key'] = $meta_key;
-                            }
+                        $films = new WP_Query( $args );
 
-							$args['meta_query'] = array(
-								'relation' => 'AND',
-								(!empty($_GET['realisateur'])) ? array(
-									'key'		=> 'realisateurs_%_realisateur',
-									'value'		=> $_GET['realisateur'],
-									'compare'	=> '='
-								) : '',
-								(!empty($_GET['genre'])) ? array(
-									'key'		=> 'genres_%_genre',
-									'value'		=> $_GET['genre'],
-									'compare'	=> '='
-								) : '',
-								(!empty($_GET['origine'])) ? array(
-									'key'		=> 'origines_%_origine',
-									'value'		=> $_GET['origine'],
-									'compare'	=> '='
-								) : '',
-								(!empty($_GET['type_public'])) ? array(
-									'key'		=> 'type_public',
-									'value'		=> '',
-									'compare'	=> '!='
-								) : '',
-							);
+					    echo '<h2>' . $films->post_count . ' films correspondent à votre recherche.' . '</h2>';
 
-							$films = new WP_Query( $args );
+                        ?>
 
-							while ( $films->have_posts() ) : $films->the_post();
+                        <div class="accordion col-md-12">
+
+                            <?php
+                            while ( $films->have_posts() ) : $films->the_post();
 
 								get_template_part( 'template-parts/page/content', 'film' );
 
