@@ -91,7 +91,7 @@ get_header(); ?>
                                     case 'sortie_nationale':
                                         $meta_key = 'sortie_nationale';
                                         $orderby = 'meta_value';
-                                        $order = 'ASC';
+                                        $order = 'DESC';
                                         break;
                                 }
                             }
