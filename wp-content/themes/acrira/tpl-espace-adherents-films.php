@@ -174,7 +174,7 @@ get_header(); ?>
                             'post_type'      => 'film',
                             'orderby'        => $orderby,
                             'order'          => $order,
-                            'posts_per_page' => 10,
+                            'posts_per_page' => 50,
                             'paged' => $paged
                         );
 
