@@ -166,11 +166,16 @@ get_header(); ?>
 
                         <?php
 
+					    echo '<h2>' . $films->post_count . ' films correspondent à votre recherche.' . '</h2>';
+
+					    $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+
                         $args = array(
                             'post_type'      => 'film',
                             'orderby'        => $orderby,
                             'order'          => $order,
-                            'posts_per_page' => 50
+                            'posts_per_page' => 10,
+                            'paged' => $paged
                         );
 
                         if(is_array($post_in)) {
@@ -206,8 +211,6 @@ get_header(); ?>
                         );
 
                         $films = new WP_Query( $args );
-
-					    echo '<h2>' . $films->post_count . ' films correspondent à votre recherche.' . '</h2>';
 
                         ?>
 
