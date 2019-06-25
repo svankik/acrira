@@ -396,6 +396,10 @@
 			.scroll {
 				padding-right: $grid-gutter-width;
 			}
+
+			img {
+				margin-top: -$grid-gutter-width/2;
+			}
 		}
 
 		.bx-controls {
