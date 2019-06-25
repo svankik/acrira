@@ -39,7 +39,7 @@ class AAM_Frontend_Authorization {
     public function checkReadAuth(AAM_Core_Object_Post $post) {
         // pre post access hook
         do_action('aam-pre-post-authorization-action', $post);
-        
+
         // Step #1. Check if access expired to the post
         $this->checkExpiration($post);
         
@@ -75,7 +75,7 @@ class AAM_Frontend_Authorization {
             $date = strtotime($post->get('frontend.expire_datetime'));
             if ($date <= time()) {
                 $actions = AAM_Core_Config::get(
-                        'feature.frontend.postAccess.expired', 'frontend.read'
+                    'feature.frontend.postAccess.expired', array('frontend.read')
                 );
 
                 foreach(array_map('trim', explode(',', $actions)) as $action) {
@@ -140,8 +140,8 @@ class AAM_Frontend_Authorization {
     protected function checkRedirect(AAM_Core_Object_Post $post) {
         if ($post->has(AAM_Core_Api_Area::get() . '.redirect')) {
             $rule = explode('|', $post->get(AAM_Core_Api_Area::get() . '.location'));
-            $code = apply_filters('aam-post-redirect-http-code-filter', 307);
-            
+            $code = (!empty($rule[2]) ? $rule[2] : 307);
+
             if (count($rule) === 1) { // TODO: legacy. Remove in Jul 2020
                 if ($rule[0] === 'login') {
                     AAM::api()->redirect('login');
