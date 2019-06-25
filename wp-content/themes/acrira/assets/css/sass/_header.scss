@@ -367,6 +367,11 @@
 				float: left;
 				margin-right: $grid-gutter-width/2;
 				margin-bottom: $grid-gutter-width/2;
+				margin-top: -$grid-gutter-width/2;
+
+				@media (max-width: $screen-sm-max) {
+					display: none;
+				}
 			}
 
 			h3 {
@@ -395,10 +400,6 @@
 
 			.scroll {
 				padding-right: $grid-gutter-width;
-			}
-
-			img {
-				margin-top: -$grid-gutter-width/2;
 			}
 		}
 
