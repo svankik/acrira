@@ -297,6 +297,15 @@ class WP_Members {
 		if ( $this->dropins ) {
 			$this->load_dropins();
 		}
+		
+		// Check for anything that we should stop execution for (currently just the default tos).
+		if ( 'display' == wpmem_get( 'tos', false, 'get' ) ) {
+
+			// If themes are not loaded, we don't need them.
+			$user_themes = ( ! defined( 'WP_USE_THEMES'  ) ) ? define( 'WP_USE_THEMES',  false  ) : '';
+			$this->load_default_tos();
+			die();
+		}
 	}
 	
 	/**
@@ -1273,6 +1282,7 @@ class WP_Members {
 			'reg_invalid_captcha'  => __( 'CAPTCHA was not valid.', 'wp-members' ),
 			'reg_generic'          => __( 'There was an error processing the form.', 'wp-members' ),
 			'reg_captcha_err'      => __( 'There was an error with the CAPTCHA form.', 'wp-members' ),
+			'reg_file_type'        => __( 'Sorry, you can only upload the following file types for the %s field: %s.', 'wp-members' ),
 			
 			// Links.
 			'profile_edit'         => __( 'Edit My Information', 'wp-members' ),
@@ -1320,11 +1330,23 @@ class WP_Members {
 		 * Filter default terms.
 		 *
 		 * @since 3.1.0
+		 * @deprecated 3.2.7 Use wpmem_default_text instead.
 		 */
 		$text = apply_filters( 'wpmem_default_text_strings', '' );
 		
 		// Merge filtered $terms with $defaults.
 		$text = wp_parse_args( $text, $defaults );
+		
+		/**
+		 * Filter the default terms.
+		 *
+		 * Replaces 'wpmem_default_text_strings' so that multiple filters could
+		 * be run. This allows for custom filters when also running the Text
+		 * String Editor extension.
+		 *
+		 * @since 3.2.7
+		 */
+		$text = apply_filters( 'wpmem_default_text', $text );
 		
 		// Return the requested text string.
 		return $text[ $str ];
@@ -1413,7 +1435,7 @@ class WP_Members {
 		) );
 
 		// Add settings for output description
-		$wp_customize->add_setting( 'show_logged_out_state', array(
+		$wp_customize->add_setting( 'wpmem_show_logged_out_state', array(
 			'default'    => '1',
 			'type'       => 'theme_mod', //'option'
 			'capability' => 'edit_theme_options',
@@ -1421,7 +1443,7 @@ class WP_Members {
 		) );
 
 		// Add settings for output description
-		$wp_customize->add_setting( 'show_form_message_dialog', array(
+		$wp_customize->add_setting( 'wpmem_show_form_message_dialog', array(
 			'default'    => '1',
 			'type'       => 'theme_mod', //'option'
 			'capability' => 'edit_theme_options',
@@ -1429,19 +1451,19 @@ class WP_Members {
 		) );
 
 		// Add control and output for select field
-		$wp_customize->add_control( 'show_form_logged_out', array(
+		$wp_customize->add_control( 'wpmem_show_form_logged_out', array(
 			'label'      => __( 'Show forms as logged out', 'wp-members' ),
 			'section'    => 'wp_members',
-			'settings'   => 'show_logged_out_state',
+			'settings'   => 'wpmem_show_logged_out_state',
 			'type'       => 'checkbox',
 			'std'        => '1'
 		) );
 		
 		// Add control for showing dialog
-		$wp_customize->add_control( 'show_form_dialog', array(
+		$wp_customize->add_control( 'wpmem_show_form_dialog', array(
 			'label'      => __( 'Show form message dialog', 'wp-members' ),
 			'section'    => 'wp_members',
-			'settings'   => 'show_form_message_dialog',
+			'settings'   => 'wpmem_show_form_message_dialog',
 			'type'       => 'checkbox',
 			'std'        => '0'
 		) );
@@ -1713,10 +1735,25 @@ class WP_Members {
 			 * @param string $dir    The translation directory.
 			 * @param string $locale The current locale.
 			 */
-			$dir = apply_filters( 'wpmem_localization_dir', dirname( plugin_basename( __FILE__ ) ) . '/lang/', $locale );
+			$dir = apply_filters( 'wpmem_localization_dir', basename( WPMEM_PATH ) . '/lang/', $locale );
 			load_plugin_textdomain( $domain, FALSE, $dir );
 		}
 		return;
+	}
+	
+	/**
+	 * Load default tos template.
+	 *
+	 * @since 3.2.8
+	 */
+	function load_default_tos() {
+		// Check for custom template or load default.
+		$custom_template = get_stylesheet_directory() . '/wp-members/templates/tos.php';
+		if ( file_exists( $custom_template ) ) {
+			require_once( $custom_template );
+		} else {
+			require_once( WPMEM_PATH . 'inc/template_tos.php' );
+		}
 	}
 
 } // End of WP_Members class.

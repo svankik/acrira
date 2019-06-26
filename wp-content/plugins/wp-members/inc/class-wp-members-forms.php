@@ -72,6 +72,7 @@ class WP_Members_Forms {
 		$placeholder = ( isset( $args['placeholder'] ) ) ? $args['placeholder'] : false;
 		$pattern     = ( isset( $args['pattern']     ) ) ? $args['pattern']     : false;
 		$title       = ( isset( $args['title']       ) ) ? $args['title']       : false;
+		$file_types  = ( isset( $args['file_types']  ) ) ? $args['file_types']      : false;
 	
 		// Handle field creation by type.
 		switch ( $type ) { 
@@ -100,9 +101,9 @@ class WP_Members_Forms {
 					break;
 			}
 			$required    = ( $required    ) ? ' required' : '';
-			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( $placeholder ) . '"' : '';
+			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( __( $placeholder, 'wp-members' ) ) . '"' : '';
 			$pattern     = ( $pattern     ) ? ' pattern="' . esc_attr( $pattern ) . '"' : '';
-			$title       = ( $title       ) ? ' title="' . esc_attr( $title ) . '"' : '';
+			$title       = ( $title       ) ? ' title="' . esc_attr( __( $title, 'wp-members' ) ) . '"' : '';
 			$min         = ( isset( $args['min'] ) && $args['min'] != '' ) ? ' min="' . esc_attr( $args['min'] ) . '"' : '';
 			$max         = ( isset( $args['max'] ) && $args['max'] != '' ) ? ' max="' . esc_attr( $args['max'] ). '"' : '';
 			$str = "<input name=\"$name\" type=\"$type\" id=\"$id\" value=\"$value\" class=\"$class\"$placeholder$title$pattern$min$max" . ( ( $required ) ? " required " : "" ) . " />";
@@ -110,16 +111,25 @@ class WP_Members_Forms {
 		
 		case "password":
 			$class = $this->sanitize_class( $class );
-			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( $placeholder ) . '"' : '';
+			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( __( $placeholder, 'wp-members' ) ) . '"' : '';
 			$pattern     = ( $pattern     ) ? ' pattern="' . esc_attr( $pattern ) . '"' : '';
-			$title       = ( $title       ) ? ' title="' . esc_attr( $title ) . '"' : '';
+			$title       = ( $title       ) ? ' title="' . esc_attr( __( $title, 'wp-members' ) ) . '"' : '';
 			$str = "<input name=\"$name\" type=\"$type\" id=\"$id\" class=\"$class\"$placeholder$title$pattern" . ( ( $required ) ? " required " : "" ) . " />";
 			break;
 		
 		case "image":
 		case "file":
-			$class = ( 'textbox' == $class ) ? "file" : $this->sanitize_class( $class );
-			$str = "<input name=\"$name\" type=\"file\" id=\"$id\" value=\"$value\" class=\"$class\"" . ( ( $required ) ? " required " : "" ) . " />";
+			if ( $file_types ) {
+				$file_types = explode( '|', $file_types );
+				foreach( $file_types as $file_type ) {
+					$array[] = "." . $file_type;
+				}
+				$accept = ' accept="' . implode( ",", $array ) . '"';
+			} else {
+				$accept = '';
+			}
+			$class  = ( 'textbox' == $class ) ? "file" : $this->sanitize_class( $class );
+			$str = "<input name=\"$name\" type=\"file\" id=\"$id\" value=\"" . esc_attr( $value ) . "\" class=\"$class\"$accept" . ( ( $required ) ? " required " : "" ) . " />";
 			break;
 	
 		case "checkbox":
@@ -130,7 +140,7 @@ class WP_Members_Forms {
 		case "textarea":
 			$value = esc_textarea( stripslashes( $value ) ); // stripslashes( esc_textarea( $value ) );
 			$class = ( 'textbox' == $class ) ? "textarea" : $this->sanitize_class( $class );
-			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( $placeholder ) . '"' : '';
+			$placeholder = ( $placeholder ) ? ' placeholder="' . esc_attr( __( $placeholder, 'wp-members' ) ) . '"' : '';
 			$rows  = ( isset( $args['rows'] ) && $args['rows'] ) ? esc_attr( $args['rows'] ) : '5';
 			$cols  = ( isset( $args['cols'] ) && $args['cols'] ) ? esc_attr( $args['cols'] ) : '20';
 			$str = "<textarea cols=\"$cols\" rows=\"$rows\" name=\"$name\" id=\"$id\" class=\"$class\"$placeholder" . ( ( $required ) ? " required " : "" ) . ">$value</textarea>";
@@ -141,7 +151,7 @@ class WP_Members_Forms {
 			break;
 	
 		case "option":
-			$str = "<option value=\"" . esc_attr( $value ) . "\" " . selected( $value, $compare, false ) . " >$name</option>";
+			$str = "<option value=\"" . esc_attr( $value ) . "\" " . selected( $value, $compare, false ) . " >" . __( $name, 'wp-members' ) . "</option>";
 			break;
 	
 		case "select":
@@ -171,7 +181,7 @@ class WP_Members_Forms {
 				} else {
 					$chk = 'not selected';
 				}
-				$str = $str . "<option value=\"$pieces[1]\"" . selected( $pieces[1], $chk, false ) . ">" . __( $pieces[0], 'wp-members' ) . "</option>\n";
+				$str = $str . "<option value=\"$pieces[1]\"" . selected( $pieces[1], $chk, false ) . ">" . esc_attr( __( $pieces[0], 'wp-members' ) ) . "</option>\n";
 			}
 			$str = $str . "</select>";
 			break;
@@ -195,7 +205,7 @@ class WP_Members_Forms {
 						'compare' => ( in_array( $pieces[1], $values ) ) ? $pieces[1] : $chk,
 					) ) . "&nbsp;" . $label . "<br />\n";
 				} else {
-					$str = $str . '<span class="div_multicheckbox_separator">' . esc_html( $pieces[0] ) . "</span><br />\n";
+					$str = $str . '<span class="div_multicheckbox_separator">' . esc_html( __( $pieces[0], 'wp-members' ) ) . "</span><br />\n";
 				}
 			}
 			break;
@@ -293,6 +303,54 @@ class WP_Members_Forms {
 			return $sanitized_class;
 		}
 	}
+	
+	/**
+	 * Sanitizes the text in an array.
+	 *
+	 * @since 3.2.9
+	 *
+	 * @param  array $data
+	 * @return array $data
+	 */
+	function sanitize_array( $data ) {
+		if ( is_array( $data ) ) {
+			foreach( $data as $key => $val ) {
+				$data[ $key ] = sanitize_text_field( $val );
+			}
+		}
+		return $data;
+	}
+	
+	/**
+	 * Sanitizes field based on field type.
+	 *
+	 * @since 3.2.9
+	 *
+	 * @param  string $data
+	 * @param  string $type
+	 * @return string $sanitized_data
+	 */
+	function sanitize_field( $data, $type ) {
+		
+		switch ( $type ) {
+
+			case 'multiselect':
+			case 'multicheckbox':
+				$sanitized_data = $this->sanitize_array( $data );
+				break;
+
+			case 'textarea':
+				$sanitized_data = sanitize_textarea_field( $data );
+				break;
+
+			default:
+				$sanitized_data = sanitize_text_field( $data );
+				break;	
+		}
+		
+		return $sanitized_data;
+	}
+	
 	/**
 	 * Uploads file from the user.
 	 *
@@ -670,7 +728,7 @@ class WP_Members_Forms {
 		$form = $args['fieldset_before'] . $args['n'] . $form . $args['fieldset_after'] . $args['n'];
 		
 		// Apply nonce.
-		$form = wp_nonce_field( 'wpmem_login_nonce', '_wpnonce', true, false ) . $args['n'] . $form;
+		$form = wp_nonce_field( 'wpmem_shortform_nonce', '_wpmem_' . $arr['action'] . '_nonce', true, false ) . $args['n'] . $form;
 
 		// Apply form wrapper.
 		$form = '<form action="' . esc_url( get_permalink() ) . '" method="POST" id="' . $this->sanitize_class( $args['form_id'] ) . '" class="' . $this->sanitize_class( $args['form_class'] ) . '">' . $args['n'] . $form . '</form>';
@@ -904,16 +962,16 @@ class WP_Members_Forms {
 
 				} else {
 					if ( 'file' == $field['type'] ) {
-						$val = ( isset( $_FILES[ $meta_key ]['name'] ) ) ? $_FILES[ $meta_key ]['name'] : '' ;
+						$val = ( isset( $_FILES[ $meta_key ]['name'] ) ) ? sanitize_file_name( $_FILES[ $meta_key ]['name'] ) : '' ;
 					} else {
-						$val = ( isset( $_POST[ $meta_key ] ) ) ? $_POST[ $meta_key ] : '';
+						$val = ( isset( $_POST[ $meta_key ] ) ) ? $this->sanitize_field( $_POST[ $meta_key ], $field['type'] ) : '';
 					}
 				}
 
 				// Does the tos field.
 				if ( 'tos' == $meta_key ) {
 
-					$val = sanitize_text_field( wpmem_get( $meta_key, '' ) ); 
+				//	$val = sanitize_text_field( wpmem_get( $meta_key, '' ) ); 
 
 					// Should be checked by default? and only if form hasn't been submitted.
 					$val   = ( ! $_POST && $field['checked_default'] ) ? $field['checked_value'] : $val;
@@ -932,7 +990,7 @@ class WP_Members_Forms {
 						$tos_link_url = do_shortcode( $tos_content );
 						$tos_link_tag = '<a href="' . esc_url( $tos_link_url ) . '" target="_blank">';
 					} else {
-						$tos_link_url = WPMEM_DIR . "/wp-members-tos.php";
+						$tos_link_url = add_query_arg( 'tos', 'display' );//WPMEM_DIR . "/wp-members-tos.php";
 						$tos_link_tag = "<a href=\"#\" onClick=\"window.open('" . $tos_link_url . "','mywindow');\">";
 					}
 					
@@ -982,7 +1040,9 @@ class WP_Members_Forms {
 						$valtochk = $val;
 						$val = $field['checked_value']; 
 						// if it should it be checked by default (& only if form not submitted), then override above...
-						if ( $field['checked_default'] && ( ! $_POST && $tag != 'edit' ) ) { $val = $valtochk = $field['checked_value']; }
+						if ( $field['checked_default'] && ( ! $_POST && $tag != 'edit' ) ) { 
+							$val = $valtochk = $field['checked_value'];
+						}
 					}
 
 					// For dropdown select.
@@ -991,7 +1051,9 @@ class WP_Members_Forms {
 						$val = $field['values'];
 					}
 
-					if ( ! isset( $valtochk ) ) { $valtochk = ''; }
+					if ( ! isset( $valtochk ) ) {
+						$valtochk = '';
+					}
 
 					if ( 'edit' == $tag && ( 'file' == $field['type'] || 'image' == $field['type'] ) ) {
 
@@ -1004,14 +1066,15 @@ class WP_Members_Forms {
 						}
 						$input.= '<br />' . $wpmem->get_text( 'profile_upload' ) . '<br />';
 						$input.= wpmem_form_field( array(
-							'name'    => $meta_key, 
-							'type'    => $field['type'], 
-							'value'   => $val, 
-							'compare' => $valtochk,
+							'name'       => $meta_key, 
+							'type'       => $field['type'], 
+							'value'      => $val, 
+							'compare'    => $valtochk,
+							'file_types' => $field['file_types'],
 						) );
 
 					} else {
-
+					
 						// For all other input types.
 						$formfield_args = array( 
 							'name'     => $meta_key, // ( 'username' == $meta_key ) ? 'user_login' : $meta_key,
@@ -1027,6 +1090,7 @@ class WP_Members_Forms {
 							'max'         => ( isset( $field['max']         ) ) ? $field['max']         : false,
 							'rows'        => ( isset( $field['rows']        ) ) ? $field['rows']        : false,
 							'cols'        => ( isset( $field['cols']        ) ) ? $field['cols']        : false,
+							'file_types'  => ( isset( $field['file_types']  ) ) ? $field['file_types']  : false,
 						);
 						if ( 'multicheckbox' == $field['type'] || 'multiselect' == $field['type'] ) {
 							$formfield_args['delimiter'] = $field['delimiter'];
@@ -1245,8 +1309,9 @@ class WP_Members_Forms {
 		// Apply attribution if enabled.
 		$form = $form . wpmem_inc_attribution();
 
-		// Apply nonce.
-		$form = wp_nonce_field( 'wpmem_reg_nonce', '_wpnonce', true, false ) . $args['n'] . $form;
+		// Apply nonce. Nonce uses $tag value of the form processor, NOT the form builder.
+		$nonce = ( $tag == 'edit' ) ? 'update' : 'register';
+		$form  = wp_nonce_field( 'wpmem_longform_nonce', '_wpmem_' . $nonce . '_nonce', true, false ) . $args['n'] . $form;
 
 		// Apply form wrapper.
 		$enctype = ( $enctype == 'multipart/form-data' ) ? ' enctype="multipart/form-data"' : '';

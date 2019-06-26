@@ -44,8 +44,8 @@ class AAM_Core_Media {
      * @access protected
      */
     protected function __construct() {
-        $media   = filter_input(INPUT_GET, 'aam-media', FILTER_VALIDATE_INT);
-        $request = ($media !== 1 ? $media : urldecode(AAM_Core_Request::server('REQUEST_URI')));
+        $media   = filter_input(INPUT_GET, 'aam-media');
+        $request = (is_numeric($media) ? urldecode(AAM_Core_Request::server('REQUEST_URI')) : $media);
         $root    = AAM_Core_Request::server('DOCUMENT_ROOT');
         
         $this->request     = str_replace('\\', '/', $root . $request);

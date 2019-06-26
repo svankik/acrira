@@ -39,68 +39,54 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
         
         $subject = $this->getSubject();
         
-        // Read cache first
-        $option = $subject->getObject('cache')->get('visibility', 0);
+        $query  = "SELECT pm.`post_id`, pm.`meta_value`, p.`post_type` ";
+        $query .= "FROM {$wpdb->postmeta} AS pm ";
+        $query .= "LEFT JOIN {$wpdb->posts} AS p ON (pm.`post_id` = p.ID) ";
+        $query .= "WHERE pm.`meta_key` = %s";
         
-        if ($option === false) { //if false, then the cache is empty but exists
-            $option = array();
-        } elseif (empty($option)) {
-            $query  = "SELECT pm.`post_id`, pm.`meta_value`, p.`post_type` ";
-            $query .= "FROM {$wpdb->postmeta} AS pm ";
-            $query .= "LEFT JOIN {$wpdb->posts} AS p ON (pm.`post_id` = p.ID) ";
-            $query .= "WHERE pm.`meta_key` = %s";
-            
-            if ($wpdb->query($wpdb->prepare($query, $this->getOptionName('post')))) {
-                foreach($wpdb->last_result as $row) {
-                    $settings = maybe_unserialize($row->meta_value);
-                    $this->pushOptions('post', $row->post_id . '|' . $row->post_type, $settings);
-                }
+        if ($wpdb->query($wpdb->prepare($query, $this->getOptionName('post')))) {
+            foreach($wpdb->last_result as $row) {
+                $settings = maybe_unserialize($row->meta_value);
+                $this->pushOptions('post', $row->post_id . '|' . $row->post_type, $settings);
             }
-            
-            // Read all the settings from the Access & Security Policies
-            $area = AAM_Core_Api_Area::get();
-            $stms = AAM_Core_Policy_Factory::get($subject)->find(
-                "/^post:(.*):(list|listtoothers)$/"
-            );
-            
-            foreach($stms as $key => $stm) {
-                $chunks = explode(':', $key);
+        }
 
-                $action = ($chunks[3] === 'listtoothers' ? 'list_others' : 'list');
+        // Read all the settings from the Access & Security Policies
+        $area = AAM_Core_Api_Area::get();
+        $stms = AAM_Core_Policy_Factory::get($subject)->find("/^post:(.*):list$/");
 
-                if (is_numeric($chunks[2])) {
-                    $postId = $chunks[2];
-                } else {
-                    $post = get_page_by_path(
-                        $chunks[2], OBJECT, $chunks[1]
-                    );
-                    $postId = (is_a($post, 'WP_Post') ? $post->ID : 0);
-                }
+        foreach($stms as $key => $stm) {
+            $chunks = explode(':', $key);
 
+            if (is_numeric($chunks[2])) {
+                $postId = $chunks[2];
+            } else {
+                $post = get_page_by_path(
+                    $chunks[2], OBJECT, $chunks[1]
+                );
+                $postId = (is_a($post, 'WP_Post') ? $post->ID : 0);
+            }
+
+            // Cover the case when unknown slug is used
+            if (!empty($postId)) { 
                 $this->pushOptions(
                     'post', 
                     "{$postId}|{$chunks[1]}", 
                     array(
-                        "{$area}.{$action}" => ($stm['Effect'] === 'deny' ? 1 : 0)
+                        "{$area}.list" => ($stm['Effect'] === 'deny' ? 1 : 0)
                     )
                 );
             }
-            
-            do_action('aam-visibility-initialize-action', $this);
-            
-            // inherit settings from parent
-            $option = $subject->inheritFromParent('visibility', 0);
-            if (!empty($option)) {
-                $option = array_replace_recursive($option, $this->getOption());
-            } else {
-                $option = $this->getOption();
-            }
-            
-            if (in_array($subject::UID, array('user', 'visitor'), true)) {
-                $subject->getObject('cache')->add(
-                    'visibility', 0, empty($option) ? false : $option
-                );
-            }
+        }
+
+        do_action('aam-visibility-initialize-action', $this);
+        
+        // inherit settings from parent
+        $option = $subject->inheritFromParent('visibility', 0);
+        if (!empty($option)) {
+            $option = array_replace_recursive($option, $this->getOption());
+        } else {
+            $option = $this->getOption();
         }
         
         $this->setOption($option);
@@ -128,8 +114,8 @@ class AAM_Core_Object_Visibility extends AAM_Core_Object {
         
         if (empty($filtered)) {
             $filtered = array_combine(
-                    $listOptions, 
-                    array_fill(0, count($listOptions), 0)
+                $listOptions, 
+                array_fill(0, count($listOptions), 0)
             );
         }
         
