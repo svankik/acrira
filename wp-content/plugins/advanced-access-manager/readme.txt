@@ -2,8 +2,8 @@
 Contributors: vasyltech
 Tags: access control, membership, backend menu, user role, restricted content, security, jwt
 Requires at least: 4.0
-Tested up to: 5.1
-Stable tag: 5.9.3
+Tested up to: 5.2.1
+Stable tag: 5.9.7.3
 
 All you need to manage access to you WordPress websites on frontend, backend and API levels for any role, user or visitors.
 
@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 * The only plugin that gives you absolute freedom to define the most granular access to any aspect of your website and most of the feature are free;
 * Bullet-proven plugin that is used on over 100,000 websites where all features are well-tested and [documented](https://aamplugin.com/support). Very low amount of support tickets speaks for quality;
 * It is the only plugin that gives you the ability to manage access to your website content for any role, individual user and visitors or even define the default access to all posts, pages, custom post types, categories and custom hierarchical taxonomies;
-* AAM is [developer oriented plugin](https://aamplugin.com/developers). It has dozens of hooks and configurations. It is integrated with WordPress RESTful and XML-RPC APIs and has numerous abstract layers to simplify coding;
+* AAM is developer oriented plugin. It has dozens of hooks and configurations. It is integrated with WordPress RESTful and XML-RPC APIs and has numerous abstract layers to simplify coding;
 * No ads or other promotional crap. The UI is clean and well crafted so you can focus only on what matters;
 * No need to be a "paid" customer to get help. Request support via email or start chat with Google Hangout;
 * Some features are limited or available only with [premium extensions](https://aamplugin.com/store). AAM functionality is transparent and you will absolute know when you need to get a premium extension;
@@ -79,6 +79,69 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 11. Improve your website security
 
 == Changelog ==
+
+= 5.9.7.3 =
+* Fixed the PHP notice that is triggered when Multiple roles is enabled and no roles selected for any particular user
+
+= 5.9.7.2 =
+* Cover incompatibility with themes/plugins that do funky stuff with roles and capabilities
+
+= 5.9.7.1 =
+* Fixed the bug with Access Policy for Capability resource
+* Fixed the bug with Nginx redirect rules for media access
+
+= 5.9.7 =
+* Prep for upcoming AAM v6 release. Converting all extensions to plugins
+* Covered odd use-case when some plugins decide to register CPT capabilities during plugin activation
+* Improved Backend Menu feature functionality
+
+= 5.9.6.3 =
+* Fixed the bug with merging access settings for multiple roles
+* Improved the way capabilities are managed internally by AAM
+* Fixed PHP notice reported by jaerlo https://forum.aamplugin.com/d/207-indirect-modification-of-overloaded-property-aam-core-subject-user-roles
+* Fixed PHP fatal error reported by kevinagar https://wordpress.org/support/topic/fatal-error-3199/
+* Fixed the bug with Backend Menu feature where all the menu items that require "administrator" capability where not shown
+
+= 5.9.6.2 =
+* Fixed the bug added slashes to the Access Policy JSON document
+* Fixed the bug with Metaboxes & Widgets to prevent PHP warning for widgets that registered with Closure callback
+* Fixed the bug in URI Access feature that causes PHP warning when data is merged for multiple roles
+* Fixed the bug with Access Policy rules that are not initialized correctly for Visitors 
+* Fixed the bug reported on GitHub https://github.com/aamplugin/advanced-access-manager/issues/6
+* Changed the way AAM hooks into get_options pipeline with Access Policy "Params". This is done to support array options
+* Changed the way Login Widget is registered to reduce code
+
+= 5.9.6.1 =
+* Fixed the fatal error related to URI object
+
+= 5.9.6 =
+* Fixed the bug with URI Access feature for URIs with trailing forward slash "/"
+* Fixed the bug with Access Policy where incorrect default value was propagated  
+* Fixed the bug with API Routes not merged properly with multiple-roles support
+* Added HTTP Redirect Code to URI Access, Posts & Terms features
+* Added new Access Policy marker type QUERY that is alias for the GET
+* Added support for the null data type for Access Policy data type casting
+* Improved the way password-protected feature works; enhanced Access Policy to support it https://aamplugin.com/reference/policy#post
+* Deprecated and removed internal AAM cache by optimizing AAM performance. Cache became major constrain for the dynamic Access Policy conditions
+
+= 5.9.5 =
+* Fixed the bug with Access Policy `Param` value that was not evaluating embedded markers
+* Fixed the bug that was causing PHP Warning for users that have none-existing role assigned
+* Fixed the bug with Customizer that was blocking user from publishing changes
+* Added support for `tags` - the ability to manage access to posts by none-hierarchical terms
+* Added the ability to define dynamic Resource names with markers in Access Policies
+* Added new Access Policy marker USERMETA https://aamplugin.com/reference/policy#usermeta
+
+= 5.9.4 =
+* Fixed the bug with incorrectly identifying CPT capabilities
+* Fixed the bug with URI Access where there where no way to override wildcard rule
+* Fixed multiple bugs related to JWT authentication
+* Fixed the bug with Access Policy that triggers PHP Notice for visitors
+* Removed support for ConfigPress option `core.settings.setJwtCookieAfterLogin`
+* Added the ability to obtain Login URL from the "Manage User" modal
+* Added the ability to control AAM cache size https://aamplugin.com/reference/plugin#core-cache-limit
+* Refactored Capabilities feature to follow the best practices for integration with WP Core
+* Refactored JWT authentication so it can be more seamlessly integrated with user status
 
 = 5.9.3 =
 * Fixed the bug with LIST and LIST TO OTHERS options for multiple roles support
@@ -982,7 +1045,7 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 * Added Post Delete feature
 * Added Post's Restore Default Restrictions feature
 * Added ConfigPress Extension turn on/off setting
-* Russian translation by (Maxim Kernozhitskiy http://aeromultimedia.com)
+* Russian translation by (Maxim Kernozhitskiy https://aeromultimedia.com)
 * Removed Migration possibility
 * Refactored AAM Core Console model
 * Increased the number of saved restriction for basic version
